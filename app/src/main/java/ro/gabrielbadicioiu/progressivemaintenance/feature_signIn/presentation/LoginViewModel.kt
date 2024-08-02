@@ -1,5 +1,8 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,6 +19,10 @@ class LoginViewModel: ViewModel() {
 data class showToast(val message:String):UiEvent()
 object SignUp:UiEvent()
     }
+
+    //states
+    var showPasswordChecked by mutableStateOf(false)
+        private set
 
 
     fun onEvent(event: LogInScreenEvent)

@@ -104,7 +104,9 @@ fun LoginScreen(
             EmailTextField(value = "") {
                 /*TODO*/
             }
-            PasswordTextField(value = "") {
+            PasswordTextField(
+                showPassword = viewModel.showPasswordChecked,
+                value = "") {
                 /*TODO*/
             }
             Spacer(modifier = Modifier

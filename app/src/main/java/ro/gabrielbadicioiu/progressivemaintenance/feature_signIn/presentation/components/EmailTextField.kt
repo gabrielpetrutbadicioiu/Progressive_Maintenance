@@ -39,8 +39,7 @@ Box {
             )*/,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
-            focusedIndicatorColor =  MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = Color.Transparent,
+            focusedIndicatorColor =  MaterialTheme.colorScheme.primary
         ),
         singleLine = true,
         label = { Text(text = stringResource(R.string.email_hint))},
@@ -49,6 +48,6 @@ Box {
             id = R.string.email_hint
         ) )},
         value = value,
-        onValueChange ={/*TODO*/} )
+        onValueChange ={onValueChange(it)} )
 }
 }

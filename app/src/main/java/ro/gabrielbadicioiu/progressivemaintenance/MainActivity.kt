@@ -18,6 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.LoginScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.LoginViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.SignUpScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.SignUpScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
 import ro.gabrielbadicioiu.progressivemaintenance.util.Screens
 
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
             ProgressiveMaintenanceTheme {
                 val navController= rememberNavController()
                 val loginScreenViewModel=getViewModel<LoginViewModel>()
+                val signUpScreenViewModel=getViewModel<SignUpScreenViewModel>()
                 
 
                     NavHost(
@@ -36,11 +38,15 @@ class MainActivity : ComponentActivity() {
                         startDestination =Screens.LoginScreen ) {
                         composable<Screens.LoginScreen>
                         {
-                            LoginScreen(navController=navController, viewModel = loginScreenViewModel)
+                            LoginScreen(
+                                navController=navController,
+                                viewModel = loginScreenViewModel)
                         }
                         composable<Screens.SignUpScreen>
                         {
-                            SignUpScreen(navController = navController)
+                            SignUpScreen(
+                                navController = navController,
+                                viewModel = signUpScreenViewModel)
                         }
                     }
 

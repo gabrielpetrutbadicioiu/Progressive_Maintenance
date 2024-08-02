@@ -16,13 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordTextField(value:String, onValueChange:(String)->Unit)
+fun PasswordTextField(
+    showPassword:Boolean,
+    value:String,
+    onValueChange:(String)->Unit,
+                      )
 {
     Box {
         //email
@@ -32,8 +37,7 @@ fun PasswordTextField(value:String, onValueChange:(String)->Unit)
                 .padding(16.dp, 4.dp),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent,
-                focusedIndicatorColor =  MaterialTheme.colorScheme.primary,
-                unfocusedTextColor = Color.Transparent,
+                focusedIndicatorColor =  MaterialTheme.colorScheme.primary
             ),
             singleLine = true,
             label = { Text(text = stringResource(R.string.password_hint))},
@@ -41,9 +45,10 @@ fun PasswordTextField(value:String, onValueChange:(String)->Unit)
                 contentDescription = stringResource(
                     id = R.string.password_hint
                 ) )},
-            visualTransformation = PasswordVisualTransformation(),
+
+            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             value = value,
-            onValueChange ={} )
+            onValueChange ={onValueChange(it)} )
     }
 }
 

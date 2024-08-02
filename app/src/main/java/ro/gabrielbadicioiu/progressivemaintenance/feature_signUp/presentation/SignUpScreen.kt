@@ -2,6 +2,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation
 
 
 import android.widget.Space
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,28 +27,54 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.EmailTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.PasswordTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.ConfirmPasswordTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.ShowPasswordCheckBox
 import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.SignUpButton
+import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.SignUpScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.util.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: SignUpScreenViewModel
 )
 {
+    val context= LocalContext.current
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collect {
+            event->
+            when(event)
+            {
+                is SignUpScreenViewModel.UiEvent.ShowToast->
+                {
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+                is SignUpScreenViewModel.UiEvent.OnSignUpClickNav->
+                {
+                    /*TODO*/
+                }
+                is SignUpScreenViewModel.UiEvent.onBackButtonPressed->{
+                    navController.navigate(Screens.LoginScreen)
+                }
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -69,7 +96,7 @@ fun SignUpScreen(
                 },//title
                 navigationIcon = {
                     IconButton(
-                        onClick = { navController.navigate(Screens.LoginScreen) }
+                        onClick = { viewModel.onEvent(SignUpScreenEvent.OnBackButtonClick) }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -98,21 +125,30 @@ fun SignUpScreen(
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp))
-            EmailTextField(value = "") {
-                /*TODO*/
+            EmailTextField(value = viewModel.email) {
+                enteredEmail->
+                viewModel.onEvent(SignUpScreenEvent.EnteredEmail(enteredEmail))
             }
-            PasswordTextField(value = "") {
-                /*TODO*/
-
+            PasswordTextField(
+                showPassword = viewModel.showPasswordChecked,
+                value = viewModel.password) {
+                enteredPass->
+                viewModel.onEvent(SignUpScreenEvent.EnteredPassword(enteredPass))
             }
-            ConfirmPasswordTextField(value = "") {
-                /*TODO*/
+            ConfirmPasswordTextField(value = viewModel.confirmedPassword,
+                showPassword = viewModel.showPasswordChecked
+            ) {
+                confirmedPass->
+                viewModel.onEvent(SignUpScreenEvent.ConfirmedPassword(confirmedPass))
+            }
+            ShowPasswordCheckBox(checked = viewModel.showPasswordChecked) {
+                viewModel.onEvent(SignUpScreenEvent.OnShowPasswordChecked)
             }
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp))
             SignUpButton {
-                /*TODO*/
+                viewModel.onEvent(SignUpScreenEvent.OnSignUpBtnClick)
             }
 
 

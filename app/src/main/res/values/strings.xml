@@ -10,4 +10,23 @@
     <string name="NavIcon_descr">Navigation Icon</string>
     <string name="confirm_pass_label">Confirm password</string>
     <string name="show_password">Show password</string>
+    <string name="terms_conditions_first">By continuing, you agree to \u0020</string>
+    <string name="terms_conditions_second">Terms of Service \u0020</string>
+    <string name="terms_conditions_third">and confirm that you have read \u0020</string>
+    <string name="terms_conditions_fourth"> Privacy Policy</string>
+    <string name="application_name">Progressive Maintenance\'s \u0020 </string>
+    <string name="show_pass_description">Hide/Show password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="continue_btn">Continue</string>
+    <string name="warning_icon_descr">Warning Icon</string>
+    <string name="check_email_txt">Check your email!</string>
+    <string name="verification_prompt">Use the link or code sent to</string>
+    <string name="resend_otp">Resend code</string>
+    <string name="resend_icon">Resend icon</string>
+    <string name="finish_btn">Finish</string>
+    <string name="check_icon">Check icon</string>
+    <string name="pass_chars">8 characters (20 max)</string>
+    <string name="pass_container">Use at least one uppercase letter and one number</string>
+    <string name="pass_strength">Strong password</string>
+    <string name="pass_match">Passwords successfully matched!</string>
 </resources>

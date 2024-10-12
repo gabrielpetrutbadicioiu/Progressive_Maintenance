@@ -80,6 +80,9 @@ dependencies {
     //viewmodel
     implementation (libs.androidx.lifecycle.viewmodel.compose)
 
+    //icons
+    implementation ("androidx.compose.material:material-icons-extended:1.6.8")
+
 
 
 }

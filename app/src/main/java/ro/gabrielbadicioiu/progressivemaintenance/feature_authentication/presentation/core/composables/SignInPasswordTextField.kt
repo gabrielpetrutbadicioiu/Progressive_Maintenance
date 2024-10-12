@@ -1,8 +1,10 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,19 +16,26 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordTextField(
+fun SignInPasswordTextField(
     showPassword:Boolean,
     value:String,
+    label:String,
+    isError:Boolean,
+    icon:ImageVector,
     onValueChange:(String)->Unit,
+    onShowPassClick:()->Unit
                       )
 {
     Box {
@@ -40,15 +49,23 @@ fun PasswordTextField(
                 focusedIndicatorColor =  MaterialTheme.colorScheme.primary
             ),
             singleLine = true,
-            label = { Text(text = stringResource(R.string.password_hint))},
+            label = { Text(text =label)},
+            isError = isError,
             leadingIcon = {Icon(imageVector = Icons.Default.Lock,
                 contentDescription = stringResource(
                     id = R.string.password_hint
                 ) )},
-
+            trailingIcon ={ Icon(imageVector = icon,
+                contentDescription = stringResource(id = R.string.show_pass_description),
+                modifier = Modifier.clickable {
+                    onShowPassClick()
+                })},
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             value = value,
-            onValueChange ={onValueChange(it)} )
+            onValueChange ={
+                password->
+                onValueChange(password)} )
     }
 }
 

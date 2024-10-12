@@ -1,12 +1,9 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components
+package ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.email_validation_screen.components
 
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,11 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.Purple40
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailTextField(value:String, onValueChange:(String)->Unit)
+fun EmailValidationTextField(value:String, onValueChange:(String)->Unit)
 {
 Box {
     //email
@@ -33,10 +29,7 @@ Box {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 4.dp)
-           /* .border(
-                BorderStroke(width = 2.dp, color = Purple40),
-                shape = RoundedCornerShape(50)
-            )*/,
+          ,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
             focusedIndicatorColor =  MaterialTheme.colorScheme.primary

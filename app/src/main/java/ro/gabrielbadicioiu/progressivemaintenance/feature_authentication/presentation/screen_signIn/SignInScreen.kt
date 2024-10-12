@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,34 +25,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.CreateAccTxtBtn
-import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.EmailTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.PasswordTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_signIn.presentation.components.SignInButton
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.CreateAccTxtBtn
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.RememberMe
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.SignInButton
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
 import ro.gabrielbadicioiu.progressivemaintenance.util.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    navController: NavController,
-    viewModel: LoginViewModel
+fun SignInScreen(
+    viewModel:SignInViewModel,
+    navController: NavController
 )
 {
+    // TODO de implementat validare email si parola cu erori si tot ce tb
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest {
-            event->
+                event->
             when(event)
             {
-                is LoginViewModel.UiEvent.SignUp->
+                is SignInViewModel.UiEvent.SignUp->
                 {
                     navController.navigate(Screens.SignUpScreen)
                 }
-                is  LoginViewModel.UiEvent.showToast->
-                    {
+                is  SignInViewModel.UiEvent.showToast->
+                {
 
                 }
             }
@@ -74,12 +75,12 @@ fun LoginScreen(
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge)
                     }
-                    },
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary))
 
         }
     ) {
-        innerPadding->
+            innerPadding->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,29 +102,39 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(12.dp))
 
-            EmailTextField(value = "") {
-                /*TODO*/
+            EmailTextField(
+                value = viewModel.email,
+                label = viewModel.emailLabel,
+                //labelIcon = Icons.Default.NewLabel,
+                isError = false) {
+                email->
+              viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
             }
-            PasswordTextField(
+            SignInPasswordTextField(
                 showPassword = viewModel.showPasswordChecked,
-                value = "") {
-                /*TODO*/
+                value = viewModel.pass,
+                label = viewModel.passLabel,
+                isError = false , icon = viewModel.icon, onValueChange = {
+                    password->
+                    viewModel.onEvent(SignInScreenEvent.EnteredPassword(password))
+                }) {
+                viewModel.onEvent(SignInScreenEvent.OnShowPasswordClick)
+            }
+            RememberMe(checked =viewModel.rememberMeChecked) {
+                viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
             }
             Spacer(modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp))
-            SignInButton {
-                /*TODO*/
-            }
+                .padding(8.dp))
+            SignInButton({}, enable = viewModel.signInBtnEn)
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp))
             CreateAccTxtBtn {
-                viewModel.onEvent(LogInScreenEvent.onCreateAccClick)
+                viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)
             }
         }
 
     }
-
 
 }

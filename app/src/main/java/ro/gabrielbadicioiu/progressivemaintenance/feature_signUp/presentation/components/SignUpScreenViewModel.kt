@@ -35,6 +35,9 @@ private val _eventFlow= MutableSharedFlow<UiEvent>()
     var confirmedPassword by mutableStateOf("")
         private set
     var showPasswordChecked by mutableStateOf(false)
+        private set
+    var rememberMeChecked by mutableStateOf(false)
+        private set
     fun onEvent(event:SignUpScreenEvent)
     {
         when(event)

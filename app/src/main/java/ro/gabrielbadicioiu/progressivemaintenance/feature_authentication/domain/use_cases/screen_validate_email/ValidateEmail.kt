@@ -3,7 +3,6 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain
 import android.util.Patterns
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WarningAmber
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.core.ValidationResult
 
 class ValidateEmail {
 
@@ -12,20 +11,25 @@ class ValidateEmail {
         if (email.isBlank())
         {
             return ValidationResult(
-                successful = false,
-                errorMessage = "\u0020 Email address cannot be empty"
+                isError = true,
+                labelMessage = "\u0020 Email address cannot be empty",
+                labelIcon = Icons.Default.WarningAmber
+
             )
         }
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
             return  ValidationResult(
-                successful = false,
-                errorMessage = "\u0020 Invalid email address. Please try again."
+                isError = true,
+                labelMessage = "\u0020 Invalid email address. Please try again.",
+                labelIcon = Icons.Default.WarningAmber
             )
         }
         return ValidationResult(
-            successful = true,
-            errorMessage = "Email"
+            isError = false,
+            labelMessage = "Email",
+            labelIcon = null
+
 
         )
     }

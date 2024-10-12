@@ -103,18 +103,20 @@ fun SignInScreen(
                 .padding(12.dp))
 
             EmailTextField(
-                value = viewModel.email,
-                label = viewModel.emailLabel,
+                value = viewModel.emailInput,
+                label = stringResource(id = R.string.email_hint),
                 //labelIcon = Icons.Default.NewLabel,
                 isError = false) {
                 email->
               viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
             }
             SignInPasswordTextField(
-                showPassword = viewModel.showPasswordChecked,
-                value = viewModel.pass,
-                label = viewModel.passLabel,
-                isError = false , icon = viewModel.icon, onValueChange = {
+                showPassword = viewModel.showPassResult.showPass,
+                value = viewModel.passInput,
+                label = stringResource(id = R.string.password_hint),
+                isError = false ,
+                icon = viewModel.showPassResult.icon,
+                onValueChange = {
                     password->
                     viewModel.onEvent(SignInScreenEvent.EnteredPassword(password))
                 }) {
@@ -126,7 +128,7 @@ fun SignInScreen(
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp))
-            SignInButton({}, enable = viewModel.signInBtnEn)
+            SignInButton({}, enable = viewModel.emailInput.isNotBlank() && viewModel.passInput.isNotBlank())
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp))

@@ -12,28 +12,24 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassResult
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignInUseCases
 
-class SignInViewModel: ViewModel() {
+class SignInViewModel(
+    private val useCases: SignInUseCases
+): ViewModel() {
 
     //states
-    var emailLabel by mutableStateOf("Email")
+var showPassResult by mutableStateOf(ShowPassResult())
         private set
-    var passLabel by mutableStateOf("Password")
+
+    var emailInput by mutableStateOf("")
         private set
-    var icon: ImageVector by mutableStateOf(Icons.Filled.VisibilityOff)
+    var passInput by mutableStateOf("")
         private set
-    var email by mutableStateOf("")
-        private set
-    var pass by mutableStateOf("")
-        private set
-    var showPasswordChecked by mutableStateOf(false)
-        private set
+
     var rememberMeChecked by mutableStateOf(false)
         private set
-    var signInBtnEn by mutableStateOf(false)
-        private set
-    private var enteredPassword by mutableStateOf(false)
-    private var enteredEmail by mutableStateOf(false)
 
     //one time events
     private val _eventFlow= MutableSharedFlow<UiEvent>()
@@ -51,27 +47,16 @@ object SignUp: UiEvent()
         {
             is SignInScreenEvent.EnteredEmail->
             {
-                email=event.value
-                enteredEmail = email.isNotBlank()
-                signInBtnEn= enteredEmail&&enteredPassword
+                emailInput=event.value
             }
 
             is SignInScreenEvent.EnteredPassword->{
-                pass=event.value
-                enteredPassword= pass.isNotBlank()
-                signInBtnEn= enteredEmail&&enteredPassword
+                passInput=event.value
             }
 
             is SignInScreenEvent.OnShowPasswordClick->
             {
-                showPasswordChecked=!showPasswordChecked
-                if (showPasswordChecked)
-                {
-                    icon=Icons.Filled.Visibility
-                }
-                else{
-                    icon=Icons.Filled.VisibilityOff
-                }
+              showPassResult= useCases.showPassword.execute(showPassResult)
             }
 
             is SignInScreenEvent.OnRememberMeCheck->{

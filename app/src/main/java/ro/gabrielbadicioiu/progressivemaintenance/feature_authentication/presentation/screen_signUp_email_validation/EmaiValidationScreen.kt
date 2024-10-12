@@ -96,8 +96,8 @@ navController: NavController
                 .fillMaxWidth()
                 .padding(12.dp))
             EmailTextField(value = viewModel.enteredEmail,
-                label = viewModel.label,
-                isError =viewModel.isError /*TODO*/ ) {
+                label = viewModel.validationResult.labelMessage,
+                isError =viewModel.validationResult.isError/*TODO*/ ) {
                 email->
                 viewModel.onEvent(EmailValidationEvent.EnteredEmail(email))
             }
@@ -108,7 +108,9 @@ navController: NavController
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp))
-            EnButton({viewModel.onEvent(EmailValidationEvent.OnNextClick)}, viewModel.nextBtnEn, stringResource(
+            EnButton({viewModel.onEvent(EmailValidationEvent.OnNextClick)},
+                viewModel.enteredEmail.isNotBlank(),
+                stringResource(
                 id = R.string.continue_btn
             ))
 

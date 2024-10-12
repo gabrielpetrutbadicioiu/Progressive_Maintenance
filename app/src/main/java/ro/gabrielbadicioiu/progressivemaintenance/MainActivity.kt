@@ -12,8 +12,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.EmailConfirmationScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_signUp.presentation.components.SignUpScreenViewModel
+
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,13 +25,12 @@ class MainActivity : ComponentActivity() {
             ProgressiveMaintenanceTheme {
                val navController= rememberNavController()
                 val signInScreenViewModel=getViewModel<SignInViewModel>()
-                val signUpScreenViewModel=getViewModel<SignUpScreenViewModel>()
                 val emailValidationViewModel=getViewModel<EmailValidationViewModel>()
                 val emailConfirmationViewModel=getViewModel<OTPViewModel>()
                 val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
-                SignInScreen(viewModel =signInScreenViewModel , navController = navController)
+             //   SignInScreen(viewModel =signInScreenViewModel , navController = navController)
 
-               //EmailValidationScreen(emailValidationViewModel, navController)
+               EmailValidationScreen(emailValidationViewModel, navController)
             //    EmailConfirmationScreen(emailConfirmationViewModel)
 
            //     CreatePassScreen(createPasswordViewmodel)

@@ -18,7 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,47 +39,49 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.components.OTPInput
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailConfirmationScreen(viewModel: OTPViewModel)
-{
+fun OTPScreen(viewModel: OTPViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.SignUp_title),
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.width(20.dp))
-                }//row
-            }, //title
-                navigationIcon ={
+            TopAppBar(
+                title = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.SignUp_title),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                    }//row
+                }, //title
+                navigationIcon = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = stringResource(
                                 id = R.string.NavIcon_descr
-                            ))
+                            )
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
             )
 
         }
-    ) {
-        innerPadding->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -89,16 +92,22 @@ fun EmailConfirmationScreen(viewModel: OTPViewModel)
         )
         {
             LaunchedEffect(key1 = true) {
-                if (!viewModel.resendCode)
-                { viewModel.CountDown()}
-            }
-            LaunchedEffect(key1 = viewModel.resendProgress) {
-                if (viewModel.resendProgress)
-                {
-                    delay(500L)
-                    viewModel.onEvent(OTPEvent.ResendReset)
+                if (viewModel.countDownValue > 0) {
+                    viewModel.onEvent(OTPEvent.startTimer)
+                } else {
+                    cancel()
                 }
+
+
             }
+            LaunchedEffect(key1 = true) {
+                if (viewModel.showIndicator) {
+                    delay(500L)
+                    viewModel.onEvent(OTPEvent.onResendOTPClick)
+                }
+
+            }
+
             Image(
                 painter = painterResource(id = R.drawable.auth_image),
                 contentDescription = stringResource(id = R.string.image_description),
@@ -106,9 +115,11 @@ fun EmailConfirmationScreen(viewModel: OTPViewModel)
                     .fillMaxWidth()
                     .padding(16.dp, 4.dp)
             )
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            )
 
             Text(
                 text = stringResource(id = R.string.check_email_txt),
@@ -121,48 +132,69 @@ fun EmailConfirmationScreen(viewModel: OTPViewModel)
 
             }
 
-            Row(modifier = Modifier
-                .wrapContentSize()
-                .clickable(enabled = viewModel.resendCode) {
+            Row(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .clickable(enabled = viewModel.hasTimeExpired) {
+                        viewModel.onEvent(OTPEvent.onResendOTPClick)
 
-                    viewModel.onEvent(OTPEvent.OnResendBtnClick)
-                },
+                    },
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically){
-                if (viewModel.resendProgress)
-                {
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (viewModel.showIndicator) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = Color.White,
                         strokeWidth = 1.dp
                     )
-                }
-                else{
-                    Text(
-                        text = stringResource(id = R.string.resend_otp),
-                        fontWeight = if (viewModel.resendCode) { FontWeight.ExtraBold} else {FontWeight.Normal},
-                        color = if (viewModel.resendCode) {Color.Red} else {Color.White}
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    if (!viewModel.resendCode)
-                    {
-                        Text(text = "${viewModel.countDownTimer}")
-                    }
-                    else
-                    {
+                } else {
+                    if (viewModel.hasTimeExpired) {
+                        Text(
+                            text = stringResource(id = R.string.resend_otp),
+                            color = Color.Red,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
                         Icon(
-                            imageVector = Icons.Default.Replay,
+                            imageVector = Icons.Default.Restore,
                             contentDescription = stringResource(id = R.string.resend_icon),
-                            tint = Color.Red)
+                            modifier = Modifier.size(18.dp),
+                            tint = Color.Red
+                        )
+                    } else {
+                        Text(text = "${stringResource(id = R.string.resend)} ${viewModel.countDownValue}")
                     }
                 }
+
+
+                /*
+                 if (viewModel.resendProgress)
+                 {
+
+                 }
+                 else{
+                     Text(
+                         text = stringResource(id = "R.string.resend_otp),
+                         fontWeight = if (viewModel.resendCode) { FontWeight.ExtraBold} else {FontWeight.Normal},
+                         color = if (viewModel.resendCode) {Color.Red} else {Color.White}
+                     )
+                     Spacer(modifier = Modifier.width(4.dp))
+                     if (!viewModel.resendCode)
+                     {
+                         Text(text = "${viewModel.countDownTimer}")
+                     }
+                     else
+                     {
+                         Icon(
+                             imageVector = Icons.Default.Replay,
+                             contentDescription = stringResource(id = R.string.resend_icon),
+                             tint = Color.Red)
+                     }
+                 }*/
 
 
             }
-
-
-           
-
 
 
         }

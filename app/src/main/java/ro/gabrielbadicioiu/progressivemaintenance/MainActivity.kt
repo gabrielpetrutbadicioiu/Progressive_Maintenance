@@ -6,13 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.getViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.EmailConfirmationScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -30,8 +27,8 @@ class MainActivity : ComponentActivity() {
                 val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
              //   SignInScreen(viewModel =signInScreenViewModel , navController = navController)
 
-               EmailValidationScreen(emailValidationViewModel, navController)
-            //    EmailConfirmationScreen(emailConfirmationViewModel)
+              // EmailValidationScreen(emailValidationViewModel, navController)
+            OTPScreen(emailConfirmationViewModel)
 
            //     CreatePassScreen(createPasswordViewmodel)
             }

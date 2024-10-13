@@ -1,53 +1,68 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.viewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OTPUseCases
 
-class OTPViewModel:ViewModel() {
-    var countDownTimer by mutableStateOf(3)
-        private set
-    var resendCode by mutableStateOf(false)
-        private set
-    var resendProgress by mutableStateOf(false)
-        private set
+class OTPViewModel(
+    private val useCases:OTPUseCases
+):ViewModel() {
 
+    var countDownValue by mutableIntStateOf(60)
+        private set
+    var hasTimeExpired by mutableStateOf(false)
+        private set
+    var showIndicator by mutableStateOf(false)
+        private set
 
     fun onEvent(event: OTPEvent)
     {
-        when(event)
-        {
-            is OTPEvent.OnResendBtnClick->{
-                countDownTimer=3
-                resendCode=false
-                resendProgress=true
-                CountDown()
+       when(event)
+       {
+           is OTPEvent.startTimer->
+           {
+               viewModelScope.launch {
 
-            }
-            is OTPEvent.ResendReset->{
-                resendProgress=false
+            useCases.countDown.execute(
+                currentTimerValue = countDownValue,
+                onTick = {newValue->
+                    countDownValue=newValue
+                },
+                hasTimeExpired = {
+                    timerStatus->
+                    hasTimeExpired=timerStatus
+                }
+            )
+               }
+           }
+           is OTPEvent.onResendOTPClick->{
+               viewModelScope.launch {
+                   useCases.onResendOTPClick.execute(
+                       onIndicatorChange = {
+                           value->
+                           showIndicator=value
+                       },
+                       initialTimerValue = 60,
+                       onTimerReset = {
+                           value->
+                           countDownValue=value
+                           hasTimeExpired=false
+                           onEvent(OTPEvent.startTimer)
+                       }
 
+                   )
+               }
 
-            }
-        }
+           }
+       }
     }
 
-    fun CountDown()
-    {
-        viewModelScope.launch {
-            delay(750L)
-            while (countDownTimer>0)
-            {
-                countDownTimer--
-                delay(1000L)
-            }
-            resendCode= countDownTimer==0
 
-        }
-    }
 
 }

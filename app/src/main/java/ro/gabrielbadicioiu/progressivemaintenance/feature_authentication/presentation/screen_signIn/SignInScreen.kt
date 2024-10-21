@@ -33,7 +33,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.RememberMe
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.SignInButton
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
-import ro.gabrielbadicioiu.progressivemaintenance.util.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +51,7 @@ fun SignInScreen(
             {
                 is SignInViewModel.UiEvent.SignUp->
                 {
-                    navController.navigate(Screens.SignUpScreen)
+                    navController.navigate(Screens.EmailValidationScreen)
                 }
                 is  SignInViewModel.UiEvent.showToast->
                 {

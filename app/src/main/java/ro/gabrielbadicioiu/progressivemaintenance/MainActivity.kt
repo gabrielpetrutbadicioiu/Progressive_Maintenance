@@ -4,12 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -25,10 +30,24 @@ class MainActivity : ComponentActivity() {
                 val emailValidationViewModel=getViewModel<EmailValidationViewModel>()
                 val emailConfirmationViewModel=getViewModel<OTPViewModel>()
                 val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
-             //   SignInScreen(viewModel =signInScreenViewModel , navController = navController)
+                NavHost(
+                    navController = navController,
+                    startDestination = Screens.SignInScreen) {
+                    composable<Screens.SignInScreen> {
+                        SignInScreen(viewModel =signInScreenViewModel , navController = navController)
+                    }
+                    composable<Screens.EmailValidationScreen> {
+                        EmailValidationScreen(emailValidationViewModel, navController)
+                    }
+                    composable<Screens.OTPScreen> {
+                        OTPScreen(emailConfirmationViewModel)
+                    }
 
-              // EmailValidationScreen(emailValidationViewModel, navController)
-            OTPScreen(emailConfirmationViewModel)
+                }
+             //
+
+              //
+          //
 
            //     CreatePassScreen(createPasswordViewmodel)
             }

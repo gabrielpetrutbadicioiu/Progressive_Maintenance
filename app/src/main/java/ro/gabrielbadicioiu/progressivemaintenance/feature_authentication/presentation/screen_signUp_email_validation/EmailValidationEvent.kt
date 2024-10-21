@@ -5,5 +5,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 sealed class EmailValidationEvent {
     data class EnteredEmail(val value:String):EmailValidationEvent()
     object OnNextClick:EmailValidationEvent()
+    object OnBackBtnClick:EmailValidationEvent()
+    object OnContinueBtnClick:EmailValidationEvent()
 
 }

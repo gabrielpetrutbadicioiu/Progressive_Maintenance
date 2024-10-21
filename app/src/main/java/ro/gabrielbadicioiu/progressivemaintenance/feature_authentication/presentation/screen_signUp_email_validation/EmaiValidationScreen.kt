@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,9 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EnButton
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.components.TermsText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +45,21 @@ viewModel: EmailValidationViewModel,
 navController: NavController
 )
 {
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest {
+            event->
+            when(event)
+            {
+                is EmailValidationViewModel.EmailValidUiEvent.OnBackBtnClick->{
+                    navController.navigateUp()
+                }
+                is EmailValidationViewModel.EmailValidUiEvent.OnContinueBtnClick->{
+                    navController.navigate(Screens.OTPScreen)
+                }
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -61,7 +79,7 @@ navController: NavController
                 }//row
             }, //title
                 navigationIcon ={
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { viewModel.onEvent(EmailValidationEvent.OnBackBtnClick) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = stringResource(

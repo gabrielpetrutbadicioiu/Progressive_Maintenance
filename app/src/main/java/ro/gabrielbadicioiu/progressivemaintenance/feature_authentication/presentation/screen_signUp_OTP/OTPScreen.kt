@@ -1,4 +1,4 @@
-@file:Suppress("IMPLICIT_CAST_TO_ANY")
+
 
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP
 
@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Autorenew
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,14 +38,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.components.OTPInput
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.components.OTPTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OTPScreen(viewModel: OTPViewModel) {
+fun OTPScreen(
+    viewModel: OTPViewModel,
+navController: NavController) {
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest {
+            event->
+            when(event)
+            {
+                is OTPViewModel.OTPUiEvent.OnBackBtnClick->{
+                    navController.navigateUp()
+                }
+                is OTPViewModel.OTPUiEvent.OnOTPComplete->{
+                    navController.navigate(Screens.SignInScreen)
+                }
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -68,7 +86,7 @@ fun OTPScreen(viewModel: OTPViewModel) {
                     }//row
                 }, //title
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { viewModel.onEvent(OTPEvent.onBackBtnClick) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = stringResource(
@@ -128,9 +146,20 @@ fun OTPScreen(viewModel: OTPViewModel) {
             )
             Text(text = stringResource(id = R.string.verification_prompt))
 
-            OTPInput(otpLength = 6) {
+         /*   OTPInput(otpLength = 6) {
 
-            }
+                viewModel.onEvent(OTPEvent.onOTPComplete(it))
+            }*/
+            OTPTextField(
+                value = viewModel.otp,
+                onValueChange = {viewModel.onEvent(OTPEvent.EnteredOTP(it))},
+                isError = viewModel.otpError,
+                onOTPComplete = {
+                    viewModel.onEvent(OTPEvent.OnOTPComplete)
+                })
+
+
+            Text(text = stringResource(id = R.string.verification_prompt))
 
             Row(
                 modifier = Modifier
@@ -168,30 +197,6 @@ fun OTPScreen(viewModel: OTPViewModel) {
                 }
 
 
-                /*
-                 if (viewModel.resendProgress)
-                 {
-
-                 }
-                 else{
-                     Text(
-                         text = stringResource(id = "R.string.resend_otp),
-                         fontWeight = if (viewModel.resendCode) { FontWeight.ExtraBold} else {FontWeight.Normal},
-                         color = if (viewModel.resendCode) {Color.Red} else {Color.White}
-                     )
-                     Spacer(modifier = Modifier.width(4.dp))
-                     if (!viewModel.resendCode)
-                     {
-                         Text(text = "${viewModel.countDownTimer}")
-                     }
-                     else
-                     {
-                         Icon(
-                             imageVector = Icons.Default.Replay,
-                             contentDescription = stringResource(id = R.string.resend_icon),
-                             tint = Color.Red)
-                     }
-                 }*/
 
 
             }

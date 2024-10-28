@@ -30,4 +30,6 @@
     <string name="pass_container">Use at least one uppercase letter and one number</string>
     <string name="pass_strength">Strong password</string>
     <string name="pass_match">Passwords successfully matched!</string>
+    <string name="invalid_otp">Verification code is expired or incorrect. Try again.</string>
+    <string name="verification_code">Verification code</string>
 </resources>

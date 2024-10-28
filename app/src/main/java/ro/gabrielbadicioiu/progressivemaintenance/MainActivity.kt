@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
                val navController= rememberNavController()
                 val signInScreenViewModel=getViewModel<SignInViewModel>()
                 val emailValidationViewModel=getViewModel<EmailValidationViewModel>()
-                val emailConfirmationViewModel=getViewModel<OTPViewModel>()
+                val otpViewModel=getViewModel<OTPViewModel>()
                 val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
                 NavHost(
                     navController = navController,
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         EmailValidationScreen(emailValidationViewModel, navController)
                     }
                     composable<Screens.OTPScreen> {
-                        OTPScreen(emailConfirmationViewModel)
+                        OTPScreen(otpViewModel, navController)
                     }
 
                 }

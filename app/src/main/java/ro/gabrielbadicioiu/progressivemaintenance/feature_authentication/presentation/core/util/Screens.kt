@@ -4,9 +4,13 @@ import kotlinx.serialization.Serializable
 
 sealed class Screens {
     @Serializable
-     object SignInScreen:Screens()
+    data object SignInScreen:Screens()
     @Serializable
-    object EmailValidationScreen:Screens()
+    data object EmailValidationScreen:Screens()
     @Serializable
-    object OTPScreen:Screens()
+    data object OTPScreen:Screens()
+    @Serializable
+    data object CreatePassScreen:Screens()
+    @Serializable
+    data object UserNameScreen:Screens()
 }

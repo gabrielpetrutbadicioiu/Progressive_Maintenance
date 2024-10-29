@@ -1,5 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
-
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Boy
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,40 +32,35 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.CreateAccTxtBtn
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.RememberMe
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.SignInButton
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EnButton
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.components.NameTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen(
-    viewModel:SignInViewModel,
+fun UserNameScreen(
+    viewModel: UserNameViewModel,
     navController: NavController
 )
 {
-    // TODO de implementat validare email si parola cu erori si tot ce tb
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest {
-                event->
-            when(event)
-            {
-                is SignInViewModel.UiEvent.SignUp->
-                {
-                    navController.navigate(Screens.EmailValidationScreen)
-                }
-                is  SignInViewModel.UiEvent.showToast->
-                {
-
-                }
-            }
-        }
+    LaunchedEffect(key1 = true)
+    {
+      viewModel.eventFlow.collectLatest {
+          event->
+          when(event){
+              is UserNameViewModel.UserNameUiEvent.OnBackBtnClick->{
+                  navController.navigateUp()
+              }
+              is UserNameViewModel.UserNameUiEvent.OnFinishBtnClick->{
+                     navController.navigate(Screens.SignInScreen)
+              }
+          }
+      }
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+
         topBar = {
             TopAppBar(
                 title = {
@@ -71,15 +70,29 @@ fun SignInScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(id = R.string.SignIn_title),
+                            text = stringResource(id = R.string.SignUp_title),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge)
                     }
                 },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        viewModel.onEvent(UserNameEvent.OnBackBtnClick)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = stringResource(
+                                id = R.string.NavIcon_descr
+                            )
+                        )
+                    }
+                },
+
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary))
 
         }
+
     ) {
             innerPadding->
         Column(
@@ -103,38 +116,33 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .padding(12.dp))
 
-            EmailTextField(
-                value = viewModel.emailInput,
-                label = stringResource(id = R.string.email_hint),
-                isError = false) {
-                email->
-              viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
-            }
-            SignInPasswordTextField(
-                showPassword = viewModel.showPassResult.showPass,
-                value = viewModel.passInput,
-                label = stringResource(id = R.string.password_hint),
-                isError = false ,
-                icon = viewModel.showPassResult.icon,
-                onValueChange = {
-                    password->
-                    viewModel.onEvent(SignInScreenEvent.EnteredPassword(password))
-                }) {
-                viewModel.onEvent(SignInScreenEvent.OnShowPasswordClick)
-            }
-            RememberMe(checked =viewModel.rememberMeChecked) {
-                viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
-            }
+            NameTextField(value = viewModel.firstName,
+                onValueChange ={
+                    firstName->
+                    viewModel.onEvent(UserNameEvent.FirstNameInput(firstName))
+                } ,
+                label = viewModel.firstNameLabel,
+                icon =Icons.Default.Boy,
+                isError = viewModel.firstNameErr)
+            NameTextField(value = viewModel.lastName,
+                onValueChange ={
+                    lastName->
+                    viewModel.onEvent(UserNameEvent.LastNameInput(lastName))
+                } ,
+                label = viewModel.lastNameLabel,
+                icon =Icons.Default.Boy ,
+                isError = viewModel.lastNameErr)
+
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp))
-            SignInButton({}, enable = viewModel.emailInput.isNotBlank() && viewModel.passInput.isNotBlank())
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp))
-            CreateAccTxtBtn {
-                viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)
-            }
+            EnButton(
+                onButtonClick = {
+                    viewModel.onEvent(UserNameEvent.OnFinishBtnClick)
+                },
+                btnEnabled = viewModel.lastName.isNotBlank()&& viewModel.firstName.isNotBlank() &&!viewModel.firstNameErr && !viewModel.lastNameErr,
+                text = stringResource(id = R.string.finish_btn) )
+
         }
 
     }

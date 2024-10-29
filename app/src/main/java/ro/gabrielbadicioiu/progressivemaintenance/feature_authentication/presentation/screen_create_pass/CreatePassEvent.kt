@@ -4,6 +4,8 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presen
  {
      data class PassInput(val value:String):CreatePassEvent()
      data class ConfirmPassInput(val value:String):CreatePassEvent()
-    object OnShowPassClick:CreatePassEvent()
+    data object OnShowPassClick:CreatePassEvent()
+     data object OnBackBtnClick:CreatePassEvent()
+     data object OnContinueBtnClick:CreatePassEvent()
 
 }

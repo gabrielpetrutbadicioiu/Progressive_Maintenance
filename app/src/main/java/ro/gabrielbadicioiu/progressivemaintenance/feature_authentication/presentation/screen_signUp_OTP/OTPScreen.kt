@@ -60,7 +60,7 @@ navController: NavController) {
                     navController.navigateUp()
                 }
                 is OTPViewModel.OTPUiEvent.OnOTPComplete->{
-                    navController.navigate(Screens.SignInScreen)
+                    navController.navigate(Screens.CreatePassScreen)
                 }
             }
         }

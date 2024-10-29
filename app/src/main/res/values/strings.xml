@@ -32,4 +32,7 @@
     <string name="pass_match">Passwords successfully matched!</string>
     <string name="invalid_otp">Verification code is expired or incorrect. Try again.</string>
     <string name="verification_code">Verification code</string>
+    <string name="username_icon">username icon</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
 </resources>

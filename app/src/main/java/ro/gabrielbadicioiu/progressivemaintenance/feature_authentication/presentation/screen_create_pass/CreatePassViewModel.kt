@@ -4,6 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.CreatePassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.CreatedPassValidationResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.PassMatchingResult
@@ -27,6 +31,15 @@ class CreatePassViewModel(
         private set
     var passMatchingResult by mutableStateOf(PassMatchingResult())
         private set
+    //one time events
+    sealed class CreatePassUiEvent{
+        data object OnBackBtnClick:CreatePassUiEvent()
+        data object OnContinueBtnClick:CreatePassUiEvent()
+    }
+    private val _eventFlow= MutableSharedFlow<CreatePassUiEvent>()
+    val eventFlow=_eventFlow.asSharedFlow()
+
+
 
 
     fun onEvent(event: CreatePassEvent)
@@ -52,6 +65,16 @@ class CreatePassViewModel(
             is CreatePassEvent.ConfirmPassInput->{
                 confirmPassInput=event.value
                 passMatchingResult=useCases.doPasswordsMatch.execute(inputPassword, confirmPassInput, createdPassValidationResult.isPassValid)
+            }
+            is CreatePassEvent.OnBackBtnClick->{
+                viewModelScope.launch {
+                    _eventFlow.emit(CreatePassUiEvent.OnBackBtnClick)
+                }
+            }
+            is CreatePassEvent.OnContinueBtnClick->{
+                viewModelScope.launch {
+                    _eventFlow.emit(CreatePassUiEvent.OnContinueBtnClick)
+                }
             }
         }
     }

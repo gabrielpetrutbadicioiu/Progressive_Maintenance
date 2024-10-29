@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,18 +31,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EnButton
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.ShowPasswordCheckBox
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.components.PassStrengthTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePassScreen(
-    viewModel: CreatePassViewModel
+    viewModel: CreatePassViewModel,
+    navController: NavController
 )
 {
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest {
+            event->
+            when(event)
+            {
+                is CreatePassViewModel.CreatePassUiEvent.OnBackBtnClick->{
+                    navController.navigateUp()
+                }
+                is CreatePassViewModel.CreatePassUiEvent.OnContinueBtnClick->{
+                    navController.navigate(Screens.UserNameScreen)
+                }
+            }
+        }
+
+    }
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -62,7 +80,9 @@ fun CreatePassScreen(
                             }//row
                         }, //title
                             navigationIcon ={
-                                IconButton(onClick = { /*TODO*/ }) {
+                                IconButton(onClick = {
+                                    viewModel.onEvent(CreatePassEvent.OnBackBtnClick)
+                                }) {
                                     Icon(
                                         imageVector = Icons.Default.ArrowBackIosNew,
                                         contentDescription = stringResource(
@@ -148,24 +168,18 @@ fun CreatePassScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically){
                             Spacer(modifier = Modifier.width(4.dp))
-
                         }
                        
                         Spacer(modifier = Modifier.height(28.dp))
 
-                        EnButton(onButtonClick = { /*TODO*/ }, btnEnabled = viewModel.passMatchingResult.arePasswordsValid, text = stringResource(
-                            id = R.string.finish_btn
+                        EnButton(
+                            onButtonClick = {
+                            viewModel.onEvent(CreatePassEvent.OnContinueBtnClick)
+                            },
+                            btnEnabled = viewModel.passMatchingResult.arePasswordsValid,
+                            text = stringResource(
+                            id = R.string.continue_btn
                         ))
-
-
-
-
-
                     }
-
                 }
-
-
-
-
 }

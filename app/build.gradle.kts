@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+//firebase
+// /Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -81,7 +85,18 @@ dependencies {
     implementation (libs.androidx.lifecycle.viewmodel.compose)
 
     //icons
-    implementation ("androidx.compose.material:material-icons-extended:1.6.8")
+    implementation (libs.androidx.material.icons.extended)
+
+    //firebase
+    // Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation(libs.firebase.analytics)
+    //auth
+    implementation(libs.firebase.auth.ktx)
+
+
+
 
 
 

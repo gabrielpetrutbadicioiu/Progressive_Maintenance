@@ -54,7 +54,7 @@ navController: NavController
                     navController.navigateUp()
                 }
                 is EmailValidationViewModel.EmailValidUiEvent.OnContinueBtnClick->{
-                    navController.navigate(Screens.OTPScreen)
+                    navController.navigate(Screens.OTPScreen(viewModel.enteredEmail))
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
@@ -45,7 +46,8 @@ class MainActivity : ComponentActivity() {
                         EmailValidationScreen(viewModel = emailValidationViewModel, navController = navController)
                     }
                     composable<Screens.OTPScreen> {
-                        OTPScreen(viewModel = otpViewModel, navController = navController)
+                        val args= it.toRoute<Screens.OTPScreen>()
+                        OTPScreen(viewModel = otpViewModel, navController = navController, args = args.email)
                     }
                     composable<Screens.CreatePassScreen> {
                         CreatePassScreen(viewModel = createPasswordViewmodel, navController = navController)

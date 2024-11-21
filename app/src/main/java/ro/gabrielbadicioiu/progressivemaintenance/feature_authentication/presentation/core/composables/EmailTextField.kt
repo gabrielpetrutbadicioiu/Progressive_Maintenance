@@ -58,7 +58,8 @@ Box {
             if (isError)
             {
                 Icon(imageVector = Icons.Default.WarningAmber,
-                    contentDescription = stringResource(id = R.string.warning_icon_descr))
+                    contentDescription = stringResource(id = R.string.warning_icon_descr),
+                    modifier = Modifier.size(16.dp))
             }
 
             Text(text = label)

@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="ro.gabrielbadicioiu.progressivemaintenance" />
+                  <option name="mobileSdkAppId" value="1:277925213768:android:92ac8cd206b7677f880a7d" />
+                  <option name="projectId" value="progressive-maintenance" />
+                  <option name="projectNumber" value="277925213768" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

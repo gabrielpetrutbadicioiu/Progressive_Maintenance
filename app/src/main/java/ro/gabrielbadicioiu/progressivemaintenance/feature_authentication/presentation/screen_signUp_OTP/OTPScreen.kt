@@ -50,7 +50,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 @Composable
 fun OTPScreen(
     viewModel: OTPViewModel,
-navController: NavController) {
+navController: NavController,
+    args:String) {
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest {
             event->
@@ -144,7 +145,15 @@ navController: NavController) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 32.sp
             )
-            Text(text = stringResource(id = R.string.verification_prompt))
+            Row (modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement =Arrangement.Center){
+                Text(
+                    fontSize = 13.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "${stringResource(id = R.string.verification_prompt)} $args")
+
+            }
 
          /*   OTPInput(otpLength = 6) {
 

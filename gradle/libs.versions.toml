@@ -1,5 +1,7 @@
 [versions]
 agp = "8.5.1"
+firebaseAuthKtx = "23.1.0"
+firebaseBom = "33.5.1"
 koinAndroid = "3.2.0-beta-1"
 koinAndroidxCompose = "3.2.0-beta-1"
 koinAndroidxNavigation = "3.2.0-beta-1"
@@ -14,6 +16,7 @@ activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 
 composeNavigation = "2.8.0-beta06"
+materialIconsExtended = "1.6.8"
 serialization = "1.6.3"
 
 [libraries]
@@ -22,6 +25,10 @@ serialization = "1.6.3"
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

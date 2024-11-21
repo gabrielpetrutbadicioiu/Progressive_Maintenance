@@ -28,8 +28,8 @@ class EmailValidationViewModel(
 //one time events
     sealed class EmailValidUiEvent()
 {
-        object OnBackBtnClick:EmailValidUiEvent()
-    object OnContinueBtnClick:EmailValidUiEvent()
+        data object OnBackBtnClick:EmailValidUiEvent()
+    data object OnContinueBtnClick:EmailValidUiEvent()
     }
     private val _eventFlow= MutableSharedFlow<EmailValidUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()

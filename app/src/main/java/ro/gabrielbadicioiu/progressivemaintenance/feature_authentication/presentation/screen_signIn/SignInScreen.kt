@@ -8,9 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,7 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
@@ -53,7 +61,7 @@ fun SignInScreen(
                 {
                     navController.navigate(Screens.EmailValidationScreen)
                 }
-                is  SignInViewModel.UiEvent.showToast->
+                is  SignInViewModel.UiEvent.ShowToast->
                 {
 
                 }
@@ -106,7 +114,7 @@ fun SignInScreen(
             EmailTextField(
                 value = viewModel.emailInput,
                 label = stringResource(id = R.string.email_hint),
-                isError = false) {
+                isError = viewModel.authResult.isError) {
                 email->
               viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
             }
@@ -114,7 +122,7 @@ fun SignInScreen(
                 showPassword = viewModel.showPassResult.showPass,
                 value = viewModel.passInput,
                 label = stringResource(id = R.string.password_hint),
-                isError = false ,
+                isError = viewModel.authResult.isError ,
                 icon = viewModel.showPassResult.icon,
                 onValueChange = {
                     password->
@@ -122,13 +130,39 @@ fun SignInScreen(
                 }) {
                 viewModel.onEvent(SignInScreenEvent.OnShowPasswordClick)
             }
+
             RememberMe(checked =viewModel.rememberMeChecked) {
                 viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
             }
+            Row(modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center) {
+                if(
+                    viewModel.authResult.isError
+                )
+                { Icon(imageVector = Icons.Default.WarningAmber,
+                    contentDescription = stringResource(
+                    id = R.string.warning_icon_descr
+                ),
+                    modifier = Modifier.size(22.dp),
+                    tint = Color.Red)
+                    Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = viewModel.authResult.errorMessage,
+                    color = Color.Red,
+                    fontSize = 15.sp
+                    )}
+                else {
+                    Text(text = "")}
+            }
+
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp))
-            SignInButton({}, enable = viewModel.emailInput.isNotBlank() && viewModel.passInput.isNotBlank())
+
+            SignInButton({
+                viewModel.onEvent(SignInScreenEvent.OnSignInBtnClick)
+            }, enable = viewModel.emailInput.isNotBlank() && viewModel.passInput.isNotBlank())
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp))

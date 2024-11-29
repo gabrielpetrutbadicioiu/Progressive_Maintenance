@@ -1,9 +1,13 @@
 package ro.gabrielbadicioiu.progressivemaintenance.di
 
+import androidx.room.Room
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.data_source.UserDatabase
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.AccountServiceImpl
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.UserRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.UserRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.CreatePassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.DoPasswordsMatch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassword
@@ -12,6 +16,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OTPValidation
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OnResendOTPClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.ValidateCreatedPass
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.FetchRememberedUser
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.RememberMe
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignIn
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignInUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignUp
@@ -72,6 +78,14 @@ viewModel {
     single<AccountService>{
         AccountServiceImpl()
     }
+
+    single {
+        Room.databaseBuilder(get(),UserDatabase::class.java, "user-db").build().dao
+    }
+    single<UserRepository>
+    {
+        UserRepositoryImpl(get())
+    }
     single{
         SignInUseCases(
             showPassword = ShowPassword(),
@@ -81,8 +95,9 @@ viewModel {
                 ),
             signUp = SignUp(
                 accountService = get()
-            )
-
+            ),
+            rememberMe = RememberMe(get()),
+            getRememberedUser = FetchRememberedUser(get())
         )
     }
     viewModel{

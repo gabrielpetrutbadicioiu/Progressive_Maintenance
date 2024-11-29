@@ -10,6 +10,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.viewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.User
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.AuthResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignInUseCases
@@ -31,6 +33,8 @@ var showPassResult by mutableStateOf(ShowPassResult())
         private set
     var authResult by mutableStateOf(AuthResult())
         private set
+    var rememberedUser by mutableStateOf(User())
+        private set
     //one time events
     private val _eventFlow= MutableSharedFlow<UiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -39,7 +43,18 @@ var showPassResult by mutableStateOf(ShowPassResult())
 data class ShowToast(val message:String): UiEvent()
 data object SignUp: UiEvent()
     }
+init {
+    viewModelScope.launch {
+        rememberedUser=useCases.getRememberedUser.execute()
+        rememberMeChecked=rememberedUser.rememberMe
+        if(rememberMeChecked)
+        {
+            emailInput=rememberedUser.email
+            passInput=rememberedUser.password
+        }
+    }
 
+}
     fun onEvent(event: SignInScreenEvent)
     {
 
@@ -48,10 +63,22 @@ data object SignUp: UiEvent()
             is SignInScreenEvent.EnteredEmail->
             {
                 emailInput=event.value
+                if (rememberMeChecked)
+                {
+                    viewModelScope.launch {
+                        useCases.rememberMe.execute(email = emailInput, pass = passInput, isRememberMeActive = rememberMeChecked)
+                    }
+
+                }
             }
 
             is SignInScreenEvent.EnteredPassword->{
                 passInput=event.value
+                if (rememberMeChecked){
+                    viewModelScope.launch {
+                        useCases.rememberMe.execute(email = emailInput, pass = passInput, isRememberMeActive = rememberMeChecked)
+                    }
+                }
             }
 
             is SignInScreenEvent.OnShowPasswordClick->
@@ -61,15 +88,21 @@ data object SignUp: UiEvent()
             }
 
             is SignInScreenEvent.OnRememberMeCheck->{
+
                 rememberMeChecked=!rememberMeChecked
-                //TODO
+                viewModelScope.launch {
+                    rememberedUser=useCases.rememberMe.execute(
+                        email = emailInput,
+                        pass = passInput,
+                        isRememberMeActive = rememberMeChecked)
+                }
+
             }
 
             is SignInScreenEvent.OnSignInBtnClick->{
                 viewModelScope.launch {
                     authResult=
                         useCases.signIn.execute(email = emailInput, password = passInput)
-
                 }
             }
 

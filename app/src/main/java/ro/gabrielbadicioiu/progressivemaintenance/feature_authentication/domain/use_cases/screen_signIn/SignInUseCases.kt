@@ -5,5 +5,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 data class SignInUseCases (
    val showPassword:ShowPassword,
    val signIn: SignIn,
-   val signUp: SignUp
+   val signUp: SignUp,
+   val rememberMe: RememberMe,
+   val getRememberedUser: FetchRememberedUser
 )

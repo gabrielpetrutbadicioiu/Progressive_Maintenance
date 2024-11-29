@@ -131,7 +131,7 @@ fun SignInScreen(
                 viewModel.onEvent(SignInScreenEvent.OnShowPasswordClick)
             }
 
-            RememberMe(checked =viewModel.rememberMeChecked) {
+            RememberMe(checked =viewModel.rememberedUser.rememberMe) {
                 viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
             }
             Row(modifier = Modifier.fillMaxWidth(),

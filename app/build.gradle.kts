@@ -5,7 +5,7 @@ plugins {
 //firebase
 // /Add the Google services Gradle plugin
     id("com.google.gms.google-services")
-
+    id("kotlin-kapt")
 }
 
 android {
@@ -72,6 +72,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //room
+    implementation (libs.androidx.room.runtime)
+    kapt (libs.androidx.room.compiler)
+
+    // Compose dependencies
+    implementation (libs.androidx.lifecycle.viewmodel.compose.v287)
+    implementation (libs.androidx.material.icons.extended)
+// Coroutines
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation (libs.androidx.room.ktx)
+
 
     //navigation
     implementation(libs.navigation.compose)

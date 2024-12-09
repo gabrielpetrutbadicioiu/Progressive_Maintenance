@@ -4,5 +4,5 @@ sealed class UserNameEvent {
     data class FirstNameInput(val value:String):UserNameEvent()
     data class LastNameInput(val value: String):UserNameEvent()
     data object OnBackBtnClick:UserNameEvent()
-    data object OnFinishBtnClick:UserNameEvent()
+    data class OnFinishBtnClick(val validatedEmail:String, val validatedPass:String):UserNameEvent()
 }

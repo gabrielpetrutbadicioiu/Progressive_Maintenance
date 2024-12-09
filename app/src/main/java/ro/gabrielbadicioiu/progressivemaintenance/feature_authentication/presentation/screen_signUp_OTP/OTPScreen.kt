@@ -61,11 +61,12 @@ navController: NavController,
                     navController.navigateUp()
                 }
                 is OTPViewModel.OTPUiEvent.OnOTPComplete->{
-                    navController.navigate(Screens.CreatePassScreen)
+                    navController.navigate(Screens.CreatePassScreen(validatedEmail = args))
                 }
             }
         }
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

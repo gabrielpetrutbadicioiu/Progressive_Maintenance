@@ -10,7 +10,7 @@ sealed class Screens {
     @Serializable
     data class OTPScreen(val email:String):Screens()
     @Serializable
-    data object CreatePassScreen:Screens()
+    data class CreatePassScreen(val validatedEmail:String):Screens()
     @Serializable
-    data object UserNameScreen:Screens()
+    data class UserNameScreen(val validatedEmail:String, val validatedPass:String):Screens()
 }

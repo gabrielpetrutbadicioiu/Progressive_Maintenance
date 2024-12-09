@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -61,6 +63,7 @@ class UserNameViewModel(
                 }
             }
             is UserNameEvent.OnFinishBtnClick->{
+                Firebase.auth.createUserWithEmailAndPassword(event.validatedEmail, event.validatedPass)
                viewModelScope.launch {
                    _eventFlow.emit(UserNameUiEvent.OnFinishBtnClick)
                }

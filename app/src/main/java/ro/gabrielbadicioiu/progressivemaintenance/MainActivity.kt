@@ -50,10 +50,16 @@ class MainActivity : ComponentActivity() {
                         OTPScreen(viewModel = otpViewModel, navController = navController, args = args.email)
                     }
                     composable<Screens.CreatePassScreen> {
-                        CreatePassScreen(viewModel = createPasswordViewmodel, navController = navController)
+                        val args =it.toRoute<Screens.CreatePassScreen>()
+                        CreatePassScreen(viewModel = createPasswordViewmodel, navController = navController, args =args.validatedEmail)
                     }
                     composable<Screens.UserNameScreen> {
-                        UserNameScreen(viewModel = userNameViewModel, navController = navController)
+                        val args=it.toRoute<Screens.UserNameScreen>()
+                        UserNameScreen(
+                            viewModel = userNameViewModel,
+                            navController = navController,
+                            validatedEmail = args.validatedEmail,
+                            validatedPass = args.validatedPass )
                     }
 
                 }

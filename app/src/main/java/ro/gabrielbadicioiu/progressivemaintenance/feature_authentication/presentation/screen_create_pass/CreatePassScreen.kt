@@ -43,7 +43,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 @Composable
 fun CreatePassScreen(
     viewModel: CreatePassViewModel,
-    navController: NavController
+    navController: NavController,
+    args:String
 )
 {
     LaunchedEffect(key1 = true) {
@@ -55,7 +56,7 @@ fun CreatePassScreen(
                     navController.navigateUp()
                 }
                 is CreatePassViewModel.CreatePassUiEvent.OnContinueBtnClick->{
-                    navController.navigate(Screens.UserNameScreen)
+                    navController.navigate(Screens.UserNameScreen(validatedEmail = args, validatedPass = viewModel.inputPassword))
                 }
             }
         }

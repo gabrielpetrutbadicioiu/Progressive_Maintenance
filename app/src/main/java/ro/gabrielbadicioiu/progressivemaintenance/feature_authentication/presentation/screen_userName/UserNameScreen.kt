@@ -41,7 +41,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 @Composable
 fun UserNameScreen(
     viewModel: UserNameViewModel,
-    navController: NavController
+    navController: NavController,
+    validatedEmail:String,
+    validatedPass:String
 )
 {
     LaunchedEffect(key1 = true)
@@ -138,7 +140,7 @@ fun UserNameScreen(
                 .padding(8.dp))
             EnButton(
                 onButtonClick = {
-                    viewModel.onEvent(UserNameEvent.OnFinishBtnClick)
+                    viewModel.onEvent(UserNameEvent.OnFinishBtnClick(validatedEmail = validatedEmail, validatedPass = validatedPass))
                 },
                 btnEnabled = viewModel.lastName.isNotBlank()&& viewModel.firstName.isNotBlank() &&!viewModel.firstNameErr && !viewModel.lastNameErr,
                 text = stringResource(id = R.string.finish_btn) )

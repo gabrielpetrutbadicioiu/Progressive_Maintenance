@@ -105,72 +105,99 @@ fun SignInScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp, 0.dp))
+                    .padding(16.dp, 0.dp)
+            )
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            )
 
             EmailTextField(
                 value = viewModel.emailInput,
                 label = stringResource(id = R.string.email_hint),
-                isError = viewModel.authResult.isError) {
-                email->
-              viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
+                isError = viewModel.authResult.isError
+            ) { email ->
+                viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
             }
             SignInPasswordTextField(
                 showPassword = viewModel.showPassResult.showPass,
                 value = viewModel.passInput,
                 label = stringResource(id = R.string.password_hint),
-                isError = viewModel.authResult.isError ,
+                isError = viewModel.authResult.isError,
                 icon = viewModel.showPassResult.icon,
-                onValueChange = {
-                    password->
+                onValueChange = { password ->
                     viewModel.onEvent(SignInScreenEvent.EnteredPassword(password))
                 }) {
                 viewModel.onEvent(SignInScreenEvent.OnShowPasswordClick)
             }
 
-            RememberMe(checked =viewModel.rememberedUser.rememberMe) {
+            RememberMe(checked = viewModel.rememberedUser.rememberMe) {
                 viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
             }
-            Row(modifier = Modifier.fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center) {
-                if(
-                    viewModel.authResult.isError
-                )
-                { Icon(imageVector = Icons.Default.WarningAmber,
-                    contentDescription = stringResource(
-                    id = R.string.warning_icon_descr
-                ),
-                    modifier = Modifier.size(22.dp),
-                    tint = Color.Red)
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (
+                    viewModel.authResult.isError || viewModel.authResult.isEmailVerified == false
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.WarningAmber,
+                        contentDescription = stringResource(
+                            id = R.string.warning_icon_descr
+                        ),
+                        modifier = Modifier.size(22.dp),
+                        tint = Color.Red
+                    )
                     Spacer(modifier = Modifier.width(3.dp))
-                Text(
-                    text = viewModel.authResult.errorMessage,
-                    color = Color.Red,
-                    fontSize = 15.sp
-                    )}
-                else {
-                    Text(text = "")}
-            }
+                    if (viewModel.authResult.isError) {
+                        Text(
+                            text = "${viewModel.authResult.errorMessage}",
+                            color = Color.Red,
+                            fontSize = 15.sp
+                        )
+                    } else {
+                        if (viewModel.authResult.isEmailVerified == false) {
+                            Text(
+                                text = stringResource(id = R.string.verify_email),
+                                color = Color.Red,
+                                fontSize = 15.sp
+                            )
+                        } else {
+                            Text(text = "")
+                        }
+                    }
+                } else {
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp))
+                    Text(text = "")
+                }
+            }//row
+
+
+
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
 
             SignInButton({
                 viewModel.onEvent(SignInScreenEvent.OnSignInBtnClick)
             }, enable = viewModel.emailInput.isNotBlank() && viewModel.passInput.isNotBlank())
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            )
             CreateAccTxtBtn {
                 viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)
             }
         }
+        }
 
     }
 
-}

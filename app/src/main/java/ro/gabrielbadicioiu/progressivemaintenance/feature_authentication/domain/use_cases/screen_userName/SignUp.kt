@@ -5,8 +5,19 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 class SignUp(
     private val accountService: AccountService
 ) {
-    suspend fun execute(email:String, password:String, onSuccess:()->Unit, onError:(String?)->Unit)
+    suspend fun execute(email:String,
+                        password:String,
+                        firstName:String,
+                        lastName:String,
+                        onSuccess:()->Unit,
+                        onError:(String?)->Unit)
     {
-        accountService.signUp(email=email, password=password, onSuccess = onSuccess, onError = onError)
+        accountService.signUp(
+            email = email,
+            password = password,
+            firstName = firstName,
+            lastName=lastName,
+            onSuccess = onSuccess,
+            onError = onError)
     }
 }

@@ -5,8 +5,16 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 class SignIn(
     private val accountService: AccountService
 ) {
-    suspend fun execute(email:String, password:String):AuthResult
+    suspend fun execute(
+        email:String,
+        password:String,
+        onSuccess:(Boolean?)->Unit,
+        onError:(String?)->Unit)
     {
-       return accountService.signIn(email, password)
+        accountService.signIn(
+            email=email,
+            password=password,
+            onSuccess = onSuccess,
+            onError = onError)
     }
 }

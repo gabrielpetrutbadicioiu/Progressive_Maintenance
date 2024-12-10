@@ -35,4 +35,5 @@
     <string name="username_icon">username icon</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
+    <string name="verify_email">Your email is not verified. Click here to send a verification email.</string>
 </resources>

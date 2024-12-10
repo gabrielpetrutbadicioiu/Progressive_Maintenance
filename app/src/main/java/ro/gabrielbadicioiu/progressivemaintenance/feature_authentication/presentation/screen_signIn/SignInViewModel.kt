@@ -18,9 +18,9 @@ class SignInViewModel(
 ): ViewModel() {
 
     //states
+
 var showPassResult by mutableStateOf(ShowPassResult())
         private set
-
     var emailInput by mutableStateOf("")
         private set
     var passInput by mutableStateOf("")
@@ -80,7 +80,6 @@ init {
 
             is SignInScreenEvent.OnShowPasswordClick->
             {
-
               showPassResult= useCases.showPassword.execute(showPassResult)
             }
 
@@ -97,10 +96,31 @@ init {
             }
 
             is SignInScreenEvent.OnSignInBtnClick->{
+
                 viewModelScope.launch {
-                    authResult=
-                        useCases.signIn.execute(email = emailInput, password = passInput)
+                        useCases.signIn.execute(
+                            email = emailInput,
+                            password = passInput,
+                            onSuccess = {
+                                isEmailVerified->
+                                authResult=authResult.copy(
+                                    isError = false,
+                                    errorMessage = "",
+                                    isEmailVerified = isEmailVerified
+                                    )
+                            },
+                            onError = {
+                                error->
+                                authResult=authResult.copy(
+                                    isError = true,
+                                    errorMessage = error,
+                                    isEmailVerified = null
+                                )
+                            })
                 }
+//
+
+
             }
 
             is SignInScreenEvent.OnCreateAccClick->

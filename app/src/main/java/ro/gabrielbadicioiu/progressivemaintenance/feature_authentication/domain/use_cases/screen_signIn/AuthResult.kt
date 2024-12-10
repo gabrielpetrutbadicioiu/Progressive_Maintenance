@@ -4,5 +4,6 @@ import java.lang.Error
 
 data class AuthResult(
     val isError:Boolean=false,
-    var errorMessage:String=""
+    var errorMessage:String?="",
+    var isEmailVerified:Boolean?=true
 )

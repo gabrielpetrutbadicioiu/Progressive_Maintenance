@@ -67,6 +67,8 @@ class UserNameViewModel(
                     useCases.signUp.execute(
                         email = event.validatedEmail,
                         password =event.validatedPass,
+                        firstName = firstName,
+                        lastName = lastName,
                         onSuccess = {
                             signUpErr=null
                             viewModelScope.launch {

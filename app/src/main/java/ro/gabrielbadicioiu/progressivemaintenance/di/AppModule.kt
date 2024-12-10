@@ -20,7 +20,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.RememberMe
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignIn
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignInUseCases
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignUp
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.SignUp
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.NameValidation
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.UserNameUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_validate_email.EmailValidationUseCases
@@ -34,7 +34,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 
 val appModule= module {
 
-
+    single<AccountService>{
+        AccountServiceImpl()
+    }
     //email validation screen
     single {
         EmailValidationUseCases(ValidateEmail())
@@ -59,13 +61,15 @@ val appModule= module {
             OTPValidation()
         )
     }
+
     viewModel{
         OTPViewModel(get())
     }
     //username screen
     single{
         UserNameUseCases(
-            NameValidation()
+            NameValidation(),
+            SignUp(get())
         )
     }
     viewModel {
@@ -75,9 +79,7 @@ viewModel {
     EmailValidationViewModel(get())
 }
 //sign in screen
-    single<AccountService>{
-        AccountServiceImpl()
-    }
+
 
     single {
         Room.databaseBuilder(get(),UserDatabase::class.java, "user-db").build().dao
@@ -93,9 +95,6 @@ viewModel {
                 accountService =get()
 
                 ),
-            signUp = SignUp(
-                accountService = get()
-            ),
             rememberMe = RememberMe(get()),
             getRememberedUser = FetchRememberedUser(get())
         )

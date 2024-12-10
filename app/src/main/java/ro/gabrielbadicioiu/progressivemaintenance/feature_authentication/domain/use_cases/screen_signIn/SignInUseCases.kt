@@ -2,10 +2,10 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain
 
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassword
 
+
 data class SignInUseCases (
-   val showPassword:ShowPassword,
-   val signIn: SignIn,
-   val signUp: SignUp,
-   val rememberMe: RememberMe,
-   val getRememberedUser: FetchRememberedUser
+    val showPassword:ShowPassword,
+    val signIn: SignIn,
+    val rememberMe: RememberMe,
+    val getRememberedUser: FetchRememberedUser
 )

@@ -5,6 +5,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 interface AccountService {
 
     suspend fun signIn(email:String, password:String):AuthResult
-    suspend fun signUp(email:String, password:String)
+    suspend fun signUp(email:String, password:String, onSuccess:()->Unit, onError:(String?)->Unit)
 
 }

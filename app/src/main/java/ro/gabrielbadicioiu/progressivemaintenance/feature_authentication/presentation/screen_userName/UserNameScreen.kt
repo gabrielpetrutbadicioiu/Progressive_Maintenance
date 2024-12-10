@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Boy
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
@@ -135,6 +138,29 @@ fun UserNameScreen(
                 icon =Icons.Default.Boy ,
                 isError = viewModel.lastNameErr)
 
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically){
+                if(!viewModel.signUpErr.isNullOrEmpty())
+                {
+                    Icon(
+                        imageVector = Icons.Default.WarningAmber,
+                        contentDescription = stringResource(id = R.string.warning_icon_descr),
+                        modifier = Modifier
+                            .size(24.dp),
+                        tint = Color.Red
+                        )
+                    Spacer(modifier = Modifier.size(2.dp))
+                    Text(text = "${viewModel.signUpErr}",
+                        fontSize = 13.sp,
+                        color = Color.Red)
+                }
+                else{
+                    Text(text = "")
+                }
+
+
+            }
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp))

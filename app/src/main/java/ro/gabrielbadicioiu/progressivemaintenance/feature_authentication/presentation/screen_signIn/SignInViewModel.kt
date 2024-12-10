@@ -5,12 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.viewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.User
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.AuthResult
@@ -29,7 +26,7 @@ var showPassResult by mutableStateOf(ShowPassResult())
     var passInput by mutableStateOf("")
         private set
 
-    var rememberMeChecked by mutableStateOf(false)
+     var rememberMeChecked by mutableStateOf(false)
         private set
     var authResult by mutableStateOf(AuthResult())
         private set
@@ -111,6 +108,7 @@ init {
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.SignUp)
                 }
+
             }
         }//when
     }//onEvent

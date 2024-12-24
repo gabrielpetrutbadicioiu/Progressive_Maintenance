@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,15 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,14 +26,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
@@ -41,7 +39,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.RememberMe
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.SignInButton
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.IconTextField
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,47 +48,56 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 fun SignInScreen(
     viewModel:SignInViewModel,
     navController: NavController
-)
-{
-    // TODO de implementat validare email si parola cu erori si tot ce tb
+) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest {
-                event->
-            when(event)
-            {
-                is SignInViewModel.UiEvent.SignUp->
-                {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is SignInViewModel.UiEvent.SignUp -> {
                     navController.navigate(Screens.EmailValidationScreen)
                 }
-                is  SignInViewModel.UiEvent.ShowToast->
-                {
 
+                is SignInViewModel.UiEvent.ShowToast -> {
+
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+
+                is SignInViewModel.UiEvent.SignIn -> {
+                    navController.navigate(Screens.HomeScreen)
                 }
             }
         }
     }
-    Scaffold(
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    )
+    { Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.SignIn_title),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleLarge)
+                        Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_icon),
+                            contentDescription = stringResource(id = R.string.image_descr),
+                            modifier = Modifier.size(86.dp)
+                        )
+
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary))
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(id = R.color.bar_color))
+            )//top app bar
 
         }
-    ) {
-            innerPadding->
+    )//scaffold
+    { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,48 +144,31 @@ fun SignInScreen(
             RememberMe(checked = viewModel.rememberedUser.rememberMe) {
                 viewModel.onEvent(SignInScreenEvent.OnRememberMeCheck)
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                if (
-                    viewModel.authResult.isError || viewModel.authResult.isEmailVerified == false
+
+            if (viewModel.authResult.isError) {
+                IconTextField(
+                    text = viewModel.authResult.errorMessage.toString(),
+                    icon = Icons.Default.WarningAmber,
+                    color = Color.Red,
+                    iconSize = 25,
+                    textSize = 15,
+                    clickEn = false,
+                    onClick = {}
+                )
+            } else if (viewModel.authResult.isEmailVerified == false) {
+                IconTextField(
+                    text = viewModel.verifyEmailTxt,
+                    icon = viewModel.verifyEmailIcon,
+                    color = viewModel.verifyEmailTxtColor,
+                    iconSize = 25,
+                    textSize = 15,
+                    clickEn = true
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.WarningAmber,
-                        contentDescription = stringResource(
-                            id = R.string.warning_icon_descr
-                        ),
-                        modifier = Modifier.size(22.dp),
-                        tint = Color.Red
-                    )
-                    Spacer(modifier = Modifier.width(3.dp))
-                    if (viewModel.authResult.isError) {
-                        Text(
-                            text = "${viewModel.authResult.errorMessage}",
-                            color = Color.Red,
-                            fontSize = 15.sp
-                        )
-                    } else {
-                        if (viewModel.authResult.isEmailVerified == false) {
-                            Text(
-                                text = stringResource(id = R.string.verify_email),
-                                color = Color.Red,
-                                fontSize = 15.sp
-                            )
-                        } else {
-                            Text(text = "")
-                        }
-                    }
-                } else {
-
-                    Text(text = "")
+                    viewModel.onEvent(SignInScreenEvent.OnSendVerificationEmail)
                 }
-            }//row
-
-
-
+            } else {
+                Text(text = "")
+            }
 
             Spacer(
                 modifier = Modifier
@@ -197,7 +188,8 @@ fun SignInScreen(
                 viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)
             }
         }
-        }
+    }//scaffold
+}
 
     }
 

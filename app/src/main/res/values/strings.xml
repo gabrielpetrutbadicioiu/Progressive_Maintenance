@@ -36,4 +36,9 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="verify_email">Your email is not verified. Click here to send a verification email.</string>
+    <string name="home_screen">Home</string>
+    <string name="icon_descr">Icon button</string>
+    <string name="image_descr"> Image</string>
+    <string name="home_btn">Home</string>
+    <string name="icon_btn_descr">Icon button</string>
 </resources>

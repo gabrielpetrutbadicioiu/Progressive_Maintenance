@@ -25,7 +25,8 @@ fun RememberMe(
             .padding(4.dp, 4.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = checked, onCheckedChange ={onCheckedChange()} )
+        Checkbox(checked = checked,
+            onCheckedChange ={onCheckedChange()}, )
         Text(text = stringResource(id = R.string.remember_me))
     }
 }

@@ -7,5 +7,6 @@ data class SignInUseCases (
     val showPassword:ShowPassword,
     val signIn: SignIn,
     val rememberMe: RememberMe,
-    val getRememberedUser: FetchRememberedUser
+    val getRememberedUser: FetchRememberedUser,
+    val sendVerificationEmail: SendVerificationEmail
 )

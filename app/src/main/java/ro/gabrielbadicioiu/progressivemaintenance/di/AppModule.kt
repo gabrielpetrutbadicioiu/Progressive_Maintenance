@@ -18,6 +18,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.ValidateCreatedPass
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.FetchRememberedUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.RememberMe
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SendVerificationEmail
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignIn
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.SignInUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.SignUp
@@ -30,6 +31,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
 
 val appModule= module {
@@ -80,7 +82,6 @@ viewModel {
 }
 //sign in screen
 
-
     single {
         Room.databaseBuilder(get(),UserDatabase::class.java, "user-db").build().dao
     }
@@ -96,11 +97,18 @@ viewModel {
 
                 ),
             rememberMe = RememberMe(get()),
-            getRememberedUser = FetchRememberedUser(get())
+            getRememberedUser = FetchRememberedUser(get()),
+            sendVerificationEmail = SendVerificationEmail()
         )
     }
     viewModel{
             SignInViewModel(get())
              }
+    //home screen
+
+    viewModel {
+        HomeViewModel()
+    }
+
 
 }

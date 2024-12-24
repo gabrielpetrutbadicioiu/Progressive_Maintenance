@@ -1,10 +1,14 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -18,7 +22,14 @@ class SignInViewModel(
 ): ViewModel() {
 
     //states
-
+    var verifyEmailTxtColor by mutableStateOf(Color.Red)
+        private set
+    var verifyEmailIcon by mutableStateOf(Icons.Default.WarningAmber)
+        private set
+    var verifyEmailTxt by mutableStateOf("Your email is not verified. Click here to send a verification link to your email.")
+        private set
+var currentUser:FirebaseUser? by mutableStateOf(null)
+            private set
 var showPassResult by mutableStateOf(ShowPassResult())
         private set
     var emailInput by mutableStateOf("")
@@ -39,6 +50,7 @@ var showPassResult by mutableStateOf(ShowPassResult())
     sealed class UiEvent{
 data class ShowToast(val message:String): UiEvent()
 data object SignUp: UiEvent()
+        data object SignIn:UiEvent()
     }
 init {
     viewModelScope.launch {
@@ -102,12 +114,21 @@ init {
                             email = emailInput,
                             password = passInput,
                             onSuccess = {
-                                isEmailVerified->
+                                isEmailVerified, user->
                                 authResult=authResult.copy(
                                     isError = false,
                                     errorMessage = "",
                                     isEmailVerified = isEmailVerified
                                     )
+                                currentUser=user
+                                if (currentUser?.isEmailVerified==true)
+                                {
+                                    viewModelScope.launch {
+                                        _eventFlow.emit(UiEvent.SignIn)
+                                    }
+                                }
+
+
                             },
                             onError = {
                                 error->
@@ -129,6 +150,26 @@ init {
                     _eventFlow.emit(UiEvent.SignUp)
                 }
 
+            }
+            is SignInScreenEvent.OnSendVerificationEmail->{
+                useCases.sendVerificationEmail.execute(
+                    currentUser = currentUser,
+                    onSuccess = {
+                        verifyEmailTxt="An verification email has been sent. Check your email address"
+                        verifyEmailIcon=Icons.Default.WarningAmber
+                        verifyEmailTxtColor= Color.Red
+                    },
+                    onFailure = {
+                        error->
+                        verifyEmailTxt="Your email is not verified. Click here to send a verification email"
+                        verifyEmailIcon=Icons.Default.WarningAmber
+                        verifyEmailTxtColor= Color.Red
+                        viewModelScope.launch {
+                            _eventFlow.emit(UiEvent.ShowToast(error.toString()))
+                        }
+                    }
+
+                )
             }
         }//when
     }//onEvent

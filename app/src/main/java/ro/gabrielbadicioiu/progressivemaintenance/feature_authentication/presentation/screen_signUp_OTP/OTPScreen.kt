@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +44,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.util.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.components.OTPTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,16 +76,15 @@ navController: NavController,
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.SignUp_title),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleLarge
+                        Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_icon),
+                            contentDescription = stringResource(id = R.string.image_descr),
+                            modifier = Modifier.size(86.dp)
                         )
-                        Spacer(modifier = Modifier.width(20.dp))
                     }//row
                 }, //title
                 navigationIcon = {
@@ -97,7 +97,9 @@ navController: NavController,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(id = R.color.bar_color)
+                )
             )
 
         }

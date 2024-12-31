@@ -48,11 +48,13 @@ fun ProductionLineCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(text = lineName.uppercase(Locale.ROOT),
-                        style = MaterialTheme.typography.titleMedium)
+                        style = MaterialTheme.typography.titleMedium,
+                        color = colorResource(id = R.color.text_color))
                     IconButton(onClick = { onExpandClick() }) {
                         val icon= if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown
                         Icon(imageVector =icon,
-                            contentDescription = stringResource(id = R.string.icon_btn_descr))
+                            contentDescription = stringResource(id = R.string.icon_btn_descr),
+                            tint = colorResource(id = R.color.text_color))
                     }
 
                 }
@@ -64,6 +66,7 @@ fun ProductionLineCard(
                         machine->
                         Text(
                             text = machine,
+                            color =colorResource(id = R.color.text_color),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp)
@@ -72,7 +75,7 @@ fun ProductionLineCard(
                                 },
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        HorizontalDivider( color = Color.DarkGray)
+                        HorizontalDivider( color = Color.LightGray)
                     }
                 }
             }

@@ -41,4 +41,10 @@
     <string name="image_descr"> Image</string>
     <string name="home_btn">Home</string>
     <string name="icon_btn_descr">Icon button</string>
+    <string name="Search">Search…</string>
+    <string name="add_equipment">Add equipment</string>
+    <string name="production_line_description">Production line name</string>
+    <string name="done_btn">Done</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="equipment_name">Equipment name</string>
 </resources>

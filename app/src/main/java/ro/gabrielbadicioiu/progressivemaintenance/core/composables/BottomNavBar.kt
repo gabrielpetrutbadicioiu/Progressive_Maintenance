@@ -10,6 +10,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import ro.gabrielbadicioiu.progressivemaintenance.R
@@ -58,7 +59,8 @@ fun BottomNavBar(
                         onClick()
                               },
                     label = {
-                        Text(text = bottomNavigationItem.title)
+                        Text(text = bottomNavigationItem.title,
+                            color = colorResource(id = R.color.text_color))
                     },
                     
                     icon = { /*TODO*/
@@ -79,10 +81,23 @@ fun BottomNavBar(
 
                         })//badgeBox
                         {
-                            Icon(imageVector = if(index==selectedItemIndex) {
+                            Icon(
+                                imageVector = if(index==selectedItemIndex) 
+                                {
                                 bottomNavigationItem.selectedIcon
-                            } else { bottomNavigationItem.unselectedIcon},
-                                contentDescription =bottomNavigationItem.title )
+                                } 
+                                else {
+                                    bottomNavigationItem.unselectedIcon
+                                     },
+
+                                contentDescription =bottomNavigationItem.title,
+                                tint = if(index==selectedItemIndex)
+                                {
+                                    Color.Black
+                                }
+                                else {
+                                    colorResource(id = R.color.text_color)
+                                })
                         }
                     }
                 )//navigationBarItem

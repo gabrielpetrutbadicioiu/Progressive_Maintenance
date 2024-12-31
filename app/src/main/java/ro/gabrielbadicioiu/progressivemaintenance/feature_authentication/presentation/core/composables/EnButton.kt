@@ -1,7 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +25,6 @@ fun EnButton(
             onClick = { onButtonClick() },
             enabled = btnEnabled,
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(16.dp, 0.dp)
         ) {
             Text(

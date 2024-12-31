@@ -21,6 +21,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addEquipment.AddEquipmentScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addEquipment.AddEquipmentViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
                 val userNameViewModel=getViewModel<UserNameViewModel>()
                 val homeScreenViewModel=getViewModel<HomeViewModel>()
+                val addEquipmentViewModel=getViewModel<AddEquipmentViewModel>()
 
                 NavHost(
                     navController = navController,
@@ -70,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable<Screens.AddEquipmentScreen> {
-                        AddEquipmentScreen()
+                        AddEquipmentScreen(addEquipmentViewModel)
                     }
                     composable<Screens.HomeScreen> {
                         HomeScreen(viewModel = homeScreenViewModel, navController = navController)

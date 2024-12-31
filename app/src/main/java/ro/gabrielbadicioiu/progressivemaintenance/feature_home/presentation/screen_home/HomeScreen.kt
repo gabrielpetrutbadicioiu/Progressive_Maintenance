@@ -5,20 +5,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Troubleshoot
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -66,13 +67,16 @@ fun HomeScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
+
                 TopAppBar(
+
                     title = { /*TODO*/
                         Row(
-                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
+
                             Image(
                                 painter = painterResource(id = R.drawable.ic_icon),
                                 contentDescription = stringResource(id = R.string.image_descr),
@@ -80,17 +84,36 @@ fun HomeScreen(
                             )
                         }
                     },
+
+                    //search interventions
                     actions = {
+                       IconButton(onClick = { /*TODO implementare ecran search ca pe tiktok cu recents cu d-alea*/ }) {
+                           Icon(
+                               imageVector = Icons.Default.Search,
+                               contentDescription = stringResource(id = R.string.icon_descr),
+                               tint = colorResource(id = R.color.text_color))
+                       }
+                        //add equipment
+                        IconButton(onClick = {
+                            viewModel.onEvent(HomeScreenEvent.OnAddProductionLineClick)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.LibraryAdd,
+                                contentDescription = stringResource(id = R.string.icon_descr),
+                                tint = colorResource(id = R.color.text_color))
+                        }
+                        //notification bell
                         IconButton(onClick = { /*TODO*/ }) {
 
                             Icon(
                                 imageVector = Icons.Default.NotificationsNone,
-                                contentDescription = stringResource(id = R.string.warning_icon_descr)
+                                contentDescription = stringResource(id = R.string.warning_icon_descr),
+                                tint = colorResource(id = R.color.text_color)
                             )
                         }
+
                     },//actions
                     scrollBehavior = scrollBehavior,
-
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colorResource(id = R.color.bar_color),
                         scrolledContainerColor = colorResource(id = R.color.scroll_bar_color)
@@ -100,7 +123,6 @@ fun HomeScreen(
             },//topBar
             bottomBar = {
                 BottomNavBar(selectedItemIndex = 0) {
-                    
                 }
             },
             floatingActionButton = {
@@ -108,11 +130,12 @@ fun HomeScreen(
                     modifier = Modifier.padding(4.dp),
                     shape = CircleShape,
                     containerColor = colorResource(id = R.color.bar_color),
-                    
+                    contentColor = colorResource(id = R.color.text_color),
 
-                    onClick = { viewModel.onEvent(HomeScreenEvent.OnFabClick) }) {
-                    
-                    Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.warning_icon_descr))
+
+                    onClick = { /*TODO*/ }) {
+
+                    Icon(imageVector = Icons.Default.Troubleshoot, contentDescription = stringResource(id = R.string.warning_icon_descr))
                 }
             }
         ) {

@@ -31,6 +31,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addEquipment.AddEquipmentViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
 
@@ -109,6 +110,11 @@ viewModel {
     viewModel {
         HomeViewModel()
     }
+    //add equipment screen
+    viewModel {
+        AddEquipmentViewModel()
+    }
+
 
 
 }

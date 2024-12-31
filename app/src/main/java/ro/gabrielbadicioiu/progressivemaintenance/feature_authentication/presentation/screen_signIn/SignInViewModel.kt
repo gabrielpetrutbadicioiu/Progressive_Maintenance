@@ -85,7 +85,10 @@ init {
                 passInput=event.value
                 if (rememberMeChecked){
                     viewModelScope.launch {
-                        useCases.rememberMe.execute(email = emailInput, pass = passInput, isRememberMeActive = rememberMeChecked)
+                        useCases.rememberMe.execute(
+                            email = emailInput,
+                            pass = passInput,
+                            isRememberMeActive = rememberMeChecked)
                     }
                 }
             }

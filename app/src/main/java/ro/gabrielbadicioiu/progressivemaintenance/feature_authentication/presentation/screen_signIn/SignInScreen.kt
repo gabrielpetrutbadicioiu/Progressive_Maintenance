@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -82,7 +81,7 @@ fun SignInScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
+//                        Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
                         Image(
                             painter = painterResource(id = R.drawable.ic_icon),
                             contentDescription = stringResource(id = R.string.image_descr),

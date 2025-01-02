@@ -2,4 +2,6 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scr
 
 sealed class AddEquipmentEvent {
     data object OnAddEquipmentClick:AddEquipmentEvent()
+    data object OnExitScreen:AddEquipmentEvent()
+    data class OnProductionLineNameChange(val name:String):AddEquipmentEvent()
 }

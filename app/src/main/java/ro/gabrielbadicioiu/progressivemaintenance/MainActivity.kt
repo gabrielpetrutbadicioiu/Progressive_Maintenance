@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable<Screens.AddEquipmentScreen> {
-                        AddEquipmentScreen(addEquipmentViewModel)
+                        AddEquipmentScreen(viewModel = addEquipmentViewModel, navController = navController)
                     }
                     composable<Screens.HomeScreen> {
                         HomeScreen(viewModel = homeScreenViewModel, navController = navController)

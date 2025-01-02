@@ -19,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,15 +28,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EnButton
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addEquipment.components.EquipmentTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEquipmentScreen(
-viewModel: AddEquipmentViewModel
+viewModel: AddEquipmentViewModel,
+navController: NavController
 ){
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event->
+            when(event){
+                is AddEquipmentViewModel.AddEquipmentUiEvent.OnExitScreen->{
+                    navController.navigate(Screens.HomeScreen)
+                }
+            }
+        }
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -75,16 +89,21 @@ viewModel: AddEquipmentViewModel
                 item{
                    EquipmentTextField(
                        label = stringResource(id = R.string.production_line_description),
-                       value ="", //TODO
-                       onValueChange = {},
-                       isError =false )
+                       value =viewModel.productionLineName, //TODO
+                       onValueChange = {
+                           name->
+                           viewModel.OnEvent(AddEquipmentEvent.OnProductionLineNameChange(name))
+                       },
+                       isError =false ,
+                       hasTrailingIcon = false)
                 }
                 items(viewModel.equipmentNr){
                     EquipmentTextField(
                         label = stringResource(id = R.string.equipment_name) ,
                         value = "",
                         onValueChange = {},//TODO
-                        isError = false)
+                        isError = false,
+                        hasTrailingIcon = true)
                 }
                 item {
                     TextButton(onClick = { viewModel.OnEvent(AddEquipmentEvent.OnAddEquipmentClick) }) {
@@ -116,7 +135,7 @@ viewModel: AddEquipmentViewModel
                             btnEnabled = false,
                             text = stringResource(id = R.string.done_btn))
                         EnButton(
-                            onButtonClick = { /*TODO*/ },
+                            onButtonClick = { viewModel.OnEvent(AddEquipmentEvent.OnExitScreen) },
                             btnEnabled =true ,
                             text = stringResource(id = R.string.cancel_btn) )
                     }

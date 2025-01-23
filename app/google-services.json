@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "277925213768",
+    "project_id": "progressive-maintenance",
+    "storage_bucket": "progressive-maintenance.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277925213768:android:92ac8cd206b7677f880a7d",
+        "android_client_info": {
+          "package_name": "ro.gabrielbadicioiu.progressivemaintenance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6UWr3QWXKRLUvfVkI4Fjl8WdWvSwFynQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

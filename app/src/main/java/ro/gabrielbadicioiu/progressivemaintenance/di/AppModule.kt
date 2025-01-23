@@ -31,7 +31,12 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addEquipment.AddEquipmentViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.AddProductionLineScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnAddEquipmentClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentDelete
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentNameChange
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnProductionLineNameChange
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
 
@@ -110,9 +115,17 @@ viewModel {
     viewModel {
         HomeViewModel()
     }
-    //add equipment screen
+    //add production line screen
+    single{
+        AddProductionLineScreenUseCases(
+            onProductionLineNameChange = OnProductionLineNameChange(),
+            onAddEquipmentClick = OnAddEquipmentClick(),
+            onEquipmentNameChange = OnEquipmentNameChange(),
+            onEquipmentDelete = OnEquipmentDelete()
+        )
+    }
     viewModel {
-        AddEquipmentViewModel()
+        AddProductionLineViewModel(get())
     }
 
 

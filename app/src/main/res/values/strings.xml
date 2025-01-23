@@ -47,4 +47,8 @@
     <string name="done_btn">Done</string>
     <string name="cancel_btn">Cancel</string>
     <string name="equipment_name">Equipment name</string>
+    <string name="enter_line_name">Enter line name (E.g. Packaging Line 1)</string>
+    <string name="required">* Required</string>
+    <string name="enter_equipment_name">Enter equipment name (E.g. Packaging Machine)</string>
+    <string name="add_equipment_to_line">Add new equipment to line</string>
 </resources>

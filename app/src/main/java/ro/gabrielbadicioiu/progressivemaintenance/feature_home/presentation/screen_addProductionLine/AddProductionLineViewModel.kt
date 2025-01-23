@@ -32,7 +32,7 @@ class AddProductionLineViewModel(
         {
 
             is AddProductionLineEvent.OnExitScreen->{
-                exitScreen()
+                onExitScreen()
             }
             is AddProductionLineEvent.OnProductionLineNameChange->{
                 productionLine=productionLine.copy(lineName = useCases.onProductionLineNameChange.execute(event.name))
@@ -53,7 +53,7 @@ class AddProductionLineViewModel(
         }
 
     }
-    private fun exitScreen()
+    private fun onExitScreen()
     {
         productionLine=productionLine.copy(equipments = mutableListOf(Equipment("")), lineName = "")
         viewModelScope.launch {

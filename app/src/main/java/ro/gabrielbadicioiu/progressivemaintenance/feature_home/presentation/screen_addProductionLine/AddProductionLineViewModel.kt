@@ -55,7 +55,7 @@ class AddProductionLineViewModel(
     }
     private fun exitScreen()
     {
-        productionLine=productionLine.copy(equipments = mutableListOf(Equipment("")))
+        productionLine=productionLine.copy(equipments = mutableListOf(Equipment("")), lineName = "")
         viewModelScope.launch {
             _eventFlow.emit(AddEquipmentUiEvent.OnExitScreen)
         }

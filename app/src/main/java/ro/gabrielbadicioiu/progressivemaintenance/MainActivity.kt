@@ -20,7 +20,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddEquipmentScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable<Screens.AddEquipmentScreen> {
-                        AddEquipmentScreen(viewModel = addProductionLineViewModel, navController = navController)
+                        AddProductionLineScreen(viewModel = addProductionLineViewModel, navController = navController)
                     }
                     composable<Screens.HomeScreen> {
                         HomeScreen(viewModel = homeScreenViewModel, navController = navController)

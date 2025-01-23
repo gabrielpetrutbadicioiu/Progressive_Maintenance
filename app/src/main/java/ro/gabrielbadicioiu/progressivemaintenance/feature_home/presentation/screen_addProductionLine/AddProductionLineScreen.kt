@@ -30,7 +30,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEquipmentScreen(
+fun AddProductionLineScreen(
     viewModel: AddProductionLineViewModel,
     navController: NavController
 ){

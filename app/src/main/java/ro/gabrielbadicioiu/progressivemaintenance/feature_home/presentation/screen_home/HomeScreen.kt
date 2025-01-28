@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LibraryAdd
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.EmptyScreenCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,15 +142,27 @@ fun HomeScreen(
             }
         ) {
             innerPadding->
-            val machines= listOf("Protos", "Focke", " Hauni")
-            Column(modifier = Modifier.padding(innerPadding)) {
-                ProductionLineCard(lineName = "mp49", onExpandClick = { /*TODO*/ }, isExpanded = true, lineMachines =machines )
+
+            if(viewModel.productionLineList.value.isEmpty())
+            {   Column(modifier = Modifier.fillMaxSize().padding(innerPadding),
+                verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                EmptyScreenCard()
             }
-//            LazyColumn(modifier = Modifier.padding(innerPadding)) {
-//                    items(100){
-//                        Text(text = "item $it")
-//                    }
-//            }
+
+            }
+            else{
+                LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                items(viewModel.productionLineList.value.size)
+                {index->
+                    ProductionLineCard(
+                        lineName = viewModel.productionLineList.value[index].lineName,
+                        onExpandClick = { /*TODO*/ },
+                        isExpanded = true,
+                        lineMachines = viewModel.productionLineList.value[index].equipments
+                    )
+                }
+            }
+         }
 
         }//scaffold
     }//surface

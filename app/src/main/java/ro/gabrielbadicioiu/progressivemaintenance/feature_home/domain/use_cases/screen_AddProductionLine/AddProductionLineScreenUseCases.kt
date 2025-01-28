@@ -4,5 +4,6 @@ data class AddProductionLineScreenUseCases(
     val onProductionLineNameChange: OnProductionLineNameChange,
     val onAddEquipmentClick: OnAddEquipmentClick,
     val onEquipmentNameChange: OnEquipmentNameChange,
-    val onEquipmentDelete: OnEquipmentDelete
+    val onEquipmentDelete: OnEquipmentDelete,
+    val onDoneBtnClick:OnDoneBtnClick
 )

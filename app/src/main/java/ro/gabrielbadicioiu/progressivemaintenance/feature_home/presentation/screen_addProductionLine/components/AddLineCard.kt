@@ -42,7 +42,7 @@ fun AddLineCard(
     onDeleteEquipment:(Int)->Unit,
    onLineNameChange:(String)->Unit,
    onEquipmentNameChange:(String, Int)->Unit,
-    //onDoneBtnClick:()->Unit,
+    onDoneBtnClick:()->Unit,
     onCancelBtnClick:()->Unit
 )
 {
@@ -106,7 +106,7 @@ fun AddLineCard(
                     ),
                     trailingIcon = { IconButton(onClick = {
                         onDeleteEquipment(index)
-                    }) { //deci am functia asta aici
+                    }) {
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
                             contentDescription = stringResource(id = R.string.icon_btn_descr),
@@ -151,7 +151,7 @@ fun AddLineCard(
                     verticalAlignment = Alignment.CenterVertically) {
                     Button(
                         onClick = {
-                            //onDoneBtnClick()
+                            onDoneBtnClick()
                         }
                     ) {
                         Text(text = stringResource(id = R.string.done_btn))

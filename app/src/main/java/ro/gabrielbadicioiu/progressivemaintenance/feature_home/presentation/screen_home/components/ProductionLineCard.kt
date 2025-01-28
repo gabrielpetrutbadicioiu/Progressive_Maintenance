@@ -27,6 +27,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import java.util.Locale
 
 
@@ -35,7 +36,7 @@ fun ProductionLineCard(
     lineName:String,
     onExpandClick:()->Unit,
     isExpanded:Boolean,
-    lineMachines:List<String>
+    lineMachines:List<Equipment>
 )
 {
     Card(
@@ -84,7 +85,7 @@ fun ProductionLineCard(
                     lineMachines.forEach {
                         machine->
                         Text(
-                            text = machine,
+                            text = machine.name,
                             color =colorResource(id = R.color.text_color),
                             modifier = Modifier
                                 .fillMaxWidth()

@@ -108,6 +108,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     //auth
     implementation(libs.firebase.auth.ktx)
+    //firebase firestore
+    implementation(libs.firebase.firestore)
 
 
 

@@ -51,4 +51,7 @@
     <string name="required">* Required</string>
     <string name="enter_equipment_name">Enter equipment name (E.g. Packaging Machine)</string>
     <string name="add_equipment_to_line">Add new equipment to line</string>
+    <string name="empty_screen_message">No production line added yet.</string>
+    <string name="empty_screen_message2">Tap on</string>
+    <string name="empty_screen_message3"> to add a production line.</string>
 </resources>

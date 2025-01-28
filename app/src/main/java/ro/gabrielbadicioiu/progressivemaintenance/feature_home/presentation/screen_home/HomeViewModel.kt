@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,13 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 class HomeViewModel:ViewModel() {
     //states
-    var selectedItemIndex by mutableStateOf(0)
-        private set
-private val _isSearching = MutableStateFlow(false)
-    val isSearching=_isSearching.asStateFlow()
+   private val  _productionLineList= mutableStateOf<List<ProductionLine>>(emptyList())
+    val productionLineList:State<List<ProductionLine>> = _productionLineList
 //one time events
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()

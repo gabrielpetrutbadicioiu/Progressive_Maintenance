@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,11 +36,15 @@ fun AddProductionLineScreen(
     viewModel: AddProductionLineViewModel,
     navController: NavController
 ){
+val context= LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event->
             when(event){
                 is AddProductionLineViewModel.AddEquipmentUiEvent.OnExitScreen->{
                     navController.navigate(Screens.HomeScreen)
+                }
+                is AddProductionLineViewModel.AddEquipmentUiEvent.ToastMessage->{
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -52,13 +58,12 @@ fun AddProductionLineScreen(
                 .fillMaxSize(),
             topBar = {
                 TopAppBar(
-                    title = { /*TODO*/
+                    title = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
                             Image(
                                 painter = painterResource(id = R.drawable.ic_icon),
                                 contentDescription = stringResource(id = R.string.image_descr),
@@ -82,20 +87,18 @@ fun AddProductionLineScreen(
                 verticalArrangement = Arrangement.Center
                 ){
                 AddLineCard(
-                    productionLine =viewModel.productionLine ,
-                    emptyNameError = false,
+                    productionLine =viewModel.productionLine.value ,
+                    emptyNameError = viewModel.isError.value,
            onAddEquipmentClick = { viewModel.onEvent(AddProductionLineEvent.OnAddEquipmentClick) },
           onDeleteEquipment ={index-> viewModel.onEvent(AddProductionLineEvent.OnEquipmentDelete(index = index))} ,
               onLineNameChange = {newName->viewModel.onEvent(AddProductionLineEvent.OnProductionLineNameChange(newName))},
            onEquipmentNameChange ={newName, index->
                viewModel.onEvent(AddProductionLineEvent.OnEquipmentNameChange(name = newName, index = index))},
-                    onCancelBtnClick = {viewModel.onEvent(AddProductionLineEvent.OnExitScreen)}
+                    onCancelBtnClick = {viewModel.onEvent(AddProductionLineEvent.OnExitScreen)},
+                    onDoneBtnClick = {viewModel.onEvent(AddProductionLineEvent.OnDoneBtnClick)}
                 )
             }
-
-               
-
-        }
+       }
     }
 }
 

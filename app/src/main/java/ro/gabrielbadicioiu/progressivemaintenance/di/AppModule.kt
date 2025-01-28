@@ -31,8 +31,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.data.repository.ProductionLineRepositoryImpl
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.AddProductionLineScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnAddEquipmentClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnDoneBtnClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentDelete
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentNameChange
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnProductionLineNameChange
@@ -41,7 +44,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 
 
 val appModule= module {
-
+    single<ProductionLineRepository>{
+        ProductionLineRepositoryImpl()
+    }
     single<AccountService>{
         AccountServiceImpl()
     }
@@ -121,7 +126,8 @@ viewModel {
             onProductionLineNameChange = OnProductionLineNameChange(),
             onAddEquipmentClick = OnAddEquipmentClick(),
             onEquipmentNameChange = OnEquipmentNameChange(),
-            onEquipmentDelete = OnEquipmentDelete()
+            onEquipmentDelete = OnEquipmentDelete(),
+            onDoneBtnClick = OnDoneBtnClick(get())
         )
     }
     viewModel {

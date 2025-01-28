@@ -57,12 +57,8 @@ fun ProductionLineCard(
                     Row(modifier = Modifier.wrapContentSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { onExpandClick() }) {
-                            Icon(imageVector =Icons.Default.Delete,
-                                contentDescription = stringResource(id = R.string.icon_btn_descr),
-                                tint = colorResource(id = R.color.text_color))
-                        }
-                        IconButton(onClick = { onExpandClick() }) {
+
+                        IconButton(onClick = { /*TODO*/ }) {
                             Icon(imageVector =Icons.Default.Edit,
                                 contentDescription = stringResource(id = R.string.icon_btn_descr),
                                 tint = colorResource(id = R.color.text_color))

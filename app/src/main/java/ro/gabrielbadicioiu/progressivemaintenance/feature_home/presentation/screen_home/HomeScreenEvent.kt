@@ -2,4 +2,5 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scr
 
 sealed class HomeScreenEvent {
     data object OnAddProductionLineClick: HomeScreenEvent()
+    data class OnExpandBtnClick(val id:String): HomeScreenEvent()
 }

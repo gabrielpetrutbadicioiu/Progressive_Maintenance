@@ -39,6 +39,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentDelete
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentNameChange
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnProductionLineNameChange
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.FetchProductionLines
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnExpandBtnClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
@@ -116,9 +119,14 @@ viewModel {
             SignInViewModel(get())
              }
     //home screen
-
+single{
+    HomeScreenUseCases(
+        fetchProductionLines = FetchProductionLines(get()),
+        onExpandBtnClick = OnExpandBtnClick()
+    )
+}
     viewModel {
-        HomeViewModel()
+        HomeViewModel(get())
     }
     //add production line screen
     single{

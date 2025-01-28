@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,10 +26,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,13 +51,17 @@ fun HomeScreen(
     navController: NavController
 )
 {
+    val context= LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest {
             event->
             when(event)
             {
-                is HomeViewModel.UiEvent.OnFabClick ->{
+                is HomeViewModel.HomeScreenUiEvent.OnFabClick ->{
                     navController.navigate(Screens.AddEquipmentScreen)
+                }
+                is HomeViewModel.HomeScreenUiEvent.ToastMessage->{
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -69,16 +76,13 @@ fun HomeScreen(
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-
                 TopAppBar(
-
                     title = { /*TODO*/
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
                             Image(
                                 painter = painterResource(id = R.drawable.ic_icon),
                                 contentDescription = stringResource(id = R.string.image_descr),
@@ -86,7 +90,6 @@ fun HomeScreen(
                             )
                         }
                     },
-
                     //search interventions
                     actions = {
                        IconButton(onClick = { /*TODO implementare ecran search ca pe tiktok cu recents cu d-alea*/ }) {
@@ -113,14 +116,12 @@ fun HomeScreen(
                                 tint = colorResource(id = R.color.text_color)
                             )
                         }
-
                     },//actions
                     scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colorResource(id = R.color.bar_color),
                         scrolledContainerColor = colorResource(id = R.color.scroll_bar_color)
                     ),
-
                     )//topAppBar
             },//topBar
             bottomBar = {
@@ -133,10 +134,7 @@ fun HomeScreen(
                     shape = CircleShape,
                     containerColor = colorResource(id = R.color.bar_color),
                     contentColor = colorResource(id = R.color.text_color),
-
-
                     onClick = { /*TODO*/ }) {
-
                     Icon(imageVector = Icons.Default.Troubleshoot, contentDescription = stringResource(id = R.string.warning_icon_descr))
                 }
             }
@@ -144,11 +142,12 @@ fun HomeScreen(
             innerPadding->
 
             if(viewModel.productionLineList.value.isEmpty())
-            {   Column(modifier = Modifier.fillMaxSize().padding(innerPadding),
+            {   Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
                 verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 EmptyScreenCard()
             }
-
             }
             else{
                 LazyColumn(modifier = Modifier.padding(innerPadding)) {
@@ -156,8 +155,8 @@ fun HomeScreen(
                 {index->
                     ProductionLineCard(
                         lineName = viewModel.productionLineList.value[index].lineName,
-                        onExpandClick = { /*TODO*/ },
-                        isExpanded = true,
+                        onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
+                        isExpanded = viewModel.productionLineList.value[index].isExpanded,
                         lineMachines = viewModel.productionLineList.value[index].equipments
                     )
                 }

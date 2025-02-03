@@ -2,7 +2,6 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_home.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
@@ -30,6 +29,27 @@ class ProductionLineRepositoryImpl:ProductionLineRepository {
             }
     }
 
+    override suspend fun updateProductionLine(
+        db: FirebaseFirestore,
+        collection: String,
+        documentID: String,
+        updatedLine: HashMap<String, Any>,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        try {
+            db.collection(collection).document(documentID).set(updatedLine).await()
+            onSuccess()
+        }catch (e:FirebaseFirestoreException)
+        {
+            onFailure("Firebase error: ${e.message?:"Unknown firebase error"}")
+        }
+        catch (e:Exception){
+            onFailure("Error updating document: ${e.message?: "Unknown error"}")
+        }
+
+    }
+
     override suspend fun fetchProductionLines(
         db: FirebaseFirestore,
         collection: String,
@@ -52,5 +72,24 @@ class ProductionLineRepositoryImpl:ProductionLineRepository {
             }
         }
         }
+
+    override suspend fun deleteProductionLine(
+        db: FirebaseFirestore,
+        collection: String,
+        documentID: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        try {
+            db.collection(collection).document(documentID).delete().await()
+            onSuccess()
+        }catch (e:FirebaseFirestoreException){
+            onFailure("Firebase error: ${e.message?:"Unknown firebase error"}")
+        }
+        catch (e:Exception)
+        {
+            onFailure("Error deleting production line:${e.message?:"Unknown error"}")
+        }
     }
+}
 

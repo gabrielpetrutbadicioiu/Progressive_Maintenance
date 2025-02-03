@@ -110,8 +110,11 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     //firebase firestore
     implementation(libs.firebase.firestore)
-
-
+// Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
 
 
 

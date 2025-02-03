@@ -10,8 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPScreen
@@ -22,6 +25,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 
@@ -44,7 +49,8 @@ class MainActivity : ComponentActivity() {
                 val userNameViewModel=getViewModel<UserNameViewModel>()
                 val homeScreenViewModel=getViewModel<HomeViewModel>()
                 val addProductionLineViewModel=getViewModel<AddProductionLineViewModel>()
-
+                val editProdLineViewModel=getViewModel<EditProdLineViewModel>()
+                val companyDetailsViewModel= getViewModel<CompanyDetailsViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -76,6 +82,19 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<Screens.HomeScreen> {
                         HomeScreen(viewModel = homeScreenViewModel, navController = navController)
+                    }
+                    composable<Screens.EditProdLineScreen> {
+                        val args=it.toRoute<Screens.EditProdLineScreen>()
+                        EditProdLineScreen(
+                            viewModel = editProdLineViewModel,
+                            navController = navController,
+                            prodLineID = args.prodLineID)
+                    }
+                    composable<Screens.RegisterCompanyMailScreen> {
+                        RegisterCompanyEmailScreen()
+                    }
+                    composable<Screens.CompanyDetailsScreen> {
+                        CompanyDetailsScreen(viewModel = companyDetailsViewModel)
                     }
                 }//navHost
 

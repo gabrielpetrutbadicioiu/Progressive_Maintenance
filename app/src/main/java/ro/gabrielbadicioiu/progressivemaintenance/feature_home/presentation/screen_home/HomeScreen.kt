@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Troubleshoot
@@ -26,7 +25,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,6 +61,12 @@ fun HomeScreen(
                 is HomeViewModel.HomeScreenUiEvent.ToastMessage->{
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnEditBtnClick->{
+                    navController.navigate(Screens.EditProdLineScreen(prodLineID = event.id))
+                }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateTo->{
+                    navController.navigate(event.screen)
+                }
             }
         }
     }
@@ -98,15 +102,7 @@ fun HomeScreen(
                                contentDescription = stringResource(id = R.string.icon_descr),
                                tint = colorResource(id = R.color.text_color))
                        }
-                        //add equipment
-                        IconButton(onClick = {
-                            viewModel.onEvent(HomeScreenEvent.OnAddProductionLineClick)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.LibraryAdd,
-                                contentDescription = stringResource(id = R.string.icon_descr),
-                                tint = colorResource(id = R.color.text_color))
-                        }
+                        
                         //notification bell
                         IconButton(onClick = { /*TODO*/ }) {
 
@@ -125,8 +121,10 @@ fun HomeScreen(
                     )//topAppBar
             },//topBar
             bottomBar = {
-                BottomNavBar(selectedItemIndex = 0) {
-                }
+                BottomNavBar(
+                    selectedItemIndex = 0,
+                    onClick = {},
+                    onAddEquipmentClick ={viewModel.onEvent(HomeScreenEvent.OnAddProductionLineClick)} )
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -137,7 +135,7 @@ fun HomeScreen(
                     onClick = { /*TODO*/ }) {
                     Icon(imageVector = Icons.Default.Troubleshoot, contentDescription = stringResource(id = R.string.warning_icon_descr))
                 }
-            }
+            },
         ) {
             innerPadding->
 
@@ -154,10 +152,10 @@ fun HomeScreen(
                 items(viewModel.productionLineList.value.size)
                 {index->
                     ProductionLineCard(
-                        lineName = viewModel.productionLineList.value[index].lineName,
+                        productionLine = viewModel.productionLineList.value[index],
                         onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
                         isExpanded = viewModel.productionLineList.value[index].isExpanded,
-                        lineMachines = viewModel.productionLineList.value[index].equipments
+                        onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))}
                     )
                 }
             }

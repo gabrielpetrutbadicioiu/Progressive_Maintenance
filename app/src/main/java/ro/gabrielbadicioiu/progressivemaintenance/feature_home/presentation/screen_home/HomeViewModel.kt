@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 
@@ -27,6 +28,8 @@ class HomeViewModel(
     {
         data object OnFabClick: HomeScreenUiEvent()
         data class ToastMessage(val message:String):HomeScreenUiEvent()
+        data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
+        data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
     }
 init {
     viewModelScope.launch {
@@ -51,6 +54,10 @@ init {
                     productionLinesList = _productionLineList.value,
                     id = event.id)
             }
+            is HomeScreenEvent.OnEditBtnClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnEditBtnClick(id = event.id)) }
+            }
+
         }
     }
 

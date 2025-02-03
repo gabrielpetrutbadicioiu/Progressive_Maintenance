@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LibraryAdd
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -46,7 +46,7 @@ fun EmptyScreenCard()
                     color = colorResource(id = R.color.text_color))
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.LibraryAdd,
+                    imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.icon_descr),
                     tint = colorResource(id = R.color.text_color))
                 Spacer(modifier = Modifier.width(4.dp))

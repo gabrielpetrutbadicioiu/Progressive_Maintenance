@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -34,7 +35,6 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.EmailTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.CreateAccTxtBtn
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.RememberMe
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.SignInButton
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.SignInPasswordTextField
@@ -53,17 +53,20 @@ fun SignInScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is SignInViewModel.UiEvent.SignUp -> {
+                is SignInViewModel.SignInScreenUiEvent.SignUp -> {
                     navController.navigate(Screens.EmailValidationScreen)
                 }
 
-                is SignInViewModel.UiEvent.ShowToast -> {
+                is SignInViewModel.SignInScreenUiEvent.ShowToast -> {
 
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
 
-                is SignInViewModel.UiEvent.SignIn -> {
+                is SignInViewModel.SignInScreenUiEvent.SignIn -> {
                     navController.navigate(Screens.HomeScreen)
+                }
+                is SignInViewModel.SignInScreenUiEvent.NavigateTo->{
+                    navController.navigate(event.screen)
                 }
             }
         }
@@ -183,8 +186,11 @@ fun SignInScreen(
                     .fillMaxWidth()
                     .padding(4.dp)
             )
-            CreateAccTxtBtn {
-                viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)
+            TextButton(onClick = {viewModel.onEvent(SignInScreenEvent.OnCreateAccClick)}) {
+                Text(text = stringResource(id = R.string.create_acc_txt))
+            }
+            TextButton(onClick = { viewModel.onEvent(SignInScreenEvent.OnRegisterCompanyClick) }) {
+                Text(text = stringResource(id = R.string.register_company_txt))
             }
         }
     }//scaffold

@@ -6,8 +6,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Prod
 class OnAddEquipmentClick {
     fun execute(productionLine:ProductionLine):ProductionLine
     {
-        val existingEquipments=productionLine.equipments.toMutableList()
-        existingEquipments.add(Equipment())
-        return productionLine.copy(equipments = existingEquipments)
+
+        return productionLine.copy(equipments = productionLine.equipments+Equipment())
     }
 }

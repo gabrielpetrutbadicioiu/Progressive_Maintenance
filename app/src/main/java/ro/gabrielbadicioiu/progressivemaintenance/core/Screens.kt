@@ -2,6 +2,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.core
 
 import kotlinx.serialization.Serializable
 
+
 sealed class Screens {
     @Serializable
     data object SignInScreen: Screens()
@@ -17,4 +18,10 @@ sealed class Screens {
     data object AddEquipmentScreen:Screens()
     @Serializable
     data object HomeScreen:Screens()
+    @Serializable
+    data class EditProdLineScreen(val prodLineID:String):Screens()
+    @Serializable
+    data object RegisterCompanyMailScreen:Screens()
+    @Serializable
+    data object CompanyDetailsScreen:Screens()
 }

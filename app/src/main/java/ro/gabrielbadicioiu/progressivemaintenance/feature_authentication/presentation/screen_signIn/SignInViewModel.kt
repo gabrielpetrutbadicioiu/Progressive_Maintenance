@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.User
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_signIn.AuthResult
@@ -44,13 +45,14 @@ var showPassResult by mutableStateOf(ShowPassResult())
     var rememberedUser by mutableStateOf(User())
         private set
     //one time events
-    private val _eventFlow= MutableSharedFlow<UiEvent>()
+    private val _eventFlow= MutableSharedFlow<SignInScreenUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
 
-    sealed class UiEvent{
-data class ShowToast(val message:String): UiEvent()
-data object SignUp: UiEvent()
-        data object SignIn:UiEvent()
+    sealed class SignInScreenUiEvent{
+data class ShowToast(val message:String): SignInScreenUiEvent()
+data object SignUp: SignInScreenUiEvent()
+        data object SignIn:SignInScreenUiEvent()
+        data class NavigateTo(val screen:Screens):SignInScreenUiEvent()
     }
 init {
     viewModelScope.launch {
@@ -127,7 +129,7 @@ init {
                                 if (currentUser?.isEmailVerified==true)
                                 {
                                     viewModelScope.launch {
-                                        _eventFlow.emit(UiEvent.SignIn)
+                                        _eventFlow.emit(SignInScreenUiEvent.SignIn)
                                     }
                                 }
 
@@ -150,7 +152,7 @@ init {
             is SignInScreenEvent.OnCreateAccClick->
             {
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.SignUp)
+                    _eventFlow.emit(SignInScreenUiEvent.SignUp)
                 }
 
             }
@@ -168,11 +170,16 @@ init {
                         verifyEmailIcon=Icons.Default.WarningAmber
                         verifyEmailTxtColor= Color.Red
                         viewModelScope.launch {
-                            _eventFlow.emit(UiEvent.ShowToast(error.toString()))
+                            _eventFlow.emit(SignInScreenUiEvent.ShowToast(error.toString()))
                         }
                     }
 
                 )
+            }
+            is SignInScreenEvent.OnRegisterCompanyClick->{
+                viewModelScope.launch {
+                    _eventFlow.emit(SignInScreenUiEvent.NavigateTo(Screens.CompanyDetailsScreen))
+                }
             }
         }//when
     }//onEvent

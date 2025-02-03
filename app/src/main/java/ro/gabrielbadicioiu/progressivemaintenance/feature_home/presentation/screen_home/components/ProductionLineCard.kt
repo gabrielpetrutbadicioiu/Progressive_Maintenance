@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,16 +26,16 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import java.util.Locale
 
 
 @Composable
 fun ProductionLineCard(
-    lineName:String,
+    productionLine: ProductionLine,
     onExpandClick:()->Unit,
+    onEditClick:()->Unit,
     isExpanded:Boolean,
-    lineMachines:List<Equipment>
 )
 {
     Card(
@@ -51,14 +50,14 @@ fun ProductionLineCard(
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = lineName.uppercase(Locale.ROOT),
+                    Text(text = productionLine.lineName.uppercase(Locale.ROOT),
                         style = MaterialTheme.typography.titleMedium,
                         color = colorResource(id = R.color.text_color))
                     Row(modifier = Modifier.wrapContentSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {
 
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {onEditClick() }) {
                             Icon(imageVector =Icons.Default.Edit,
                                 contentDescription = stringResource(id = R.string.icon_btn_descr),
                                 tint = colorResource(id = R.color.text_color))
@@ -78,7 +77,7 @@ fun ProductionLineCard(
                 Column(
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
-                    lineMachines.forEach {
+                    productionLine.equipments.forEach {
                         machine->
                         Text(
                             text = machine.name,

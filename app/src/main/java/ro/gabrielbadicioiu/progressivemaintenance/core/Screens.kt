@@ -23,5 +23,7 @@ sealed class Screens {
     @Serializable
     data object RegisterCompanyMailScreen:Screens()
     @Serializable
-    data object CompanyDetailsScreen:Screens()
+    data class CompanyDetailsScreen(val selectedCountry:String):Screens()
+    @Serializable
+    data object SelectCountryScreen:Screens()
 }

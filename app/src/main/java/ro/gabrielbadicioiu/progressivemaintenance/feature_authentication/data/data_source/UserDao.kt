@@ -11,5 +11,5 @@ interface UserDao {
     suspend fun upsertUser(user: User)
 
     @Query("SELECT * FROM `remembered-user` WHERE userID=:id")
-    suspend fun getUserById(id:Int):User
+    suspend fun getUserById(id:Int):User?
 }

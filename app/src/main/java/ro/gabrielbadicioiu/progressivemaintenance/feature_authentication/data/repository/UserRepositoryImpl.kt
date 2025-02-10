@@ -10,8 +10,7 @@ class UserRepositoryImpl(
     override suspend fun upsertUser(user: User) {
 dao.upsertUser(user = user)
     }
-
-    override suspend fun getUserById(id: Int): User {
+    override suspend fun getUserById(id: Int): User?{
         return dao.getUserById(id = id)
     }
 }

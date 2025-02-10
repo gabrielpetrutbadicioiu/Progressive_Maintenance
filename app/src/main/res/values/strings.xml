@@ -41,7 +41,7 @@
     <string name="image_descr"> Image</string>
     <string name="home_btn">Home</string>
     <string name="icon_btn_descr">Icon button</string>
-    <string name="Search">Search…</string>
+    <string name="Search">Search</string>
     <string name="add_equipment">Add equipment</string>
     <string name="production_line_description">Production line name</string>
     <string name="done_btn">Done</string>
@@ -61,13 +61,13 @@
     <string name="register_company_txt">Register your company</string>
     <string name="enter_business_email">Enter business email</string>
     <string name="organisation_name">Organisation\'s name*</string>
-    <string name="enter_organisation_name">Add your organisation\s name</string>
+    <string name="enter_organisation_name">Add your organisation\'s name</string>
     <string name="industry">Industry*</string>
     <string name="industry_hint">ex: Pharmaceutical Manufacturing</string>
     <string name="country">Country/Region* </string>
-    <string name="country_hint">ex: United States</string>
+    <string name="country_hint">Select Country</string>
     <string name="city">City*</string>
     <string name="city_hint">ex: Denver</string>
-
+    <string name="support_txt">If you need assistance integrating this app in your company, contact us at: gabrieltechventures@gmail.com</string>
 
 </resources>

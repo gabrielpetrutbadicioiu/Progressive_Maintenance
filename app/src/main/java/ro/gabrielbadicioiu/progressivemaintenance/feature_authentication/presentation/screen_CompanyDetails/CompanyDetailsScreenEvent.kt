@@ -4,5 +4,8 @@ sealed class CompanyDetailsScreenEvent {
     data class OnOrganisationNameChange(val organisationName:String):CompanyDetailsScreenEvent()
     data class OnIndustryNameChange(val industryName:String):CompanyDetailsScreenEvent()
     data class OnCountryNameChange(val countryName:String):CompanyDetailsScreenEvent()
-    data class OnCityNameChange(val cityName:String):CompanyDetailsScreenEvent()
+    data class OnCountryInit(val country:String):CompanyDetailsScreenEvent()
+    data object OnSelectCountryClick:CompanyDetailsScreenEvent()
+    data object OnNavigateUp:CompanyDetailsScreenEvent()
+
 }

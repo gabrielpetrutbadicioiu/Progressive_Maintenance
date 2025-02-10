@@ -84,7 +84,6 @@ fun SignInScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-//                        Text(text = "IEPM", style = MaterialTheme.typography.titleLarge)
                         Image(
                             painter = painterResource(id = R.drawable.ic_icon),
                             contentDescription = stringResource(id = R.string.image_descr),
@@ -117,7 +116,6 @@ fun SignInScreen(
                     .fillMaxWidth()
                     .padding(16.dp, 0.dp)
             )
-
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,7 +127,7 @@ fun SignInScreen(
                 label = stringResource(id = R.string.email_hint),
                 isError = viewModel.authResult.isError
             ) { email ->
-                viewModel.onEvent(SignInScreenEvent.EnteredEmail(email))
+                viewModel.onEvent(SignInScreenEvent.OnInputEmailChange(email))
             }
             SignInPasswordTextField(
                 showPassword = viewModel.showPassResult.showPass,
@@ -159,9 +157,9 @@ fun SignInScreen(
                 )
             } else if (viewModel.authResult.isEmailVerified == false) {
                 IconTextField(
-                    text = viewModel.verifyEmailTxt,
-                    icon = viewModel.verifyEmailIcon,
-                    color = viewModel.verifyEmailTxtColor,
+                    text = viewModel.verifyEmailTxt.value,
+                    icon = viewModel.verifyEmailIcon.value,
+                    color = viewModel.verifyEmailTxtColor.value,
                     iconSize = 25,
                     textSize = 15,
                     clickEn = true

@@ -10,12 +10,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LogInScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.SignInViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 darkTheme = false
             ) {
                val navController= rememberNavController()
+                val loginViewModel=getViewModel<LoginViewModel> ()
                 val signInScreenViewModel=getViewModel<SignInViewModel>()
                 val emailValidationViewModel=getViewModel<EmailValidationViewModel>()
                 val otpViewModel=getViewModel<OTPViewModel>()
@@ -51,11 +55,14 @@ class MainActivity : ComponentActivity() {
                 val addProductionLineViewModel=getViewModel<AddProductionLineViewModel>()
                 val editProdLineViewModel=getViewModel<EditProdLineViewModel>()
                 val companyDetailsViewModel= getViewModel<CompanyDetailsViewModel>()
+                val selectCountryScreenViewModel=getViewModel<SelectCountryScreenViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
                     composable<Screens.SignInScreen> {
-                        SignInScreen(viewModel =signInScreenViewModel , navController = navController)
+                        LogInScreen(viewModel = loginViewModel,
+                                    navController = navController)
+                       // SignInScreen(viewModel =signInScreenViewModel , navController = navController)
                     }
                     composable<Screens.EmailValidationScreen> {
                         EmailValidationScreen(viewModel = emailValidationViewModel, navController = navController)
@@ -94,7 +101,18 @@ class MainActivity : ComponentActivity() {
                         RegisterCompanyEmailScreen()
                     }
                     composable<Screens.CompanyDetailsScreen> {
-                        CompanyDetailsScreen(viewModel = companyDetailsViewModel)
+                        val args=it.toRoute<Screens.CompanyDetailsScreen>()
+                        CompanyDetailsScreen(
+                            viewModel = companyDetailsViewModel,
+                            navController = navController,
+                            selectedCountry = args.selectedCountry
+                            )
+                    }
+                    composable<Screens.SelectCountryScreen> {
+                        SelectCountryScreen(
+                            viewModel = selectCountryScreenViewModel,
+                            navController = navController
+                            )
                     }
                 }//navHost
 

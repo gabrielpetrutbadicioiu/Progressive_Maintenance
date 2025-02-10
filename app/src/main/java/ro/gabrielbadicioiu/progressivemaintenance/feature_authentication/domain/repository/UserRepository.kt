@@ -8,5 +8,5 @@ interface UserRepository {
 
     suspend fun upsertUser(user: User)
 
-    suspend fun getUserById(id:Int): User
+    suspend fun getUserById(id:Int): User?
 }

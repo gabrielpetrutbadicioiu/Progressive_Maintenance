@@ -7,7 +7,7 @@ sealed class SignInScreenEvent {
     data object OnRememberMeCheck:SignInScreenEvent()
     data object OnSignInBtnClick:SignInScreenEvent()
     data object OnSendVerificationEmail:SignInScreenEvent()
-    data class EnteredEmail(val value:String):SignInScreenEvent()
+    data class OnInputEmailChange(val email:String):SignInScreenEvent()
     data class EnteredPassword(val value: String):SignInScreenEvent()
 
 

@@ -2,10 +2,12 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presen
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -23,12 +25,15 @@ class SignInViewModel(
 ): ViewModel() {
 
     //states
-    var verifyEmailTxtColor by mutableStateOf(Color.Red)
-        private set
-    var verifyEmailIcon by mutableStateOf(Icons.Default.WarningAmber)
-        private set
-    var verifyEmailTxt by mutableStateOf("Your email is not verified. Click here to send a verification link to your email.")
-        private set
+  private val _verifyEmailTxtColor = mutableStateOf(Color.Red)
+    val verifyEmailTxtColor:State<Color> = _verifyEmailTxtColor
+
+    private val _verifyEmailIcon = mutableStateOf(Icons.Default.WarningAmber)
+    val verifyEmailIcon:State<ImageVector> = _verifyEmailIcon
+
+   private val _verifyEmailTxt = mutableStateOf("Your email is not verified. Click here to send a verification link to your email.")
+    val verifyEmailTxt:State<String> = _verifyEmailTxt
+
 var currentUser:FirebaseUser? by mutableStateOf(null)
             private set
 var showPassResult by mutableStateOf(ShowPassResult())
@@ -38,8 +43,8 @@ var showPassResult by mutableStateOf(ShowPassResult())
     var passInput by mutableStateOf("")
         private set
 
-     var rememberMeChecked by mutableStateOf(false)
-        private set
+     private val _rememberMeChecked= mutableStateOf(false)
+        val rememberMeChecked:State<Boolean> =_rememberMeChecked
     var authResult by mutableStateOf(AuthResult())
         private set
     var rememberedUser by mutableStateOf(User())
@@ -56,28 +61,27 @@ data object SignUp: SignInScreenUiEvent()
     }
 init {
     viewModelScope.launch {
-        rememberedUser=useCases.getRememberedUser.execute()
-        rememberMeChecked=rememberedUser.rememberMe
-        if(rememberMeChecked)
+     //   rememberedUser=useCases.getRememberedUser.execute()
+        _rememberMeChecked.value=rememberedUser.rememberMe
+        if(_rememberMeChecked.value)
         {
             emailInput=rememberedUser.email
             passInput=rememberedUser.password
         }
     }
-
 }
     fun onEvent(event: SignInScreenEvent)
     {
 
         when(event)
         {
-            is SignInScreenEvent.EnteredEmail->
+            is SignInScreenEvent.OnInputEmailChange->
             {
-                emailInput=event.value
-                if (rememberMeChecked)
+                emailInput=event.email
+                if (_rememberMeChecked.value)
                 {
                     viewModelScope.launch {
-                        useCases.rememberMe.execute(email = emailInput, pass = passInput, isRememberMeActive = rememberMeChecked)
+                        useCases.rememberMe.execute(email = emailInput, pass = passInput, isRememberMeActive = _rememberMeChecked.value)
                     }
 
                 }
@@ -85,12 +89,12 @@ init {
 
             is SignInScreenEvent.EnteredPassword->{
                 passInput=event.value
-                if (rememberMeChecked){
+                if (_rememberMeChecked.value){
                     viewModelScope.launch {
                         useCases.rememberMe.execute(
                             email = emailInput,
                             pass = passInput,
-                            isRememberMeActive = rememberMeChecked)
+                            isRememberMeActive = _rememberMeChecked.value)
                     }
                 }
             }
@@ -102,12 +106,12 @@ init {
 
             is SignInScreenEvent.OnRememberMeCheck->{
 
-                rememberMeChecked=!rememberMeChecked
+                _rememberMeChecked.value=!_rememberMeChecked.value
                 viewModelScope.launch {
                     rememberedUser=useCases.rememberMe.execute(
                         email = emailInput,
                         pass = passInput,
-                        isRememberMeActive = rememberMeChecked)
+                        isRememberMeActive = _rememberMeChecked.value)
                 }
 
             }
@@ -160,15 +164,15 @@ init {
                 useCases.sendVerificationEmail.execute(
                     currentUser = currentUser,
                     onSuccess = {
-                        verifyEmailTxt="An verification email has been sent. Check your email address"
-                        verifyEmailIcon=Icons.Default.WarningAmber
-                        verifyEmailTxtColor= Color.Red
+                        _verifyEmailTxt.value="An verification email has been sent. Check your email address"
+                        _verifyEmailIcon.value=Icons.Default.WarningAmber
+                        _verifyEmailTxtColor.value= Color.Red
                     },
                     onFailure = {
                         error->
-                        verifyEmailTxt="Your email is not verified. Click here to send a verification email"
-                        verifyEmailIcon=Icons.Default.WarningAmber
-                        verifyEmailTxtColor= Color.Red
+                        _verifyEmailTxt.value="Your email is not verified. Click here to send a verification email"
+                        _verifyEmailIcon.value=Icons.Default.WarningAmber
+                        _verifyEmailTxtColor.value= Color.Red
                         viewModelScope.launch {
                             _eventFlow.emit(SignInScreenUiEvent.ShowToast(error.toString()))
                         }
@@ -178,7 +182,7 @@ init {
             }
             is SignInScreenEvent.OnRegisterCompanyClick->{
                 viewModelScope.launch {
-                    _eventFlow.emit(SignInScreenUiEvent.NavigateTo(Screens.CompanyDetailsScreen))
+                    _eventFlow.emit(SignInScreenUiEvent.NavigateTo(Screens.CompanyDetailsScreen("")))
                 }
             }
         }//when

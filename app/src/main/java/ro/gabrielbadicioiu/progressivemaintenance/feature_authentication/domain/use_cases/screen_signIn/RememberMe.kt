@@ -12,12 +12,13 @@ class RememberMe(
         isRememberMeActive:Boolean
     ):User
     {
-    val user=User(
-        email = email,
-        password = pass,
-        rememberMe = isRememberMeActive,
-        userID = 0)
-        dao.upsertUser(user = user)
-        return dao.getUserById(0)
+        return User()
+//    val user=User(
+//        email = email,
+//        password = pass,
+//        rememberMe = isRememberMeActive,
+//        userID = 0)
+//        dao.upsertUser(user = user)
+//        return dao.getUserById(0)
     }
 }

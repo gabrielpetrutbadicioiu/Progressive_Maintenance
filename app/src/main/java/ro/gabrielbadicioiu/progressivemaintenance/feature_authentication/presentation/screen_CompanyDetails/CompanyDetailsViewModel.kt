@@ -22,6 +22,7 @@ class CompanyDetailsViewModel:ViewModel() {
     {
         data object OnCountrySelectClick:CompanyDetailsUiEvent()
         data object OnNavigateUp:CompanyDetailsUiEvent()
+        data object OnContinueClick:CompanyDetailsUiEvent()
     }
     fun onEvent(event: CompanyDetailsScreenEvent)
     {
@@ -47,6 +48,9 @@ class CompanyDetailsViewModel:ViewModel() {
             }
             is CompanyDetailsScreenEvent.OnNavigateUp->{
                 viewModelScope.launch { _eventFlow.emit(CompanyDetailsUiEvent.OnNavigateUp) }
+            }
+            is CompanyDetailsScreenEvent.OnContinueClick->{
+                viewModelScope.launch { _eventFlow.emit(CompanyDetailsUiEvent.OnContinueClick) }
             }
         }
     }

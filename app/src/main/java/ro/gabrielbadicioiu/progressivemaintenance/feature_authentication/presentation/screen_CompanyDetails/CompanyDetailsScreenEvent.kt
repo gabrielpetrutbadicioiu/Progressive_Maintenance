@@ -7,5 +7,6 @@ sealed class CompanyDetailsScreenEvent {
     data class OnCountryInit(val country:String):CompanyDetailsScreenEvent()
     data object OnSelectCountryClick:CompanyDetailsScreenEvent()
     data object OnNavigateUp:CompanyDetailsScreenEvent()
+    data object OnContinueClick:CompanyDetailsScreenEvent()
 
 }

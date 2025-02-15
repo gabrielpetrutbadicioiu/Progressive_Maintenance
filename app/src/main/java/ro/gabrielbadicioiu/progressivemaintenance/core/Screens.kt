@@ -26,4 +26,10 @@ sealed class Screens {
     data class CompanyDetailsScreen(val selectedCountry:String):Screens()
     @Serializable
     data object SelectCountryScreen:Screens()
+    @Serializable
+    data class CreateOwnerEmailScreen(val organisationName:String, val country:String, val industry:String)
+    @Serializable
+    data class CreateOwnerPassScreen(val email:String, val organisationName:String, val country:String, val industry:String)
+    @Serializable
+    data class OwnerAccDetailsScreen(val email:String, val password:String, val organisationName:String, val country:String, val industry:String)
 }

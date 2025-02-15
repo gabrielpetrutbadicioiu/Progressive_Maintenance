@@ -116,7 +116,8 @@ dependencies {
     implementation (libs.okhttp)
     implementation (libs.logging.interceptor)
 
-
+    //image picker
+    implementation(libs.coil.kt.coil.compose)
 
 
 }

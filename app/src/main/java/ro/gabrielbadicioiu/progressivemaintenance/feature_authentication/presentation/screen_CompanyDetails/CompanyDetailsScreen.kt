@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +54,12 @@ fun CompanyDetailsScreen(
                     }
                     is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnNavigateUp->{
                         navController.navigate(Screens.SignInScreen)
+                    }
+                    is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnContinueClick->{
+                        navController.navigate(Screens.CreateOwnerEmailScreen(
+                            organisationName = viewModel.companyDetails.value.organisationName,
+                            country = viewModel.companyDetails.value.country,
+                            industry = viewModel.companyDetails.value.industryType))
                     }
                 }
             }
@@ -151,7 +158,7 @@ fun CompanyDetailsScreen(
                     trailingIcon = {
                         IconButton(onClick = { viewModel.onEvent(CompanyDetailsScreenEvent.OnSelectCountryClick) }) {
                             Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
+                                imageVector = Icons.Default.ArrowForwardIos,
                                 contentDescription = stringResource(id = R.string.icon_descr)
                             )
                         }
@@ -163,7 +170,7 @@ fun CompanyDetailsScreen(
                         .padding(4.dp)
                 )
                 Button(
-                    onClick = { /*TODo*/ },
+                    onClick = {viewModel.onEvent(CompanyDetailsScreenEvent.OnContinueClick) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp, 0.dp),

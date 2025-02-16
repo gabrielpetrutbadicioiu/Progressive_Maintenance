@@ -111,6 +111,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center)
             {
+
                 if(viewModel.selectedImageUri.value==null)
                 {
                     Icon(
@@ -123,13 +124,12 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 }
                 else{
                     AsyncImage(model =viewModel.selectedImageUri.value ,
-                        contentDescription ="",
+                        contentDescription = stringResource(id = R.string.image_description),
                         modifier = Modifier
                             .size(128.dp)
-                            .clip(CircleShape)
-                            ,
+                            .clip(CircleShape),
                         contentScale = ContentScale.Crop)
-                }
+                    }
 
                 Button(
                     onClick = {
@@ -144,15 +144,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 ) {
                     Text(text = stringResource(id = R.string.select_profile_pic))
                 }
-//                Image(
-//                    painter = painterResource(id = R.drawable.auth_image),
-//                    contentDescription = stringResource(
-//                        id = R.string.image_description
-//                    ),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp, 0.dp)
-//                )
+
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()

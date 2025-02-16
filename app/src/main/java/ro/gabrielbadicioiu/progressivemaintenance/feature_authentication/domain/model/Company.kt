@@ -4,5 +4,6 @@ data class Company(
     val organisationName:String="",
     val industryType:String="",
     val country:String="",
+    val companyLogoUrl:String="",
     val id:String=""
 )

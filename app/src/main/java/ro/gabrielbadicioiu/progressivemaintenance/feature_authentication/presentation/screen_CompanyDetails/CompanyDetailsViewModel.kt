@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,8 @@ class CompanyDetailsViewModel:ViewModel() {
     private val _companyDetails= mutableStateOf(Company())
     val companyDetails:State<Company> = _companyDetails
 
+    private val _selectedImageUri = mutableStateOf<Uri?>(null)
+    val selectedImageUri:State<Uri?> = _selectedImageUri
 //one time events
     private val _eventFlow= MutableSharedFlow<CompanyDetailsUiEvent> ()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -51,6 +54,9 @@ class CompanyDetailsViewModel:ViewModel() {
             }
             is CompanyDetailsScreenEvent.OnContinueClick->{
                 viewModelScope.launch { _eventFlow.emit(CompanyDetailsUiEvent.OnContinueClick) }
+            }
+            is CompanyDetailsScreenEvent.OnUriResult->{
+                _selectedImageUri.value=event.uri
             }
         }
     }

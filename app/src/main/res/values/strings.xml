@@ -80,4 +80,5 @@
     <string name="position">Position</string>
     <string name="job_title">Specify your job title within the company*</string>
     <string name="select_profile_pic">Select profile picture</string>
+    <string name="pick_company_logo">Pick company logo</string>
 </resources>

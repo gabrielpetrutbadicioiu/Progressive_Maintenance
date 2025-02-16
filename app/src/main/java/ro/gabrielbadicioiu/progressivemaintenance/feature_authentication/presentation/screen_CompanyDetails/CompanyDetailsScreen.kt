@@ -1,5 +1,8 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,10 +11,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,12 +34,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
@@ -45,6 +55,10 @@ fun CompanyDetailsScreen(
      selectedCountry:String
 )
 {
+    val photoPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+        uri->
+        viewModel.onEvent(CompanyDetailsScreenEvent.OnUriResult(uri))
+    }
     LaunchedEffect(key1 = true) {
             viewModel.onEvent(CompanyDetailsScreenEvent.OnCountryInit(selectedCountry))
             viewModel.eventFlow.collectLatest { event->
@@ -59,7 +73,9 @@ fun CompanyDetailsScreen(
                         navController.navigate(Screens.CreateOwnerEmailScreen(
                             organisationName = viewModel.companyDetails.value.organisationName,
                             country = viewModel.companyDetails.value.country,
-                            industry = viewModel.companyDetails.value.industryType))
+                            industry = viewModel.companyDetails.value.industryType,
+                            companyLogo = viewModel.selectedImageUri.value.toString())
+                            )
                     }
                 }
             }
@@ -105,15 +121,37 @@ fun CompanyDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center){
 
-                Image(
-                    painter = painterResource(id = R.drawable.auth_image),
-                    contentDescription = stringResource(
-                        id = R.string.image_description
-                    ),
+                if(viewModel.selectedImageUri.value==null)
+                {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = stringResource(id = R.string.icon_descr),
+                        modifier = Modifier.size(128.dp),
+                        tint = Color.DarkGray,
+
+                        )
+                }
+                else{
+                    AsyncImage(
+                        model = viewModel.selectedImageUri.value,
+                        contentDescription = stringResource(id = R.string.image_description),
+                        modifier = Modifier
+                            .size(128.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop)
+                }
+
+                Button(
+                    onClick = {
+                       photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
-                )
+                        .wrapContentSize()
+                        .padding(16.dp, 0.dp),
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                ) {
+                    Text(text = stringResource(id = R.string.pick_company_logo))
+                }
 
                 Spacer(
                     modifier = Modifier

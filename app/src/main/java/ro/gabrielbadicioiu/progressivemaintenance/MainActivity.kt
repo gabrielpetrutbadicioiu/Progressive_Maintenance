@@ -127,7 +127,8 @@ class MainActivity : ComponentActivity() {
                         val companyDetails=Company(
                             organisationName = args.organisationName,
                             country = args.country,
-                            industryType = args.industry
+                            industryType = args.industry,
+                            companyLogoUrl = args.companyLogo
                         )
                         CreateOwnerEmailScreen(companyDetails =
                         companyDetails,
@@ -137,7 +138,11 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<Screens.CreateOwnerPassScreen> {
                         val args=it.toRoute<Screens.CreateOwnerPassScreen>()
-                        val companyDetails=Company(organisationName = args.organisationName, industryType = args.industry, country = args.country)
+                        val companyDetails=Company(
+                            organisationName = args.organisationName,
+                            industryType = args.industry,
+                            country = args.country,
+                            companyLogoUrl = args.companyLogo)
                         CreateOwnerPassScreen(
                             email = args.email,
                             viewModel = createOwnerPassViewModel,
@@ -147,7 +152,10 @@ class MainActivity : ComponentActivity() {
                     }
                     composable<Screens.OwnerAccDetailsScreen> {
                         val args= it.toRoute<Screens.OwnerAccDetailsScreen>()
-                        val company=Company(country = args.country, industryType = args.industry, organisationName = args.organisationName)
+                        val company=Company(country = args.country,
+                            industryType = args.industry,
+                            organisationName = args.organisationName,
+                            companyLogoUrl = args.companyLogo)
                         OwnerAccDetailsScreen(email = args.email,
                             pass = args.password,
                             company = company,

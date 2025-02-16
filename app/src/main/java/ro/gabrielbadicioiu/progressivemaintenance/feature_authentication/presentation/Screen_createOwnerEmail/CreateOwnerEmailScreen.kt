@@ -63,7 +63,8 @@ fun CreateOwnerEmailScreen(
                         email = event.email,
                         organisationName =companyDetails.organisationName,
                         country = companyDetails.country,
-                        industry = companyDetails.industryType))
+                        industry = companyDetails.industryType,
+                        companyLogo = companyDetails.companyLogoUrl))
                 }
             }
         }

@@ -66,7 +66,8 @@ fun CreateOwnerPassScreen(
                        password = event.pass,
                        organisationName = company.organisationName,
                        country = company.country,
-                       industry = company.industryType
+                       industry = company.industryType,
+                       companyLogo = company.companyLogoUrl
                    ))
                }
            }

@@ -40,4 +40,6 @@ sealed class Screens {
         val userID:String?,
         val userEmail:String?
         ):Screens()
+    @Serializable
+    data object SelectCompanyScreen:Screens()
 }

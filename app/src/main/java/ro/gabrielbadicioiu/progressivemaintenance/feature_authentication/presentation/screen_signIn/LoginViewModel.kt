@@ -17,8 +17,11 @@ class LoginViewModel(
     private val useCases: LoginScreenUseCases
 ):ViewModel() {
 
-    //states
+
     private var firebaseUser:FirebaseUser?=null
+    //states
+    private val _company= mutableStateOf("")
+    val company:State<String> = _company
 
     private val _isError= mutableStateOf(false)
     val isError:State<Boolean> = _isError
@@ -68,6 +71,7 @@ class LoginViewModel(
                     useCases.onSignInClick.execute(
                         email = _user.value.email,
                         pass = _user.value.password,
+                        company = _company.value,
                         onSuccess = {isEmailVerified, currentUser->
                             if (isEmailVerified!=null && currentUser!=null)
                             {
@@ -100,6 +104,10 @@ class LoginViewModel(
             }
             is LoginScreenEvent.OnRegisterCompanyClick->{
                 viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnOwnerEmailScreen) }
+            }
+
+            is LoginScreenEvent.OnSelectCompanyClick->{
+                viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnNavigateTo(Screens.SelectCompanyScreen)) }
             }
         }
     }

@@ -70,8 +70,8 @@
     <string name="city_hint">ex: Denver</string>
     <string name="support_txt">If you need assistance integrating this app in your company, contact us at: gabrieltechventures@gmail.com</string>
     <string name="company_details">Company details</string>
-    <string name="read_more">Read more</string>
-    <string name="read_less">Read less</string>
+    <string name="read_more">more</string>
+    <string name="read_less">less</string>
     <string name="short_text">By completing this step, you will create an owner account for the company and will have full administrative rights.</string>
     <string name="full_text">As the owner, you will have full control over the company account. You can manage users (promote to Administrator for additional management, demote, approve, or remove them), add, edit, or delete production lines and data.Access levels: Owner(full access, including user management), Administrator(can manage production lines but cannot mange users), User(can log interventions and view data but cannot make structural changes).</string>
     <string name="email_recommendation">We recommend using a business email*</string>
@@ -82,4 +82,7 @@
     <string name="select_profile_pic">Select profile picture</string>
     <string name="pick_company_logo">Pick company logo</string>
     <string name="Name_Supporting_Text">This name will be visible to other users*</string>
+    <string name="select_company">Select company</string>
+    <string name="select_company_supporting_txt">Pick the company you work for*</string>
+
 </resources>

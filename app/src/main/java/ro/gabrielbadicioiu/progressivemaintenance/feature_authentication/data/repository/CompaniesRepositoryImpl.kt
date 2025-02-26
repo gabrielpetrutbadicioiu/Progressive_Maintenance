@@ -1,6 +1,8 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository
 
+import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestoreException
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -47,5 +49,43 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             .addOnFailureListener {e->
                 onFailure("Error adding user to company: ${e.message}")
             }
+    }
+
+    override suspend fun getAllCompanies(
+        collectionReference: CollectionReference,
+        onSuccess: ( List<Company>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        try {
+            collectionReference.addSnapshotListener { snapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message.toString())
+                    return@addSnapshotListener
+                }
+                if (snapshot!=null && !snapshot.isEmpty)
+                {
+                    val companies=snapshot.documents.mapNotNull {documentSnapshot ->
+                        documentSnapshot.toObject(Company::class.java)
+                    }
+                    onSuccess(companies)
+                }
+                else{
+                    onFailure("No companies found")
+                }
+            }
+        }catch (e:FirebaseFirestoreException)
+        {
+            onFailure("Firebase firestore exception: ${e.message}")
+        }
+        catch (e:FirebaseException)
+        {
+            onFailure("Firebase exception: ${e.message}")
+        }
+        catch (e:Exception )
+        {
+            onFailure("Error fetching companies: ${e.message}")
+        }
+
     }
 }

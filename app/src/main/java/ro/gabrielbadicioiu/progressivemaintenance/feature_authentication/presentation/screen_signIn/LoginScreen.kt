@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
@@ -48,6 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsScreenEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,138 +104,183 @@ fun LogInScreen(
             },
         )
         { innerPadding ->
-            Column (
+            LazyColumn (
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center)
             {
-                Image(
-                    painter = painterResource(id = R.drawable.auth_image),
-                    contentDescription = stringResource(
-                        id = R.string.image_description
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp)
-                )
-                //Email
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    value = viewModel.user.value.email,
-                    onValueChange = {email-> viewModel.onEvent(LoginScreenEvent.OnEmailChange(email))},
-                    label ={
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            if (viewModel.isError.value)
-                            {
-                                Icon(imageVector = Icons.Default.WarningAmber,
-                                    contentDescription = stringResource(id = R.string.icon_descr),
-                                    )
-                            }
-                            Text(text = stringResource(id = R.string.email_hint))
-                        }
-                    } ,
-                    isError = viewModel.isError.value,
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Email,
-                            contentDescription = stringResource(id = R.string.icon_descr))
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                item {
+                    Image(
+                        painter = painterResource(id = R.drawable.auth_image),
+                        contentDescription = stringResource(
+                            id = R.string.image_description
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp, 0.dp)
+                            .size(128.dp)
                     )
-
-                //Password
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    value =viewModel.user.value.password,
-                    onValueChange ={pass->viewModel.onEvent(LoginScreenEvent.OnPassChange(pass))},
-                    singleLine = true,
-                    isError = viewModel.isError.value,
-                    label = {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            if (viewModel.isError.value)
-                            {
-                                Icon(imageVector = Icons.Default.WarningAmber,
-                                    contentDescription = stringResource(id = R.string.icon_descr),
-                                )
-                            }
-                            Text(text = stringResource(id = R.string.password_hint))
-                        }
-                    },
-                    leadingIcon = {
-                        Icon(imageVector =Icons.Default.Lock,
-                            contentDescription = stringResource(id = R.string.icon_descr) )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = {viewModel.onEvent(LoginScreenEvent.OnShowPassClick)}) {
-                            Icon(imageVector = if(viewModel.showPassword.value) Icons.Default.Visibility else Icons.Default.VisibilityOff ,
-                                contentDescription = stringResource(id = R.string.icon_descr) )}
-                        },
-                    visualTransformation =if(viewModel.showPassword.value) VisualTransformation.None else PasswordVisualTransformation())
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp, 4.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = viewModel.user.value.rememberMe,
-                        onCheckedChange ={viewModel.onEvent(LoginScreenEvent.OnCheckedChange)}, )
-                    Text(text = stringResource(id = R.string.remember_me))
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(6.dp)
+                    )
                 }
+
+                item {
+    //Email
+     OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        value = viewModel.user.value.email,
+        onValueChange = {email-> viewModel.onEvent(LoginScreenEvent.OnEmailChange(email))},
+        label ={
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 if (viewModel.isError.value)
                 {
-                    IconTextField(
-                        text = viewModel.errorMessage.value,
-                        icon = Icons.Default.WarningAmber,
-                        color = Color.Red,
-                        iconSize = 24,
-                        textSize = 16,
-                        clickEn = viewModel.clickableErr.value
-                    ) {
-                        viewModel.onEvent(LoginScreenEvent.OnSendVerificationEmail)
+                    Icon(imageVector = Icons.Default.WarningAmber,
+                        contentDescription = stringResource(id = R.string.icon_descr),
+                    )
+                }
+                Text(text = stringResource(id = R.string.email_hint))
+            }
+        } ,
+        isError = viewModel.isError.value,
+        singleLine = true,
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Email,
+                contentDescription = stringResource(id = R.string.icon_descr))
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+    )
+}
+
+                //Password
+                    item {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                            value =viewModel.user.value.password,
+                            onValueChange ={pass->viewModel.onEvent(LoginScreenEvent.OnPassChange(pass))},
+                            singleLine = true,
+                            isError = viewModel.isError.value,
+                            label = {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                                    if (viewModel.isError.value)
+                                    {
+                                        Icon(imageVector = Icons.Default.WarningAmber,
+                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                        )
+                                    }
+                                    Text(text = stringResource(id = R.string.password_hint))
+                                }
+                            },
+                            leadingIcon = {
+                                Icon(imageVector =Icons.Default.Lock,
+                                    contentDescription = stringResource(id = R.string.icon_descr) )
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = {viewModel.onEvent(LoginScreenEvent.OnShowPassClick)}) {
+                                    Icon(imageVector = if(viewModel.showPassword.value) Icons.Default.Visibility else Icons.Default.VisibilityOff ,
+                                        contentDescription = stringResource(id = R.string.icon_descr) )}
+                            },
+                            visualTransformation =if(viewModel.showPassword.value) VisualTransformation.None else PasswordVisualTransformation())
+                    }
+                //select country
+                item {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().padding(4.dp),
+                        isError = viewModel.isError.value,//todo
+                        value = "",//todo
+                        readOnly = true,
+                        onValueChange ={value->},//todo
+                        supportingText = { Text(text = stringResource(id = R.string.select_company_supporting_txt)) },
+                        shape = RoundedCornerShape(16.dp),
+                        placeholder = { Text(text = stringResource(id = R.string.select_company))},
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(onClick = {viewModel.onEvent(LoginScreenEvent.OnSelectCompanyClick) })
+                            {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForwardIos,
+                                    contentDescription = stringResource(id = R.string.icon_descr)
+                                )
+                            }
+                        }
+                    )
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp, 4.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = viewModel.user.value.rememberMe,
+                            onCheckedChange ={viewModel.onEvent(LoginScreenEvent.OnCheckedChange)}, )
+                        Text(text = stringResource(id = R.string.remember_me))
                     }
                 }
-                
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.bar_color)),
-                onClick = { viewModel.onEvent(LoginScreenEvent.OnSignInClick)},
-                ) {
-                Text(
-                    text = stringResource(id = R.string.SignIn_title),
-                    color = colorResource(id =R.color.text_color),
-                    fontSize = 18.sp)
-            }
-                
-                TextButton(onClick = { /*TODO*/ }) {
-                    Text(text = stringResource(id = R.string.create_acc_txt))
-                }
-                TextButton(onClick = {
 
-                    viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) }) {
-                    Text(text = stringResource(id = R.string.register_company_txt))
+                item {
+                    if (viewModel.isError.value)
+                    {
+                        IconTextField(
+                            text = viewModel.errorMessage.value,
+                            icon = Icons.Default.WarningAmber,
+                            color = Color.Red,
+                            iconSize = 24,
+                            textSize = 16,
+                            clickEn = viewModel.clickableErr.value
+                        ) {
+                            viewModel.onEvent(LoginScreenEvent.OnSendVerificationEmail)
+                        }
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
                 }
-                Text(text = stringResource(id = R.string.support_txt),
-                    fontSize = 10.sp)
+
+                item {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.bar_color)),
+                        onClick = { viewModel.onEvent(LoginScreenEvent.OnSignInClick)},
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.SignIn_title),
+                            color = colorResource(id =R.color.text_color),
+                            fontSize = 18.sp)
+                    }
+                }
+
+                
+                item {
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Text(text = stringResource(id = R.string.create_acc_txt))
+                    }
+                }
+                item {
+                    TextButton(onClick = {
+                        viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) }) {
+                        Text(text = stringResource(id = R.string.register_company_txt))
+                    }
+                }
+
+                item {
+                    Text(text = stringResource(id = R.string.support_txt),
+                        fontSize = 10.sp)
+                }
+
             }
         }
     }

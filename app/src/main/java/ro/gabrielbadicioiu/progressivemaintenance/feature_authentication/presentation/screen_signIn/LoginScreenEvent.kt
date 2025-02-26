@@ -12,5 +12,5 @@ sealed class LoginScreenEvent {
     data object OnSendVerificationEmail:LoginScreenEvent()
     data object OnSignInClick:LoginScreenEvent()
     data object OnRegisterCompanyClick:LoginScreenEvent()
-
+    data object OnSelectCompanyClick:LoginScreenEvent()
 }

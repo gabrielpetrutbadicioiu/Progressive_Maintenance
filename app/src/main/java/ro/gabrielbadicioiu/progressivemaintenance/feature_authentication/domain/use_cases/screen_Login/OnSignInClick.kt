@@ -8,9 +8,14 @@ class OnSignInClick(
 ) {
     suspend fun execute(email:String,
                         pass:String,
+                        company:String,
                         onSuccess:(Boolean?, FirebaseUser?) -> Unit,
                         onError: (String) -> Unit){
-
+if (company.isEmpty())
+{
+    onError("Company selection is required.")
+    return
+}
        accountService.login(
            email = email,
            password = pass,

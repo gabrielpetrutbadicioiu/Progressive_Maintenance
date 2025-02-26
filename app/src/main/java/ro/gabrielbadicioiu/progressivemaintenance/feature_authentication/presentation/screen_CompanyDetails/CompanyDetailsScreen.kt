@@ -161,8 +161,7 @@ fun CompanyDetailsScreen(
                 ) {
                     Text(text = stringResource(id = R.string.pick_company_logo))
                 }
-                Text(text =viewModel.currentUserEmail.value)
-                Text(text =viewModel. currentUserID.value)
+
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()

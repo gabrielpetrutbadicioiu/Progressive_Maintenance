@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.composables
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 
 @Composable
-fun SearchArea(
-     query:String,
-     onQueryChange:(String)->Unit,
-     onCancelClick:()->Unit
+fun CompanySearchArea(
+    query:String,
+    onQueryChange:(String)->Unit,
+    onCancelClick:()->Unit
 ){
     Box{
         Column(
@@ -36,7 +36,7 @@ fun SearchArea(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top){
             Text(
-                text = stringResource(id = R.string.country_hint),
+                text = stringResource(id = R.string.select_company),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(8.dp)

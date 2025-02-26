@@ -21,6 +21,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CreateOwnerPass.CreateOwnerPassViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.SelectCompanyScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 val createOwnerEmailViewModel=getViewModel<CreateOwnerEmailViewModel>()
                 val createOwnerPassViewModel= getViewModel<CreateOwnerPassViewModel> ()
                 val ownerAccDetailsViewModel=getViewModel<OwnerAccDetailsViewModel> ()
-
+                val companySelectionViewModel=getViewModel<CompanySelectionViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -159,6 +161,12 @@ class MainActivity : ComponentActivity() {
                             userID = args.userID,
                             userEmail = args.userEmail
                             )
+                    }
+                    composable<Screens.SelectCompanyScreen> {
+                        SelectCompanyScreen(
+                            viewModel = companySelectionViewModel,
+                            navController=navController
+                        )
                     }
                 }//navHost
 

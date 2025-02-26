@@ -18,4 +18,10 @@ interface CompaniesRepository {
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     )
+
+    suspend fun getAllCompanies(
+        collectionReference: CollectionReference,
+        onSuccess: (List<Company>) -> Unit,
+        onFailure: (String) -> Unit
+    )
 }

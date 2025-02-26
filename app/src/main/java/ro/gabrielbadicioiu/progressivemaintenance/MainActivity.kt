@@ -8,12 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreenViewModel
-//import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.CreateOwnerAccountScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.CreateOwnerEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.CreateOwnerEmailViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsScreen
@@ -65,6 +64,7 @@ class MainActivity : ComponentActivity() {
                 val createOwnerEmailViewModel=getViewModel<CreateOwnerEmailViewModel>()
                 val createOwnerPassViewModel= getViewModel<CreateOwnerPassViewModel> ()
                 val ownerAccDetailsViewModel=getViewModel<OwnerAccDetailsViewModel> ()
+
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -113,54 +113,51 @@ class MainActivity : ComponentActivity() {
                         CompanyDetailsScreen(
                             viewModel = companyDetailsViewModel,
                             navController = navController,
-                            selectedCountry = args.selectedCountry
+                            selectedCountry = args.selectedCountry,
+                            currentUserEmail = args.userEmail,
+                            currentUserID = args.userID,
                             )
                     }
                     composable<Screens.SelectCountryScreen> {
+                        val args=it.toRoute<Screens.SelectCountryScreen>()
                         SelectCountryScreen(
                             viewModel = selectCountryScreenViewModel,
-                            navController = navController
+                            navController = navController,
+                            currentUserEmail = args.currentUserEmail,
+                            currentUserId = args.currentUserId
                             )
                     }
                     composable<Screens.CreateOwnerEmailScreen> {
-                        val args=it.toRoute<Screens.CreateOwnerEmailScreen>()
-                        val companyDetails=Company(
-                            organisationName = args.organisationName,
-                            country = args.country,
-                            industryType = args.industry,
-                            companyLogoUrl = args.companyLogo
-                        )
-                        CreateOwnerEmailScreen(companyDetails =
-                        companyDetails,
-                            viewModel =createOwnerEmailViewModel ,
+                    //    val args=it.toRoute<Screens.CreateOwnerEmailScreen>()
+//                        val companyDetails=Company(
+//                            organisationName = args.organisationName,
+//                            country = args.country,
+//                            industryType = args.industry,
+//                            companyLogoUrl = args.companyLogo
+//                        )
+                        CreateOwnerEmailScreen(
+                            viewModel =createOwnerEmailViewModel,
                             navController = navController)
 
                     }
                     composable<Screens.CreateOwnerPassScreen> {
                         val args=it.toRoute<Screens.CreateOwnerPassScreen>()
-                        val companyDetails=Company(
-                            organisationName = args.organisationName,
-                            industryType = args.industry,
-                            country = args.country,
-                            companyLogoUrl = args.companyLogo)
                         CreateOwnerPassScreen(
                             email = args.email,
+                            poppedBackStack = args.poppedBackStack,
                             viewModel = createOwnerPassViewModel,
-                            company = companyDetails,
                             navController = navController
                         )
                     }
                     composable<Screens.OwnerAccDetailsScreen> {
                         val args= it.toRoute<Screens.OwnerAccDetailsScreen>()
-                        val company=Company(country = args.country,
-                            industryType = args.industry,
-                            organisationName = args.organisationName,
-                            companyLogoUrl = args.companyLogo)
-                        OwnerAccDetailsScreen(email = args.email,
-                            pass = args.password,
-                            company = company,
+
+                        OwnerAccDetailsScreen(
+                            companyDocumentID = args.companyDocumentID,
                             navController = navController,
-                            viewModel = ownerAccDetailsViewModel
+                            viewModel = ownerAccDetailsViewModel,
+                            userID = args.userID,
+                            userEmail = args.userEmail
                             )
                     }
                 }//navHost

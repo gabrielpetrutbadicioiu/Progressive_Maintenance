@@ -18,7 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,16 +43,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanyDetailsScreen(
      viewModel: CompanyDetailsViewModel,
      navController: NavController,
-     selectedCountry:String
+     selectedCountry:String,
+     currentUserID:String?,
+     currentUserEmail:String?,
 )
 {
     val photoPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
@@ -60,22 +65,27 @@ fun CompanyDetailsScreen(
         viewModel.onEvent(CompanyDetailsScreenEvent.OnUriResult(uri))
     }
     LaunchedEffect(key1 = true) {
+            viewModel.onEvent(CompanyDetailsScreenEvent.GetUserEmailAndID
+                (currentUserEmail = currentUserEmail.toString(),
+                currentUserID = currentUserID.toString()))
             viewModel.onEvent(CompanyDetailsScreenEvent.OnCountryInit(selectedCountry))
+
+
             viewModel.eventFlow.collectLatest { event->
                 when(event){
                     is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnCountrySelectClick->{
-                        navController.navigate(Screens.SelectCountryScreen)
+                        navController.navigate(Screens.SelectCountryScreen
+                            (currentUserId = viewModel.currentUserID.value,
+                            currentUserEmail = viewModel.currentUserEmail.value))
                     }
                     is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnNavigateUp->{
-                        navController.navigate(Screens.SignInScreen)
+                        navController.navigate(Screens.CreateOwnerPassScreen(email = Firebase.auth.currentUser?.email.toString(), poppedBackStack = true))
                     }
-                    is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnContinueClick->{
-                        navController.navigate(Screens.CreateOwnerEmailScreen(
-                            organisationName = viewModel.companyDetails.value.organisationName,
-                            country = viewModel.companyDetails.value.country,
-                            industry = viewModel.companyDetails.value.industryType,
-                            companyLogo = viewModel.selectedImageUri.value.toString())
-                            )
+                    is CompanyDetailsViewModel.CompanyDetailsUiEvent.OnContinueToOwnerDetails->{
+                        navController.navigate(Screens.OwnerAccDetailsScreen(
+                            companyDocumentID = event.documentID,
+                            userEmail = viewModel.currentUserEmail.value,
+                            userID = viewModel.currentUserID.value))
                     }
                 }
             }
@@ -100,7 +110,7 @@ fun CompanyDetailsScreen(
                                     contentDescription = stringResource(id = R.string.icon_descr),
                                     tint = colorResource(id = R.color.text_color))
                             }
-                            Text(text = stringResource(id = R.string.SignIn_title),
+                            Text(text = stringResource(id = R.string.create_pass),
                                 color = colorResource(id = R.color.text_color))
                         }
                     },
@@ -123,13 +133,12 @@ fun CompanyDetailsScreen(
 
                 if(viewModel.selectedImageUri.value==null)
                 {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.icon_descr),
-                        modifier = Modifier.size(128.dp),
-                        tint = Color.DarkGray,
-
-                        )
+                  Image(
+                      painter = painterResource(id = R.drawable.ic_unknown_company_logo),
+                      contentDescription = stringResource(id = R.string.image_description),
+                      modifier = Modifier
+                          .size(128.dp)
+                      )
                 }
                 else{
                     AsyncImage(
@@ -152,7 +161,8 @@ fun CompanyDetailsScreen(
                 ) {
                     Text(text = stringResource(id = R.string.pick_company_logo))
                 }
-
+                Text(text =viewModel.currentUserEmail.value)
+                Text(text =viewModel. currentUserID.value)
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -207,6 +217,17 @@ fun CompanyDetailsScreen(
                         .fillMaxWidth()
                         .padding(4.dp)
                 )
+                if (viewModel.isError.value)
+                {
+                    IconTextField(
+                        text = viewModel.errorMessage.value,
+                        icon = Icons.Default.WarningAmber,
+                        color = Color.Red,
+                        iconSize = 24,
+                        textSize = 16,
+                        clickEn =false
+                    ) {}
+                }
                 Button(
                     onClick = {viewModel.onEvent(CompanyDetailsScreenEvent.OnContinueClick) },
                     modifier = Modifier

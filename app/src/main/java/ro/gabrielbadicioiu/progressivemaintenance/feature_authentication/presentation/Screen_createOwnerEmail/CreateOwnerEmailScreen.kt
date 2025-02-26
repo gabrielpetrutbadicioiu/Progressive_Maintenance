@@ -40,13 +40,11 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.Composables.ExpandableText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateOwnerEmailScreen(
-    companyDetails:Company,
     viewModel: CreateOwnerEmailViewModel,
     navController: NavController
 )
@@ -55,16 +53,11 @@ fun CreateOwnerEmailScreen(
         viewModel.eventFlow.collectLatest {event->
             when(event)
             {
-                is CreateOwnerEmailViewModel.CreateOwnerAccountUiEvent.NavigateToCompanyDetailsScreen->{
-                    navController.navigate(Screens.CompanyDetailsScreen(companyDetails.country))
+                is CreateOwnerEmailViewModel.CreateOwnerAccountUiEvent.OnNavigateUp->{
+                    navController.navigateUp()
                 }
                 is CreateOwnerEmailViewModel.CreateOwnerAccountUiEvent.NavigateToOwnerPass->{
-                    navController.navigate(Screens.CreateOwnerPassScreen(
-                        email = event.email,
-                        organisationName =companyDetails.organisationName,
-                        country = companyDetails.country,
-                        industry = companyDetails.industryType,
-                        companyLogo = companyDetails.companyLogoUrl))
+                    navController.navigate(Screens.CreateOwnerPassScreen(email = event.email, poppedBackStack = false))
                 }
             }
         }
@@ -84,13 +77,13 @@ fun CreateOwnerEmailScreen(
                     navigationIcon = {
                         Row(horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { viewModel.onEvent(CreateOwnerEmailEvent.OnNavigateToCompanyDetailsScreen)}) {
+                            IconButton(onClick = { viewModel.onEvent(CreateOwnerEmailEvent.OnNavigateUp)}) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBackIosNew,
                                     contentDescription = stringResource(id = R.string.icon_descr),
                                     tint = colorResource(id = R.color.text_color))
                             }
-                            Text(text = stringResource(id = R.string.company_details),
+                            Text(text = stringResource(id = R.string.SignIn_title),
                                 color = colorResource(id = R.color.text_color))
                         }
                     },

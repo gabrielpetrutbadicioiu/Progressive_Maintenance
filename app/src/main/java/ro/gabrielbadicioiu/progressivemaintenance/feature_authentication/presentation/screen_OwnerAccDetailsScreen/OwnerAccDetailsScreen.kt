@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,28 +46,37 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OwnerAccDetailsScreen(
     viewModel: OwnerAccDetailsViewModel,
     navController: NavController,
-    email:String,
-    pass:String,
-    company: Company
+    companyDocumentID:String,
+    userID:String?,
+    userEmail:String?
 )
 {
 val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
     uri->
     viewModel.onEvent(OwnerAccDetailsScreenEvent.OnUriResult(uri))
 }
+
     LaunchedEffect(key1 = true) {
+
+        viewModel.onEvent(OwnerAccDetailsScreenEvent.GetUserEmailAndID(
+            currentUserEmail = userEmail.toString(),
+            currentUserID = userID.toString()))
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
                 is OwnerAccDetailsViewModel.OwnerAccDetailsUiEvent.OnNavigateUp->{
                     navController.navigateUp()
+                }
+                is OwnerAccDetailsViewModel.OwnerAccDetailsUiEvent.OnNavigateToSignInScreen->{
+                    navController.navigate(Screens.SignInScreen)
                 }
             }
         }
@@ -92,7 +102,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                                     contentDescription = stringResource(id = R.string.icon_descr),
                                     tint = colorResource(id = R.color.text_color))
                             }
-                            Text(text = stringResource(id = R.string.create_pass),
+                            Text(text = stringResource(id = R.string.company_details),
                                 color = colorResource(id = R.color.text_color))
                         }
                     },
@@ -112,18 +122,18 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 verticalArrangement = Arrangement.Center)
             {
 
-                if(viewModel.selectedImageUri.value==null)
+
+                if(viewModel.user.value.profilePicture.isEmpty())
                 {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = stringResource(id = R.string.icon_descr),
                         modifier = Modifier.size(128.dp),
                         tint = Color.DarkGray,
-
                     )
                 }
                 else{
-                    AsyncImage(model =viewModel.selectedImageUri.value ,
+                    AsyncImage(model =viewModel.user.value.profilePicture,
                         contentDescription = stringResource(id = R.string.image_description),
                         modifier = Modifier
                             .size(128.dp)
@@ -155,7 +165,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
-                    value = viewModel.firstName.value,
+                    value = viewModel.user.value.firstName,
                     onValueChange = {firstName->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnFirstNameChange(firstName))},
                     placeholder = { Text(text = stringResource(id = R.string.first_name))},
                     singleLine = true,
@@ -164,15 +174,15 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                             contentDescription = stringResource(id = R.string.icon_descr))
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    supportingText = { Text(text = viewModel.firstNameSupportingText.value)},
-                    isError = false//todo
+                    supportingText = { Text(text = stringResource(id = R.string.Name_Supporting_Text))},
+                    isError = viewModel.firstNameErr.value
                 )
                 //last name
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
-                    value = viewModel.lastName.value,
+                    value = viewModel.user.value.lastName,
                     onValueChange = {lastName->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnLastNameChange(lastName))},
                     placeholder = { Text(text = stringResource(id = R.string.last_name))},
                     singleLine = true,
@@ -181,16 +191,17 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                             contentDescription = stringResource(id = R.string.icon_descr))
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    supportingText = { Text(text = viewModel.lastNameSupportingText.value)},
-                    isError = false//todo
+                    supportingText = { Text(text = stringResource(id = R.string.Name_Supporting_Text))},
+                    isError = viewModel.lastNameErr.value
                 )
-
+                Text(text = userEmail.toString())
+                Text(text = userID.toString())
                 //position
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
-                    value = viewModel.position.value,
+                    value = viewModel.user.value.position,
                     onValueChange = {position->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnPositionChange(position))},
                     placeholder = { Text(text = stringResource(id = R.string.position))},
                     singleLine = true,
@@ -202,23 +213,32 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                     supportingText = { Text(text = stringResource(id = R.string.job_title))},
                     isError = false
                 )
+                if (viewModel.lastNameErr.value||viewModel.firstNameErr.value || viewModel.registerErr.value) {
+                    IconTextField(
+                        text = viewModel.errMsg.value,
+                        icon = Icons.Default.WarningAmber,
+                        color = Color.Red,
+                        iconSize = 24,
+                        textSize = 16,
+                        clickEn = false
+                    ) {}
+                }
 
-
-
+                    val btnEn=viewModel.user.value.firstName.isNotBlank()&& viewModel.user.value.lastName.isNotBlank() && viewModel.user.value.position.isNotBlank()
                 Button(
                     onClick = {
-                        /*TODO*/
+                        viewModel.onEvent(OwnerAccDetailsScreenEvent.OnFinishBtnClick(companyDocumentID))
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp, 0.dp),
-                    enabled = false,//TODO
+                    enabled = btnEn,
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
                 ) {
                     Text(text = stringResource(id = R.string.finish_btn))
                 }
 
-            }
+
         }
     }
-}
+}}

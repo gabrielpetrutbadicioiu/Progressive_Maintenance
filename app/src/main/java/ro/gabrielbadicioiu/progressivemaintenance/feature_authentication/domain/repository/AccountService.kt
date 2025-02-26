@@ -20,9 +20,7 @@ suspend fun sendVerificationEmail(
     suspend fun signUp(
         email:String,
         password:String,
-        firstName:String,
-        lastName:String,
-        onSuccess:()->Unit,
+        onSuccess:(FirebaseUser?)->Unit,
         onError:(String?)->Unit)
 
 }

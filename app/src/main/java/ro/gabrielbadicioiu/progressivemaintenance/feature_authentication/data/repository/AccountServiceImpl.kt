@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService
@@ -77,21 +76,14 @@ class AccountServiceImpl:AccountService {
     override suspend fun signUp(
         email: String,
         password: String,
-        firstName:String,
-        lastName:String,
-        onSuccess:()->Unit,
+        onSuccess:(currentUser:FirebaseUser?)->Unit,
         onError:(String?)->Unit) {
         Firebase.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
             task->
             if(task.isSuccessful)
             {
-                val user=Firebase.auth.currentUser
-                user?.updateProfile(
-                    userProfileChangeRequest {
-                        displayName= "$firstName $lastName"
-                    }
-                )
-                onSuccess()
+                    val user=Firebase.auth.currentUser
+                    onSuccess(user)
             }
             else{
                 onError(task.exception?.message)

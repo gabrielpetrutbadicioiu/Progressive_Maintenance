@@ -46,7 +46,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.IconTextField
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +63,9 @@ fun LogInScreen(
             {
                 is LoginViewModel.LoginScreenUiEvent.OnNavigateTo->{
                     navController.navigate(event.screen)
+                }
+                is LoginViewModel.LoginScreenUiEvent.OnOwnerEmailScreen->{
+                    navController.navigate(Screens.CreateOwnerEmailScreen)
                 }
             }
         }
@@ -221,7 +225,9 @@ fun LogInScreen(
                 TextButton(onClick = { /*TODO*/ }) {
                     Text(text = stringResource(id = R.string.create_acc_txt))
                 }
-                TextButton(onClick = { viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) }) {
+                TextButton(onClick = {
+
+                    viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) }) {
                     Text(text = stringResource(id = R.string.register_company_txt))
                 }
                 Text(text = stringResource(id = R.string.support_txt),

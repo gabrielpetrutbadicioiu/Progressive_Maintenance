@@ -24,7 +24,7 @@ class CreateOwnerEmailViewModel(private val useCases: CreateOwnerAccUseCases):Vi
     private val _eventFlow= MutableSharedFlow<CreateOwnerAccountUiEvent>()
     val eventFlow= _eventFlow.asSharedFlow()
     sealed class CreateOwnerAccountUiEvent{
-        data object NavigateToCompanyDetailsScreen:CreateOwnerAccountUiEvent()
+        data object OnNavigateUp:CreateOwnerAccountUiEvent()
         data class NavigateToOwnerPass(val email:String):CreateOwnerAccountUiEvent()
     }
     fun onEvent(event: CreateOwnerEmailEvent)
@@ -34,8 +34,8 @@ class CreateOwnerEmailViewModel(private val useCases: CreateOwnerAccUseCases):Vi
             is CreateOwnerEmailEvent.OnExpandTextClick->{
                 _isExpanded.value=!_isExpanded.value
             }
-            is CreateOwnerEmailEvent.OnNavigateToCompanyDetailsScreen->{
-                viewModelScope.launch { _eventFlow.emit(CreateOwnerAccountUiEvent.NavigateToCompanyDetailsScreen) }
+            is CreateOwnerEmailEvent.OnNavigateUp->{
+                viewModelScope.launch { _eventFlow.emit(CreateOwnerAccountUiEvent.OnNavigateUp) }
             }
             is CreateOwnerEmailEvent.OnEmailChange->{
                 _inputEmail.value=event.email

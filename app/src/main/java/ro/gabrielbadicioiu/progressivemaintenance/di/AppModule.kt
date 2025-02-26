@@ -5,8 +5,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.data_source.UserDatabase
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.AccountServiceImpl
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.CompaniesRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.UserRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.UserRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.CreatePassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.DoPasswordsMatch
@@ -23,9 +25,14 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OTPValidation
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OnResendOTPClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.IsValidName
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.OnAddUserToCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.OwnerAccDetailsUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_SelectCountry.OnQueryChange
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_SelectCountry.SelectCountryUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.CompanyDetailsUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.OnRegisterCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OnRegisterUser
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OwnerPassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.ValidateCreatedPass
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.SignUp
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.NameValidation
@@ -67,6 +74,10 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 val appModule= module {
     single<ProductionLineRepository>{
         ProductionLineRepositoryImpl()
+    }
+    single<CompaniesRepository>
+    {
+        CompaniesRepositoryImpl()
     }
     single<AccountService>{
         AccountServiceImpl()
@@ -173,8 +184,15 @@ single{
         EditProdLineViewModel(get())
     }
     //company details screen
+    single{
+        CompanyDetailsUseCases(
+            onRegisterCompany = OnRegisterCompany(get())
+        )
+    }
     viewModel {
-        CompanyDetailsViewModel()
+        CompanyDetailsViewModel(
+            get()
+        )
     }
     //select country screen
     single{
@@ -196,11 +214,17 @@ single{
         CreateOwnerEmailViewModel(get())
     }
     //create owner pass screen
-    viewModel { CreateOwnerPassViewModel() }
+    single{
+        OwnerPassUseCases(
+            onRegisterUser = OnRegisterUser(get())
+        )
+    }
+    viewModel { CreateOwnerPassViewModel(get()) }
     //owner acc details screen
     single{
         OwnerAccDetailsUseCases(
-            isValidName = IsValidName()
+            isValidName = IsValidName(),
+            onAddUserToCompany = OnAddUserToCompany(get())
         )
     }
     viewModel { OwnerAccDetailsViewModel(get()) }

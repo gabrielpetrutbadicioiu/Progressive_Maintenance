@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

@@ -40,6 +40,7 @@ class LoginViewModel(
     val eventFlow= _eventFlow.asSharedFlow()
     sealed class LoginScreenUiEvent{
         data class OnNavigateTo(val screen:Screens):LoginScreenUiEvent()
+        data object OnOwnerEmailScreen:LoginScreenUiEvent()
     }
     fun onEvent(event: LoginScreenEvent)
     {
@@ -98,7 +99,7 @@ class LoginViewModel(
                 }
             }
             is LoginScreenEvent.OnRegisterCompanyClick->{
-                viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnNavigateTo(Screens.CompanyDetailsScreen(""))) }
+                viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnOwnerEmailScreen) }
             }
         }
     }

@@ -12,12 +12,10 @@ class SignUp(
                         onSuccess:()->Unit,
                         onError:(String?)->Unit)
     {
-        accountService.signUp(
-            email = email,
-            password = password,
-            firstName = firstName,
-            lastName=lastName,
-            onSuccess = onSuccess,
-            onError = onError)
+//        accountService.signUp(
+//            email = email,
+//            password = password,
+//            onSuccess = onSuccess,
+//            onError = onError)
     }
 }

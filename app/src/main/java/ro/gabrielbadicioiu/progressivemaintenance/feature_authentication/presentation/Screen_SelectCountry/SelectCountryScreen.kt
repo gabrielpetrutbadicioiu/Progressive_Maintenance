@@ -38,14 +38,16 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 @Composable
 fun SelectCountryScreen(
     viewModel: SelectCountryScreenViewModel,
-    navController: NavController
+    navController: NavController,
+    currentUserId:String,
+    currentUserEmail:String
 )
 {
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event->
             when(event){
                 is SelectCountryScreenViewModel.SelectCountryUiEvent.OnExitScreen->{
-                    navController.navigate(Screens.CompanyDetailsScreen(event.country))
+                    navController.navigate(Screens.CompanyDetailsScreen(selectedCountry = event.country, userID = currentUserId, userEmail = currentUserEmail))
                 }
             }
         }

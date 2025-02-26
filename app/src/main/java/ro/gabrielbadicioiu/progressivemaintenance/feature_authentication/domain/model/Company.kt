@@ -4,6 +4,16 @@ data class Company(
     val organisationName:String="",
     val industryType:String="",
     val country:String="",
-    val companyLogoUrl:String="",
-    val id:String=""
+    val companyLogoUrl:String=""
 )
+{
+    fun toFirebaseDocument():HashMap<String, Any>
+    {
+        return hashMapOf(
+            "organisationName" to organisationName,
+            "industryType" to industryType,
+            "country" to country,
+            "companyLogoUrl" to companyLogoUrl
+        )
+    }
+}

@@ -10,4 +10,6 @@ sealed class OwnerAccDetailsScreenEvent {
     data class OnLastNameChange(val lastname:String):OwnerAccDetailsScreenEvent()
     data class OnPositionChange(val position:String):OwnerAccDetailsScreenEvent()
     data class OnUriResult(val uri: Uri?):OwnerAccDetailsScreenEvent()
+    data class OnFinishBtnClick(val companyID:String):OwnerAccDetailsScreenEvent()
+    data class GetUserEmailAndID(val currentUserEmail:String, val currentUserID:String):OwnerAccDetailsScreenEvent()
 }

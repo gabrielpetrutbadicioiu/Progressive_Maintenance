@@ -23,13 +23,21 @@ sealed class Screens {
     @Serializable
     data object RegisterCompanyMailScreen:Screens()
     @Serializable
-    data class CompanyDetailsScreen(val selectedCountry:String):Screens()
+    data class CompanyDetailsScreen(
+        val selectedCountry:String,
+        val userID:String?,
+        val userEmail:String?
+        ):Screens()
     @Serializable
-    data object SelectCountryScreen:Screens()
+    data class SelectCountryScreen(val currentUserId:String, val currentUserEmail:String):Screens()
     @Serializable
-    data class CreateOwnerEmailScreen(val organisationName:String, val country:String, val industry:String, val companyLogo:String)
+    data object CreateOwnerEmailScreen:Screens()
     @Serializable
-    data class CreateOwnerPassScreen(val email:String, val organisationName:String, val country:String, val industry:String, val companyLogo:String)
+    data class CreateOwnerPassScreen(val email:String, val poppedBackStack:Boolean):Screens()
     @Serializable
-    data class OwnerAccDetailsScreen(val email:String, val password:String, val organisationName:String, val country:String, val industry:String, val companyLogo:String)
+    data class OwnerAccDetailsScreen(
+        val companyDocumentID:String,
+        val userID:String?,
+        val userEmail:String?
+        ):Screens()
 }

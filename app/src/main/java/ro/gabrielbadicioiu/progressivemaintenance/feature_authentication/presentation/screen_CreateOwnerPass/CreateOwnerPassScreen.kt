@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,14 +42,14 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.PasswordRequirements
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateOwnerPassScreen(
+    poppedBackStack:Boolean,
     email:String,
-    company: Company,
     viewModel: CreateOwnerPassViewModel,
     navController: NavController
 )
@@ -61,13 +62,10 @@ fun CreateOwnerPassScreen(
                    navController.navigateUp()
                }
                is CreateOwnerPassViewModel.CreateOwnerPassUiEvent.OnContinueBtnClick->{
-                   navController.navigate(Screens.OwnerAccDetailsScreen(
-                       email = email,
-                       password = event.pass,
-                       organisationName = company.organisationName,
-                       country = company.country,
-                       industry = company.industryType,
-                       companyLogo = company.companyLogoUrl
+                   navController.navigate(Screens.CompanyDetailsScreen(
+                       selectedCountry = "",
+                       userID = event.currentFirebaseUser?.uid,
+                       userEmail = event.currentFirebaseUser?.email
                    ))
                }
            }
@@ -179,15 +177,25 @@ fun CreateOwnerPassScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 PasswordRequirements(password = viewModel.password.value, confPassword =viewModel.confPass.value)
-
-                val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
+                if (viewModel.isError.value) {
+                    IconTextField(
+                        text = viewModel.errMsg.value,
+                        icon = Icons.Default.WarningAmber,
+                        color = Color.Red,
+                        iconSize = 24,
+                        textSize = 16,
+                        clickEn = false
+                    ) {}
+                }
+                    val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
                 Button(
                     onClick = {
-                        viewModel.onEvent(CreateOwnerPassEvent.OnContinueBtnClick(
-                            email=email,
-                            pass = viewModel.password.value,
-                            company = company
-                        ))
+                            viewModel.onEvent(CreateOwnerPassEvent.OnContinueBtnClick(
+                                email=email,
+                                pass = viewModel.password.value,
+                                poppedBackStack = poppedBackStack
+                            ))
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -47,7 +47,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavController
-)
+) //TODO cred ca trebuie sa trimiti catre acest ecran id-ul user-ului si id-ul companiei ca sa poti sa ii cauti si sa afisezi date in functie de acestea
 {
     val context= LocalContext.current
     LaunchedEffect(key1 = true) {

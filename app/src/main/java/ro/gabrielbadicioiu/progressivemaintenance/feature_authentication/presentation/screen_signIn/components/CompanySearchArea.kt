@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.composables
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

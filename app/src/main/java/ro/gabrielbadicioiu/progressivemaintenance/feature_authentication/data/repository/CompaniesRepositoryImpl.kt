@@ -23,6 +23,13 @@ class CompaniesRepositoryImpl:CompaniesRepository {
 
        collectionReference.add(firebaseDocument)
            .addOnSuccessListener { documentReference->
+               val companyID=documentReference.id
+               documentReference.update("id",companyID).addOnSuccessListener {
+                   onSuccess(companyID)
+               }
+                   .addOnFailureListener {
+                       onFailure("Error updating companyID")
+                   }
            onSuccess(documentReference.id)
        }
            .addOnFailureListener { e->
@@ -86,6 +93,34 @@ class CompaniesRepositoryImpl:CompaniesRepository {
         {
             onFailure("Error fetching companies: ${e.message}")
         }
+
+    }
+
+    override suspend fun getUserInCompany(
+        currentUserID: String,
+        companyID: String,
+        onSuccess: (UserDetails?) -> Unit,
+        onFailure: (String) -> Unit,
+        onUserNotFound:()->Unit
+    ) {
+        Firebase.firestore.collection(FirebaseCollections.COMPANIES) //accesam colectia principala
+            .document(companyID)//selectam compania dupa ID
+            .collection(FirebaseSubCollections.USERS)//accesam subcolectia users
+            .whereEqualTo("userID", currentUserID)
+            .get()
+            .addOnSuccessListener {result->
+                if (result.isEmpty)
+                {
+                    onUserNotFound()
+                }
+                else{
+                    val userDetails=result.documents.first().toObject(UserDetails::class.java)
+                    onSuccess(userDetails)
+                }
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message ?: "Unknown error")
+            }
 
     }
 }

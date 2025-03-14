@@ -42,4 +42,6 @@ sealed class Screens {
         ):Screens()
     @Serializable
     data object SelectCompanyScreen:Screens()
+    @Serializable
+    data object JoinSelectCompanyScreen:Screens()
 }

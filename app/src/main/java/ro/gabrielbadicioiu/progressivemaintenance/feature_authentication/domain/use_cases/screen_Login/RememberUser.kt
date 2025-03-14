@@ -6,9 +6,19 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 class RememberUser(
     private val repository: UserRepository
 ){
-    suspend fun execute(email:String, pass:String, isRemembered:Boolean)
+    suspend fun execute(email:String,
+                        pass:String,
+                        isRemembered:Boolean,
+                        employer:String,
+                        employerId:String)
     {
-        var user=User(email=email, password = pass, userID = 0, rememberMe = isRemembered)
+        var user=User(email=email,
+            password = pass,
+            userID = 0,
+            rememberMe = isRemembered,
+            companyName = employer,
+            companyID = employerId
+            )
         if (!isRemembered)
         {
             user=User()

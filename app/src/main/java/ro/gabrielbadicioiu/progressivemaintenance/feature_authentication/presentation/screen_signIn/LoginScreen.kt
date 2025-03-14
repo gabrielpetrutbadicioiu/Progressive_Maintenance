@@ -1,9 +1,9 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,17 +52,22 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsScreenEvent
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.PickCompanyAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogInScreen(
     viewModel: LoginViewModel,
-    navController: NavController
+    navController: NavController,
 )
 {
+     val context= LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(LoginScreenEvent.GetRememberedUser)
+        viewModel.onEvent(LoginScreenEvent.OnFetchRegisteredCompanies)
+
+
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
@@ -70,6 +76,15 @@ fun LogInScreen(
                 }
                 is LoginViewModel.LoginScreenUiEvent.OnOwnerEmailScreen->{
                     navController.navigate(Screens.CreateOwnerEmailScreen)
+                }
+                is LoginViewModel.LoginScreenUiEvent.OnShowToast->{
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+                is LoginViewModel.LoginScreenUiEvent.OnNavigateToHomeScreen->{
+                    navController.navigate(Screens.HomeScreen)
+                }
+                is LoginViewModel.LoginScreenUiEvent.OnNavigateToJoinCompanyScreen->{
+                    navController.navigate(Screens.JoinSelectCompanyScreen)
                 }
             }
         }
@@ -86,14 +101,17 @@ fun LogInScreen(
                     title = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
+                            horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_icon),
-                                contentDescription = stringResource(id = R.string.image_descr),
-                                modifier = Modifier.size(86.dp)
-                            )
+                            Text(text = stringResource(id = R.string.SignIn_title),
+                                color = colorResource(id = R.color.text_color),
+                                )
+//                            Image(
+//                                painter = painterResource(id = R.drawable.ic_icon),
+//                                contentDescription = stringResource(id = R.string.image_descr),
+//                                modifier = Modifier.size(86.dp)
+//                            )
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -136,7 +154,13 @@ fun LogInScreen(
             .fillMaxWidth()
             .padding(4.dp),
         value = viewModel.user.value.email,
-        onValueChange = {email-> viewModel.onEvent(LoginScreenEvent.OnEmailChange(email))},
+        onValueChange = {email->
+            viewModel.onEvent(LoginScreenEvent.OnEmailChange(email))
+            if (viewModel.user.value.rememberMe)
+            {
+                viewModel.onEvent(LoginScreenEvent.OnRememberUser)
+            }
+                       },
         label ={
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 if (viewModel.isError.value)
@@ -165,7 +189,12 @@ fun LogInScreen(
                                 .fillMaxWidth()
                                 .padding(4.dp),
                             value =viewModel.user.value.password,
-                            onValueChange ={pass->viewModel.onEvent(LoginScreenEvent.OnPassChange(pass))},
+                            onValueChange ={pass->viewModel.onEvent(LoginScreenEvent.OnPassChange(pass))
+                                if (viewModel.user.value.rememberMe)
+                                {
+                                    viewModel.onEvent(LoginScreenEvent.OnRememberUser)
+                                }
+                                           },
                             singleLine = true,
                             isError = viewModel.isError.value,
                             label = {
@@ -190,14 +219,16 @@ fun LogInScreen(
                             },
                             visualTransformation =if(viewModel.showPassword.value) VisualTransformation.None else PasswordVisualTransformation())
                     }
-                //select country
+                //select company
                 item {
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth().padding(4.dp),
-                        isError = viewModel.isError.value,//todo
-                        value = "",//todo
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        isError = viewModel.isError.value,
+                        value = viewModel.user.value.companyName,
                         readOnly = true,
-                        onValueChange ={value->},//todo
+                        onValueChange ={ },
                         supportingText = { Text(text = stringResource(id = R.string.select_company_supporting_txt)) },
                         shape = RoundedCornerShape(16.dp),
                         placeholder = { Text(text = stringResource(id = R.string.select_company))},
@@ -226,9 +257,9 @@ fun LogInScreen(
                         Text(text = stringResource(id = R.string.remember_me))
                     }
                 }
-
+                //error message
                 item {
-                    if (viewModel.isError.value)
+                    if (viewModel.isError.value || viewModel.unverifiedEmailErr.value)
                     {
                         IconTextField(
                             text = viewModel.errorMessage.value,
@@ -262,10 +293,8 @@ fun LogInScreen(
                             fontSize = 18.sp)
                     }
                 }
-
-                
                 item {
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = { viewModel.onEvent(LoginScreenEvent.OnJoinCompanyClick)  }) {
                         Text(text = stringResource(id = R.string.create_acc_txt))
                     }
                 }
@@ -282,6 +311,22 @@ fun LogInScreen(
                 }
 
             }
+        }
+        if (viewModel.showDialog.value)
+        {
+           PickCompanyAlertDialog(
+                companies = viewModel.registeredCompanies.value,
+               onDismissRequest = {viewModel.onEvent(LoginScreenEvent.OnCancelDialogClick)},
+               query = viewModel.companyQuery.value,
+               onQueryChange = {query-> viewModel.onEvent(LoginScreenEvent.OnCompanySearch(query = query))},
+               filteredCompanies = viewModel.filteredCompanies.value,
+               onCompanyClick ={
+                   selectedCompany-> viewModel.onEvent(LoginScreenEvent.OnCompanyClick(selectedCompany))
+                   if (viewModel.user.value.rememberMe)
+                   {
+                       viewModel.onEvent(LoginScreenEvent.OnRememberUser)
+                   }}
+           )
         }
     }
 }

@@ -4,22 +4,29 @@ import com.google.firebase.auth.FirebaseUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService
 
 class OnSignInClick(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+   // private val companiesRepository: CompaniesRepository
 ) {
     suspend fun execute(email:String,
                         pass:String,
-                        company:String,
-                        onSuccess:(Boolean?, FirebaseUser?) -> Unit,
+                        onSuccess:(FirebaseUser?) -> Unit,
+                        onUnverifiedEmailErr:(FirebaseUser?)->Unit,
                         onError: (String) -> Unit){
-if (company.isEmpty())
-{
-    onError("Company selection is required.")
-    return
-}
+
        accountService.login(
            email = email,
            password = pass,
-           onSuccess ={isEmailVerified, currentUSer->onSuccess(isEmailVerified, currentUSer)} ,
+           onSuccess ={isEmailVerified, currentUser->
+
+                   if (isEmailVerified!=null && isEmailVerified)
+                   {
+                       onSuccess(currentUser)
+                   }
+                   else{
+                       onUnverifiedEmailErr(currentUser)
+                   }
+
+              } ,
            onFailure = {e-> onError(e)}
        )
 

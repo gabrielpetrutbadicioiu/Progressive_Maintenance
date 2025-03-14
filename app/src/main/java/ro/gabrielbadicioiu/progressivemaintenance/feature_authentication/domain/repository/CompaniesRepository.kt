@@ -24,4 +24,12 @@ interface CompaniesRepository {
         onSuccess: (List<Company>) -> Unit,
         onFailure: (String) -> Unit
     )
+
+    suspend fun getUserInCompany(
+        currentUserID:String,
+        companyID:String,
+        onSuccess: (UserDetails?) -> Unit,
+        onFailure: (String) -> Unit,
+        onUserNotFound:()->Unit
+    )
 }

@@ -5,9 +5,11 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.data_source.UserDatabase
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.AccountServiceImpl
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.CloudStorageRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.CompaniesRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.UserRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CloudStorageRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.UserRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.CreatePassUseCases
@@ -15,6 +17,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.ShowPassword
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_CreateOwnerEmail.CreateOwnerAccUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_CreateOwnerEmail.OnValidateEmailFormat
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_Login.CheckUserInCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.FetchRegisteredCompanies
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_Login.GetCurrentFirebaseUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_Login.GetRememberedUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_Login.LoginScreenUseCases
@@ -31,9 +35,12 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_SelectCountry.SelectCountryUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.CompanyDetailsUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.OnRegisterCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companySelection.CompanySelectionUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.OnCompanySearch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OnRegisterUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OwnerPassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.ValidateCreatedPass
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_join_selectCompany.JoinSelectCompanyUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.SignUp
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.NameValidation
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.UserNameUseCases
@@ -46,6 +53,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
@@ -75,6 +83,10 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 val appModule= module {
     single<ProductionLineRepository>{
         ProductionLineRepositoryImpl()
+    }
+    single<CloudStorageRepository>
+    {
+        CloudStorageRepositoryImpl()
     }
     single<CompaniesRepository>
     {
@@ -138,9 +150,12 @@ viewModel {
         LoginScreenUseCases(
             rememberUser = RememberUser(get()),
             getRememberedUser = GetRememberedUser(get()),
-            onSignInClick = OnSignInClick(get()),
+            onSignIn = OnSignInClick(get()),
             sendVerificationEmail = ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_Login.SendVerificationEmail(get()),
-            getCurrentFirebaseUser = GetCurrentFirebaseUser()
+            getCurrentFirebaseUser = GetCurrentFirebaseUser(),
+            checkUserInCompany = CheckUserInCompany(get()),
+            fetchRegisteredCompanies = FetchRegisteredCompanies(get()),
+            onCompanySearch = OnCompanySearch()
         )
     }
     viewModel {
@@ -187,7 +202,9 @@ single{
     //company details screen
     single{
         CompanyDetailsUseCases(
-            onRegisterCompany = OnRegisterCompany(get())
+            onRegisterCompany = OnRegisterCompany(
+                companiesRepository = get(),
+                cloudStorageRepository = get())
         )
     }
     viewModel {
@@ -225,11 +242,31 @@ single{
     single{
         OwnerAccDetailsUseCases(
             isValidName = IsValidName(),
-            onAddUserToCompany = OnAddUserToCompany(get())
+            onAddUserToCompany = OnAddUserToCompany(
+                companiesRepository = get(),
+                cloudStorageRepository = get())
         )
     }
     viewModel { OwnerAccDetailsViewModel(get()) }
 //company selection screen
-
-    viewModel { CompanySelectionViewModel(get()) }
+single{
+    CompanySelectionUseCases(
+        onCompanySearch = OnCompanySearch()
+    )
 }
+    viewModel { CompanySelectionViewModel(
+        repository = get(),
+        useCases = get()
+        ) }
+    //join select company screen
+single{
+    JoinSelectCompanyUseCases(
+        fetchRegisteredCompanies = FetchRegisteredCompanies(get()),
+        onCompanySearch = OnCompanySearch()
+    )
+}
+    viewModel {
+        JoinSelectCompanyViewModel(useCases = get())
+    }
+}
+

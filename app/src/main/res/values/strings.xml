@@ -3,7 +3,7 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="signIn_btn_txt">Sign in</string>
-    <string name="create_acc_txt">Don\'t have an account? Click here to Sign Up!</string>
+    <string name="create_acc_txt">New here? Sign up and Join a Company</string>
     <string name="image_description">auth image</string>
     <string name="SignIn_title">Sign in</string>
     <string name="SignUp_title">Sign up</string>
@@ -58,7 +58,7 @@
     <string name="delete_line_warning">Are you sure you want to delete this production line? This action cannot be undone.</string>
     <string name="delete_line_confirm">Yes, delete this production line</string>
     <string name="delete_line_dismiss">No, don\'t delete this production line</string>
-    <string name="register_company_txt">Register your company</string>
+    <string name="register_company_txt">Register a New Company</string>
     <string name="enter_business_email">Enter business email</string>
     <string name="organisation_name">Organisation\'s name*</string>
     <string name="enter_organisation_name">Add your organisation\'s name</string>
@@ -84,5 +84,7 @@
     <string name="Name_Supporting_Text">This name will be visible to other users*</string>
     <string name="select_company">Select company</string>
     <string name="select_company_supporting_txt">Pick the company you work for*</string>
-
+    <string name="company_searched_fail">This company is not registered. Try another search term.</string>
+    <string name="otp_hint">Enter OTP</string>
+    <string name="get_otp_hint">Contact company Owner for the OTP*</string>
 </resources>

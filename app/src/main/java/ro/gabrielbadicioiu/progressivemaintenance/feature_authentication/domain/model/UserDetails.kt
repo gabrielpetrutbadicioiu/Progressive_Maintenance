@@ -10,6 +10,7 @@ data class UserDetails(
     val email:String="",
     val profilePicture:String="",
     val userID:String="",
+    val companyID:String=""
 ){
     fun toFirebaseDocument():HashMap<String, Any>
     {
@@ -20,7 +21,8 @@ data class UserDetails(
             "rank" to rank,
             "email" to email,
             "profilePicture" to profilePicture,
-            "userID" to userID
+            "userID" to userID,
+            "companyID" to companyID
         )
     }
 }

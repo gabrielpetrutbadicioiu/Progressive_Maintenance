@@ -133,7 +133,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                     )
                 }
                 else{
-                    AsyncImage(model =viewModel.user.value.profilePicture,
+                    AsyncImage(model =viewModel.selectedImageUri.value,
                         contentDescription = stringResource(id = R.string.image_description),
                         modifier = Modifier
                             .size(128.dp)
@@ -194,8 +194,6 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                     supportingText = { Text(text = stringResource(id = R.string.Name_Supporting_Text))},
                     isError = viewModel.lastNameErr.value
                 )
-                Text(text = userEmail.toString())
-                Text(text = userID.toString())
                 //position
                 OutlinedTextField(
                     modifier = Modifier

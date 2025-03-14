@@ -25,6 +25,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.SelectCompanyScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LogInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
@@ -67,12 +69,16 @@ class MainActivity : ComponentActivity() {
                 val createOwnerPassViewModel= getViewModel<CreateOwnerPassViewModel> ()
                 val ownerAccDetailsViewModel=getViewModel<OwnerAccDetailsViewModel> ()
                 val companySelectionViewModel=getViewModel<CompanySelectionViewModel> ()
+                val joinSelectCompanyViewModel=getViewModel<JoinSelectCompanyViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
                     composable<Screens.SignInScreen> {
-                        LogInScreen(viewModel = loginViewModel,
-                                    navController = navController)
+
+                        LogInScreen(
+                            viewModel = loginViewModel,
+                                    navController = navController,
+                           )
                     }
                     composable<Screens.EmailValidationScreen> {
                         EmailValidationScreen(viewModel = emailValidationViewModel, navController = navController)
@@ -166,6 +172,12 @@ class MainActivity : ComponentActivity() {
                         SelectCompanyScreen(
                             viewModel = companySelectionViewModel,
                             navController=navController
+                        )
+                    }
+                    composable<Screens.JoinSelectCompanyScreen> {
+                        JoinSelectCompanyScreen(
+                            viewModel = joinSelectCompanyViewModel,
+                            navController = navController
                         )
                     }
                 }//navHost

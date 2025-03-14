@@ -1,8 +1,5 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection
 
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreenEvent
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreenViewModel
-
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -16,9 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -29,12 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.composables.CompanyDescription
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.composables.CompanySearchArea
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.CompanySearchArea
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -50,6 +48,9 @@ navController: NavController
             {
                 is CompanySelectionViewModel.CompanySelectionUiEvent.OnNavigateUp->{
                     navController.navigateUp()
+                }
+                is CompanySelectionViewModel.CompanySelectionUiEvent.OnNavigateToLogin->{
+                    navController.navigate(Screens.SignInScreen)
                 }
             }
         }
@@ -88,24 +89,32 @@ navController: NavController
                 .padding(innerPadding)
                 .fillMaxSize()) {
                 CompanySearchArea(
-                    query = "",//todo
-                    onQueryChange = {},//todo
+                    query = viewModel.searchedValue.value,
+                    onQueryChange = {value->viewModel.onEvent(CompanySelectionScreenEvent.OnSearchedCompany(value))},
                     onCancelClick = {viewModel.onEvent(CompanySelectionScreenEvent.OnCancelBtnClick)}
                 )
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 )
                 {
-
-                    items(viewModel.companies.value)
-                    {company->
-                        CompanyDescription(text = company.organisationName,
-                            avatar = company.companyLogoUrl,
-                            onClick = {/*TODO*/})
-
-                        HorizontalDivider(thickness = 2.dp,
-                            color = colorResource(id = R.color.unfocused_color))
+                val companies=if (viewModel.searchedValue.value.isEmpty()) viewModel.companies.value else {viewModel.filteredCompanies.value}
+                    if (companies.isEmpty())
+                    {
+                        item { 
+                            Text(text = stringResource(id = R.string.company_searched_fail),
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center)
+                        }
                     }
+                    else{
+                        items(companies)
+                        {company->
+
+
+
+                        }
+                    }
+
 
                 }
             }

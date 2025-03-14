@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.core.CloudStorageFolders
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.CompanyDetailsUseCases
@@ -18,6 +20,7 @@ class CompanyDetailsViewModel(
 private val useCases: CompanyDetailsUseCases
 ):ViewModel() {
     private val companyCollectionReference=Firebase.firestore.collection(FirebaseCollections.COMPANIES)
+    private val imageRef=Firebase.storage.reference
     //states
     private val _companyDetails= mutableStateOf(Company())
     val companyDetails:State<Company> = _companyDetails
@@ -86,12 +89,15 @@ private val useCases: CompanyDetailsUseCases
                         onFailure = {e->
                             _isError.value=true
                             _errorMessage.value=e
-                        }
+                        },
+                        localUri = _selectedImageUri.value,
+                        imageName = _companyDetails.value.organisationName,
+                        imageFolderName = CloudStorageFolders.COMPANY_LOGOS,
+                        imageReference =imageRef
                     )
                 }
             }
             is CompanyDetailsScreenEvent.OnUriResult->{
-                _companyDetails.value=_companyDetails.value.copy(companyLogoUrl = event.uri.toString())
                 _selectedImageUri.value=event.uri
             }
         }

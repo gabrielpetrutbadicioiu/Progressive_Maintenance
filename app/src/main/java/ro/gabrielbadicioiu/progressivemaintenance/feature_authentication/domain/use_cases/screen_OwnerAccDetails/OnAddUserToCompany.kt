@@ -1,10 +1,14 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails
 
+import android.net.Uri
+import com.google.firebase.storage.StorageReference
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CloudStorageRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 
 class OnAddUserToCompany(
-    private val repository: CompaniesRepository
+    private val companiesRepository: CompaniesRepository,
+    private val cloudStorageRepository: CloudStorageRepository
 ) {
     suspend fun execute(
         user:UserDetails,
@@ -12,9 +16,14 @@ class OnAddUserToCompany(
         onLastNameFail:()->Unit,
         companyID:String,
         onSuccess:()->Unit,
-        onFailure:(String)->Unit
+        onFailure:(String)->Unit,
+        localUri: Uri?,
+        imageName:String,
+        imageFolderName:String,
+        imageReference: StorageReference,
         )
     {
+
         //verificat nume
         val trimmedFirstName=user.firstName.trim()
         val trimmedLastName=user.lastName.trim()
@@ -30,18 +39,31 @@ class OnAddUserToCompany(
             onLastNameFail()
             return
         }
-        val newUser=user.copy(
+        var newUser=user.copy(
             firstName = trimmedFirstName,
             lastName = trimmedLastName,
             position = trimmedPosition,
+            companyID = companyID
             )
         try {
-            repository.addUserToCompany(
-                companyID=companyID,
-                user =newUser,
-                onSuccess = {onSuccess()},
+            cloudStorageRepository.putFile(
+                localUri = localUri,
+                folderName = imageFolderName,
+                imageReference = imageReference,
+                imageName = imageName,
+                onSuccess = {cloudUri->
+                    newUser=newUser.copy(profilePicture = cloudUri)
+                },
                 onFailure = {e-> onFailure(e)}
             )
+            companiesRepository.addUserToCompany(
+                companyID=companyID,
+                user =newUser,
+                onSuccess = {
+                    onSuccess()},
+                onFailure = {e-> onFailure(e)}
+            )
+
         }
         catch (e:Exception)
         {

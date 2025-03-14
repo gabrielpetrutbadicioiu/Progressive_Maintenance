@@ -119,5 +119,7 @@ dependencies {
     //image picker
     implementation(libs.coil.kt.coil.compose)
 
+    //upload files to firebase(ex images)
+    implementation(libs.firebase.storage)
 
 }

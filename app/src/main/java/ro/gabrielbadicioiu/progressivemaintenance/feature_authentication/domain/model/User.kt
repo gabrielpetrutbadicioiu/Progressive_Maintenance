@@ -12,6 +12,10 @@ data class User(
     val password:String="",
     @ColumnInfo(name = "remembered")
     val rememberMe:Boolean=false,
+    @ColumnInfo(name = "employer_company")
+    val companyName:String="",
+    @ColumnInfo(name = "employer_company_id")
+    val companyID:String="",
     @PrimaryKey(autoGenerate = false)
     val userID:Int=0
 

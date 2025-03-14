@@ -1,12 +1,16 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.core.CloudStorageFolders
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.OwnerAccDetailsUseCases
@@ -14,6 +18,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 class OwnerAccDetailsViewModel(
     val useCases: OwnerAccDetailsUseCases
 ):ViewModel() {
+    private val storageRef=Firebase.storage.reference
+
     //states
     private val _user = mutableStateOf(UserDetails(
         rank = UserRank.OWNER.name
@@ -32,6 +38,8 @@ class OwnerAccDetailsViewModel(
     private val _errMsg= mutableStateOf("")
     val errMsg:State<String> = _errMsg
 
+    private val _selectedImageUri = mutableStateOf<Uri?>(null)
+    val selectedImageUri:State<Uri?> = _selectedImageUri
     //one time events
     private val _eventFlow=MutableSharedFlow<OwnerAccDetailsUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -61,7 +69,7 @@ class OwnerAccDetailsViewModel(
                 _user.value=_user.value.copy(position = event.position.replaceFirstChar { char-> char.uppercase() })
             }
             is OwnerAccDetailsScreenEvent.OnUriResult->{
-              //  _selectedImageUri.value=event.uri
+                _selectedImageUri.value=event.uri
                 _user.value=_user.value.copy(profilePicture = event.uri.toString())
             }
             is OwnerAccDetailsScreenEvent.GetUserEmailAndID->{
@@ -90,7 +98,11 @@ class OwnerAccDetailsViewModel(
                         onFailure = {e->
                             _registerErr.value=true
                             _errMsg.value=e
-                        }
+                        },
+                        imageReference = storageRef,
+                        imageName = _user.value.userID,
+                        localUri = _selectedImageUri.value,
+                        imageFolderName = CloudStorageFolders.USER_PROFILE_PICTURES
                     )
                 }
 

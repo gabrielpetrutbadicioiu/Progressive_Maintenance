@@ -1,8 +1,10 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
 
+import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.WarningAmber
@@ -48,6 +52,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
@@ -85,6 +90,15 @@ fun LogInScreen(
                 }
                 is LoginViewModel.LoginScreenUiEvent.OnNavigateToJoinCompanyScreen->{
                     navController.navigate(Screens.JoinSelectCompanyScreen)
+                }
+                is LoginViewModel.LoginScreenUiEvent.OnCountDown->{
+                    if (viewModel.countDownTimer.value>0)
+                    {
+                        delay(1000)
+                        viewModel.onEvent(LoginScreenEvent.OnCountDown)
+
+                    }
+
                 }
             }
         }
@@ -277,6 +291,24 @@ fun LogInScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                }
+                item { 
+                    if (viewModel.showResendBtn.value)
+                    {
+
+                            Row (
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable(enabled = viewModel.enableResendBtn.value)
+                                {
+                                    viewModel.onEvent(LoginScreenEvent.OnSendVerificationEmail)
+                                }) {
+                                Icon(imageVector = Icons.Default.Refresh,
+                                    contentDescription = stringResource(id = R.string.icon_descr) )
+                                Spacer(modifier = Modifier.width(2.dp))
+                                Text(text = "${stringResource(id = R.string.resend)} ${viewModel.countDownTimer.value}")
+                            }
+
+                    }
                 }
 
                 item {

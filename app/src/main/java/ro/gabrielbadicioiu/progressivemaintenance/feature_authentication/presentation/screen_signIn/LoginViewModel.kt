@@ -2,6 +2,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presen
 
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,15 @@ class LoginViewModel(
     private var firebaseUser:FirebaseUser?=null
     //states
     private val _selectedCompany= mutableStateOf(Company())
+
+    private val _countDownTimer= mutableIntStateOf(90)
+    val countDownTimer:State<Int> = _countDownTimer
+
+    private val _enableResendBtn= mutableStateOf(false)
+    val enableResendBtn:State<Boolean> = _enableResendBtn
+
+    private val _showResendBtn= mutableStateOf(false)
+    val showResendBtn:State<Boolean> = _showResendBtn
 
     private val _registeredCompanies= mutableStateOf<List<Company>>(emptyList())
     val registeredCompanies:State<List<Company>> = _registeredCompanies
@@ -69,6 +79,7 @@ class LoginViewModel(
         data object OnOwnerEmailScreen:LoginScreenUiEvent()
         data object OnNavigateToHomeScreen:LoginScreenUiEvent()
         data object OnNavigateToJoinCompanyScreen:LoginScreenUiEvent()
+        data object OnCountDown:LoginScreenUiEvent()
     }
     fun onEvent(event: LoginScreenEvent)
     {
@@ -105,6 +116,7 @@ class LoginViewModel(
                         onSuccess = {
                             currentUser->
                             _unverifiedEmailErr.value=false
+                            _showResendBtn.value=false
                             _errorMessage.value=""
                             _isError.value=false
                             if (_user.value.companyName.isEmpty())
@@ -161,8 +173,15 @@ class LoginViewModel(
                 viewModelScope.launch {
                         useCases.sendVerificationEmail.execute(
                             currentUser =firebaseUser ,
-                            onSuccess = {_errorMessage.value=it},
-                            onFailure = {_errorMessage.value=it}
+                            onSuccess = {message->
+                                _errorMessage.value=message
+                                _clickableErr.value=false
+                                _showResendBtn.value=true
+                                _countDownTimer.intValue=90
+                                viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnCountDown) }
+                                        },
+                            onFailure = {e->
+                                _errorMessage.value=e}
                         )
                 }
             }
@@ -204,6 +223,13 @@ class LoginViewModel(
             }
             is LoginScreenEvent.OnJoinCompanyClick->{
                 viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnNavigateToJoinCompanyScreen) }
+            }
+            is LoginScreenEvent.OnCountDown->{
+
+                    _countDownTimer.intValue--
+                 _enableResendBtn.value=_countDownTimer.intValue==0
+                   viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnCountDown) }
+
             }
         }
     }

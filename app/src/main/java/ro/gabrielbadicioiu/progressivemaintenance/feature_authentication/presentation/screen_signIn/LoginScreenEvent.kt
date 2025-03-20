@@ -21,6 +21,8 @@ sealed class LoginScreenEvent {
     data object OnCancelDialogClick:LoginScreenEvent()
     data object OnRememberUser:LoginScreenEvent()
     data object OnJoinCompanyClick:LoginScreenEvent()
+    data object OnCountDown:LoginScreenEvent()
+
 
 
 }

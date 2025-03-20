@@ -21,7 +21,6 @@ class OnRegisterCompany(
         imageName:String,
         imageFolderName:String,
         imageReference: StorageReference,
-
     )
     {
         var newCompany=company

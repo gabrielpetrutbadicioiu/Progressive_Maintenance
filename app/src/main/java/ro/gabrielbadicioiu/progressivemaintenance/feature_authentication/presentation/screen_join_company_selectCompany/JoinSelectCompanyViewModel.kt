@@ -21,8 +21,8 @@ class JoinSelectCompanyViewModel(
     private val _registrationEmail = mutableStateOf("")
     val registrationEmail:State<String> = _registrationEmail
 
-    private val _registrationEmailErr= mutableStateOf(false)
-    val registrationEmailErr:State<Boolean> =_registrationEmailErr
+    private val _emailMatchesPattern= mutableStateOf(false)
+    val emailMatchesPattern:State<Boolean> =_emailMatchesPattern
 
     private val _showDialog= mutableStateOf(false)
     val showDialog:State<Boolean> = _showDialog
@@ -53,7 +53,8 @@ class JoinSelectCompanyViewModel(
     private val _eventFlow= MutableSharedFlow<JoinSelectCompanyUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
     sealed class JoinSelectCompanyUiEvent{
-
+        data object OnContinueClick:JoinSelectCompanyUiEvent()
+        data object OnNavigateUp:JoinSelectCompanyUiEvent()
     }
 
     fun onEvent(event:JoinSelectCompanyEvent)
@@ -62,7 +63,7 @@ class JoinSelectCompanyViewModel(
         {
             is JoinSelectCompanyEvent.OnRegistrationEmailChange->{
                 _registrationEmail.value=event.newValue
-                _registrationEmailErr.value=!Patterns.EMAIL_ADDRESS.matcher(_registrationEmail.value).matches()
+                _emailMatchesPattern.value=Patterns.EMAIL_ADDRESS.matcher(_registrationEmail.value).matches()
             }
             is JoinSelectCompanyEvent.OnShowDialogClick->{
                 _showDialog.value=true
@@ -95,6 +96,20 @@ class JoinSelectCompanyViewModel(
 
             is JoinSelectCompanyEvent.OnOtpValueChange->{
                 _enteredOTP.value=event.enteredOTP
+            }
+            is JoinSelectCompanyEvent.OnContinueBtnClick->{
+                if (_selectedCompany.value.otp==_enteredOTP.value)
+                {
+                    _isError.value=false
+                   viewModelScope.launch {  _eventFlow.emit(JoinSelectCompanyUiEvent.OnContinueClick) }
+                }
+                else{
+                    _isError.value=true
+                    _errorMessage.value="The OTP you entered is incorrect. Please ensure you received the code from your company Owner."
+                }
+            }
+            is JoinSelectCompanyEvent.OnNavigateUp->{
+                viewModelScope.launch { _eventFlow.emit(JoinSelectCompanyUiEvent.OnNavigateUp) }
             }
         }
     }

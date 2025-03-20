@@ -87,4 +87,5 @@
     <string name="company_searched_fail">This company is not registered. Try another search term.</string>
     <string name="otp_hint">Enter OTP</string>
     <string name="get_otp_hint">Contact company Owner for the OTP*</string>
+    <string name="confirm_password">Confirm password</string>
 </resources>

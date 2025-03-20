@@ -19,6 +19,10 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CreateOwnerPass.CreateOwnerPassScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CreateOwnerPass.CreateOwnerPassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserPassword.JoinCompanyUserPasswordScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserPassword.JoinCompanyUserPasswordScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserProfile.CreateUserProfileViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserProfile.JoinCompanyUserProfileScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
@@ -70,6 +74,8 @@ class MainActivity : ComponentActivity() {
                 val ownerAccDetailsViewModel=getViewModel<OwnerAccDetailsViewModel> ()
                 val companySelectionViewModel=getViewModel<CompanySelectionViewModel> ()
                 val joinSelectCompanyViewModel=getViewModel<JoinSelectCompanyViewModel>()
+                val joinCompanyUserPasswordScreenViewModel=getViewModel<JoinCompanyUserPasswordScreenViewModel> ()
+                val createUserProfileViewModel=getViewModel<CreateUserProfileViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -178,6 +184,26 @@ class MainActivity : ComponentActivity() {
                         JoinSelectCompanyScreen(
                             viewModel = joinSelectCompanyViewModel,
                             navController = navController
+                        )
+                    }
+                    composable<Screens.JoinCompanyUserPassword> {
+                        val args=it.toRoute<Screens.JoinCompanyUserPassword>()
+                        JoinCompanyUserPasswordScreen(
+                            email =args.email ,
+                            companyId = args.companyID,
+                            navController = navController,
+                            viewModel = joinCompanyUserPasswordScreenViewModel,
+                            poppedBackStack = args.hasPoppedBackStack)
+                    }
+
+                    composable<Screens.JoinCompanyCreateUserProfile> {
+                        val args=it.toRoute<Screens.JoinCompanyCreateUserProfile>()
+                        JoinCompanyUserProfileScreen(
+                            viewModel = createUserProfileViewModel,
+                            navController = navController,
+                            companyID =args.companyID ,
+                            userID = args.userID,
+                            email = args.email
                         )
                     }
                 }//navHost

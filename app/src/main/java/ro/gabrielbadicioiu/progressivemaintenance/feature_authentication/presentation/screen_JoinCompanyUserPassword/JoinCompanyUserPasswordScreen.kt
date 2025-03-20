@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CreateOwnerPass
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserPassword
 
 
 import androidx.compose.foundation.Image
@@ -47,29 +47,28 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateOwnerPassScreen(
-    poppedBackStack:Boolean,
+fun JoinCompanyUserPasswordScreen(
     email:String,
-    viewModel: CreateOwnerPassViewModel,
-    navController: NavController
+    companyId:String,
+    poppedBackStack:Boolean,
+    navController: NavController,
+    viewModel: JoinCompanyUserPasswordScreenViewModel
 )
 {
     LaunchedEffect(key1 = true) {
-       viewModel.eventFlow.collectLatest { event->
-           when(event)
-           {
-               is CreateOwnerPassViewModel.CreateOwnerPassUiEvent.OnNavigateUp->{
-                   navController.navigateUp()
-               }
-               is CreateOwnerPassViewModel.CreateOwnerPassUiEvent.OnContinueBtnClick->{
-                   navController.navigate(Screens.CompanyDetailsScreen(
-                       selectedCountry = "",
-                       userID = event.currentFirebaseUser?.uid,
-                       userEmail = event.currentFirebaseUser?.email
-                   ))
-               }
-           }
-       }
+    viewModel.eventFlow.collectLatest { event->
+        when(event)
+        {
+            is JoinCompanyUserPasswordScreenViewModel.JoinCompanyUserPassUiEvent.OnNavigateUp->{
+                navController.navigateUp()
+            }
+            is JoinCompanyUserPasswordScreenViewModel.JoinCompanyUserPassUiEvent.OnNavigateToUserProfile->{
+                navController.navigate(Screens.JoinCompanyCreateUserProfile(companyID = companyId, userID = event.userID, email = email))
+            }
+
+
+        }
+    }
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -85,7 +84,7 @@ fun CreateOwnerPassScreen(
                         Row(horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = {
-                                viewModel.onEvent(CreateOwnerPassEvent.OnNavigateUp)
+                               viewModel.onEvent(JoinCompanyUserPassEvent.OnNavigateUp)
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -131,7 +130,8 @@ fun CreateOwnerPassScreen(
                         .fillMaxWidth()
                         .padding(4.dp),
                     value =viewModel.password.value,
-                    onValueChange ={pass-> if (pass.length<=20) viewModel.onEvent(CreateOwnerPassEvent.OnPassChange(pass))},
+                    onValueChange ={ pass->
+                        if(pass.length<=20) viewModel.onEvent(JoinCompanyUserPassEvent.OnPasswordChange(pass))},
                     singleLine = true,
                     isError = false,
                     label = {
@@ -144,11 +144,11 @@ fun CreateOwnerPassScreen(
                             contentDescription = stringResource(id = R.string.icon_descr) )
                     },
                     trailingIcon = {
-                        IconButton(onClick = {viewModel.onEvent(CreateOwnerPassEvent.OnShowPassClick)}) {
-                            Icon(imageVector = if(viewModel.showPass.value) Icons.Default.Visibility else Icons.Default.VisibilityOff ,
+                        IconButton(onClick = {viewModel.onEvent(JoinCompanyUserPassEvent.OnShowHidePassClick)}) {
+                            Icon(imageVector = if (viewModel.showPass.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                 contentDescription = stringResource(id = R.string.icon_descr) )}
                     },
-                    visualTransformation =if(viewModel.showPass.value) VisualTransformation.None else PasswordVisualTransformation()
+                    visualTransformation = if (viewModel.showPass.value) VisualTransformation.None else PasswordVisualTransformation()
                 )
                 //confirm password
                 OutlinedTextField(
@@ -156,7 +156,7 @@ fun CreateOwnerPassScreen(
                         .fillMaxWidth()
                         .padding(4.dp),
                     value =viewModel.confPass.value,
-                    onValueChange ={confPass-> if (confPass.length<=20) viewModel.onEvent(CreateOwnerPassEvent.OnConfPassChange(confPass))},
+                    onValueChange ={confPass-> if (confPass.length<=20) viewModel.onEvent(JoinCompanyUserPassEvent.OnConfPassChange(confPass))},
                     singleLine = true,
                     isError = false,
                     label = {
@@ -169,17 +169,19 @@ fun CreateOwnerPassScreen(
                             contentDescription = stringResource(id = R.string.icon_descr) )
                     },
                     trailingIcon = {
-                        IconButton(onClick = {viewModel.onEvent(CreateOwnerPassEvent.OnShowConfPassClick)}) {
+                        IconButton(onClick = {viewModel.onEvent(JoinCompanyUserPassEvent.OnShowHideConfPassClick)}) {
                             Icon(imageVector = if(viewModel.showConfPass.value) Icons.Default.Visibility else Icons.Default.VisibilityOff ,
                                 contentDescription = stringResource(id = R.string.icon_descr) )}
                     },
                     visualTransformation =if(viewModel.showConfPass.value) VisualTransformation.None else PasswordVisualTransformation()
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
                 PasswordRequirements(password = viewModel.password.value, confPassword =viewModel.confPass.value)
+
                 if (viewModel.isError.value) {
                     IconTextField(
-                        text = viewModel.errMsg.value,
+                        text = viewModel.errorMessage.value,
                         icon = Icons.Default.WarningAmber,
                         color = Color.Red,
                         iconSize = 24,
@@ -187,14 +189,14 @@ fun CreateOwnerPassScreen(
                         clickEn = false
                     ) {}
                 }
-                    val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
+                val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
                 Button(
                     onClick = {
-                            viewModel.onEvent(CreateOwnerPassEvent.OnContinueBtnClick(
-                                email=email,
-                                pass = viewModel.password.value,
-                                poppedBackStack = poppedBackStack
-                            ))
+                        viewModel.onEvent(JoinCompanyUserPassEvent.OnContinueBtnClick(
+                            email=email,
+                            pass = viewModel.password.value,
+                            hasPoppedBackstack = poppedBackStack
+                        ))
 
                     },
                     modifier = Modifier
@@ -205,7 +207,7 @@ fun CreateOwnerPassScreen(
                 ) {
                     Text(text = stringResource(id = R.string.continue_btn))
                 }
-            }
         }
     }
+}
 }

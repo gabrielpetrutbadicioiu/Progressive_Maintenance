@@ -12,4 +12,6 @@ sealed class JoinSelectCompanyEvent {
     data object OnShowDialogClick:JoinSelectCompanyEvent()
     data object OnFetchRegisteredCompanies:JoinSelectCompanyEvent()
     data object OnDialogDismiss:JoinSelectCompanyEvent()
+    data object OnContinueBtnClick:JoinSelectCompanyEvent()
+    data object OnNavigateUp:JoinSelectCompanyEvent()
 }

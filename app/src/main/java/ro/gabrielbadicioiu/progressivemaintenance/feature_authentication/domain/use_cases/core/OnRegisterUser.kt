@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core
 
 import com.google.firebase.auth.FirebaseUser
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.AccountService

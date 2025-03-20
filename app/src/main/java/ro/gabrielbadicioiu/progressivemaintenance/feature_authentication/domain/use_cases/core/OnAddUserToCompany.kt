@@ -1,4 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails
+package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core
 
 import android.net.Uri
 import com.google.firebase.storage.StorageReference

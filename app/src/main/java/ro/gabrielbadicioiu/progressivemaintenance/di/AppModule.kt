@@ -29,7 +29,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OTPValidation
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OTP.OnResendOTPClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.IsValidName
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.OnAddUserToCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.OnAddUserToCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_OwnerAccDetails.OwnerAccDetailsUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_SelectCountry.OnQueryChange
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_SelectCountry.SelectCountryUseCases
@@ -37,9 +37,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companyDetails.OnRegisterCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_companySelection.CompanySelectionUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.OnCompanySearch
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OnRegisterUser
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.OnRegisterUser
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_JoinCompanyUserPass.UserPassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass.OwnerPassUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_create_pass.ValidateCreatedPass
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_joinCompanyCreateUser.CreateUserUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_join_selectCompany.JoinSelectCompanyUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.SignUp
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_userName.NameValidation
@@ -50,6 +52,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.CreateOwnerEmailViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CompanyDetails.CompanyDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_CreateOwnerPass.CreateOwnerPassViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserPassword.JoinCompanyUserPasswordScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserProfile.CreateUserProfileViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
@@ -267,6 +271,23 @@ single{
 }
     viewModel {
         JoinSelectCompanyViewModel(useCases = get())
+    }
+    //join select company user password screen
+    single{
+        UserPassUseCases(
+            onRegisterUser = OnRegisterUser(get())
+        )
+    }
+    viewModel {
+        JoinCompanyUserPasswordScreenViewModel(useCases =get())
+    }
+
+    //join select company create user profile screen
+    single{
+        CreateUserUseCases(onAddUserToCompany = OnAddUserToCompany(companiesRepository = get(), cloudStorageRepository = get()))
+    }
+    viewModel {
+        CreateUserProfileViewModel(get())
     }
 }
 

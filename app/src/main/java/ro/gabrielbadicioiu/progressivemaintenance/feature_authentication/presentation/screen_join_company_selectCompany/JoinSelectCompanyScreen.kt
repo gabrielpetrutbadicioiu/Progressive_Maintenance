@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
@@ -40,7 +41,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.PickCompanyAlertDialog
 
@@ -53,6 +56,20 @@ fun JoinSelectCompanyScreen(
 {
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(JoinSelectCompanyEvent.OnFetchRegisteredCompanies)
+        viewModel.eventFlow.collectLatest { event->
+            when(event)
+            {
+                is JoinSelectCompanyViewModel.JoinSelectCompanyUiEvent.OnContinueClick->{
+                    navController.navigate(Screens.JoinCompanyUserPassword(
+                        email = viewModel.registrationEmail.value,
+                        companyID = viewModel.selectedCompany.value.id,
+                        hasPoppedBackStack = false))
+                }
+                is JoinSelectCompanyViewModel.JoinSelectCompanyUiEvent.OnNavigateUp->{
+                    navController.navigateUp()
+                }
+            }
+        }
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -63,6 +80,21 @@ fun JoinSelectCompanyScreen(
                 .fillMaxSize(),
             topBar = {
                 TopAppBar(
+                    navigationIcon = {
+                        Row(horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = {
+                                viewModel.onEvent(JoinSelectCompanyEvent.OnNavigateUp)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBackIosNew,
+                                    contentDescription = stringResource(id = R.string.icon_descr),
+                                    tint = colorResource(id = R.color.text_color))
+                            }
+                            Text(text = stringResource(id = R.string.SignIn_title),
+                                color = colorResource(id = R.color.text_color))
+                        }
+                    },
                     title = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -120,7 +152,7 @@ fun JoinSelectCompanyScreen(
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     supportingText = { Text(text = stringResource(id = R.string.email_recommendation)) },
-                    isError = viewModel.registrationEmailErr.value
+                    isError = !viewModel.emailMatchesPattern.value&&viewModel.registrationEmail.value.isNotBlank()
                     
                 )
                 Spacer(
@@ -174,7 +206,7 @@ fun JoinSelectCompanyScreen(
                         textStyle = TextStyle(fontSize = 24.sp, letterSpacing = 12.sp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                         shape = RoundedCornerShape(12.dp),
-
+                        isError = viewModel.isError.value
                         )
                 }
                 Spacer(
@@ -203,11 +235,11 @@ fun JoinSelectCompanyScreen(
 
                 //continue btn
                 Button(
-                    onClick = {/*TODO*/ },
+                    onClick = {viewModel.onEvent(JoinSelectCompanyEvent.OnContinueBtnClick)},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp, 0.dp),
-                    enabled = !viewModel.isError.value && !viewModel.registrationEmailErr.value && viewModel.registrationEmail.value.isNotBlank() && viewModel.enteredOTP.value.isNotBlank(),
+                    enabled = viewModel.emailMatchesPattern.value && viewModel.selectedCompany.value.organisationName.isNotEmpty(),
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
                 ) {
                     Text(text = stringResource(id = R.string.continue_btn))

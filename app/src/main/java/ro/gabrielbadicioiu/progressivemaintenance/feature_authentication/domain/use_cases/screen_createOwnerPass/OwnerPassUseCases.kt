@@ -1,3 +1,5 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_createOwnerPass
 
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.core.OnRegisterUser
+
 data class OwnerPassUseCases(val onRegisterUser: OnRegisterUser)

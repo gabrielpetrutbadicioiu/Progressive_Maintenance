@@ -19,6 +19,9 @@ class CreateOwnerPassViewModel(
     private val _password = mutableStateOf("")
     val password:State<String> = _password
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _confPass = mutableStateOf("")
     val confPass:State<String> = _confPass
 
@@ -62,7 +65,7 @@ class CreateOwnerPassViewModel(
                 _showConfPass.value=!_showConfPass.value
             }
             is CreateOwnerPassEvent.OnContinueBtnClick->{
-
+                _showProgressBar.value=true
                 viewModelScope.launch {
                     if (event.poppedBackStack)
                     {
@@ -76,8 +79,10 @@ class CreateOwnerPassViewModel(
                                 _isError.value=false
                                 _errMsg.value=""
                                 viewModelScope.launch {  _eventFlow.emit(CreateOwnerPassUiEvent.OnContinueBtnClick(currentFirebaseUser = currentUser)) }
+                                _showProgressBar.value=false
                             },
                             onFailure = {e->
+                                _showProgressBar.value=false
                                 _isError.value=true
                                 _errMsg.value=e
                             }

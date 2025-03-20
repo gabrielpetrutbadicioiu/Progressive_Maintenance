@@ -23,6 +23,9 @@ class CreateUserProfileViewModel(
     private val _user = mutableStateOf(UserDetails(rank = UserRank.USER.name))
     val user: State<UserDetails> = _user
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _firstNameErr= mutableStateOf(false)
     val firstNameErr:State<Boolean> = _firstNameErr
 
@@ -66,14 +69,17 @@ class CreateUserProfileViewModel(
                 _user.value=_user.value.copy(position = event.position.replaceFirstChar { char-> char.uppercase() })
             }
             is CreateUserProfileScreenEvent.OnFinishBtnClick->{
+                _showProgressBar.value=true
                 viewModelScope.launch {
                     useCases.onAddUserToCompany.execute(
                         user = _user.value.copy(),
                         onLastNameFail = {
+                            _showProgressBar.value=false
                             _lastNameErr.value=true
                             _errMsg.value="Invalid last name: Only letters and spaces are allowed."
                         },
                         onFirstNameFail = {
+                            _showProgressBar.value=false
                             _firstNameErr.value=true
                             _errMsg.value="Invalid first name: Only letters and spaces are allowed."
                         },
@@ -81,15 +87,18 @@ class CreateUserProfileViewModel(
                         localUri = _selectedImageUri.value,
                         imageFolderName = CloudStorageFolders.USER_PROFILE_PICTURES,
                         onFailure = {e->
+                            _showProgressBar.value=false
                             _registerErr.value=true
                             _errMsg.value=e
                         },
                         onSuccess = {
+
                             _registerErr.value=false
                             _lastNameErr.value=false
                             _firstNameErr.value=false
                             _errMsg.value=""
                             viewModelScope.launch {_eventFlow.emit(CreateUserProfileUiEvent.OnNavigateToSignIn)  }
+                            _showProgressBar.value=false
                         },
                         imageReference = storageRef,
                         imageName = _user.value.userID

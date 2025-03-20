@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -227,16 +228,26 @@ fun CompanyDetailsScreen(
                         clickEn =false
                     ) {}
                 }
-                Button(
-                    onClick = {viewModel.onEvent(CompanyDetailsScreenEvent.OnContinueClick) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp),
-                    enabled = viewModel.companyDetails.value.organisationName.isNotEmpty()&&viewModel.companyDetails.value.industryType.isNotEmpty()&&viewModel.companyDetails.value.country.isNotEmpty(),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
-                ) {
-                    Text(text = stringResource(id = R.string.continue_btn))
+                if (viewModel.showProgressBar.value)
+                {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp) ,
+                        color = colorResource(id = R.color.bar_color)
+                    )
                 }
+                else{
+                    Button(
+                        onClick = {viewModel.onEvent(CompanyDetailsScreenEvent.OnContinueClick) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, 0.dp),
+                        enabled = viewModel.companyDetails.value.organisationName.isNotEmpty()&&viewModel.companyDetails.value.industryType.isNotEmpty()&&viewModel.companyDetails.value.country.isNotEmpty(),
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    ) {
+                        Text(text = stringResource(id = R.string.continue_btn))
+                    }
+                }
+
             }
         }
     }

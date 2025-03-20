@@ -25,6 +25,9 @@ private val useCases: CompanyDetailsUseCases
     private val _companyDetails= mutableStateOf(Company())
     val companyDetails:State<Company> = _companyDetails
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _selectedImageUri = mutableStateOf<Uri?>(null)
     val selectedImageUri:State<Uri?> = _selectedImageUri
 
@@ -79,16 +82,19 @@ private val useCases: CompanyDetailsUseCases
                 viewModelScope.launch { _eventFlow.emit(CompanyDetailsUiEvent.OnNavigateUp) }
             }
             is CompanyDetailsScreenEvent.OnContinueClick->{
+                _showProgressBar.value=true
                 viewModelScope.launch {
                     useCases.onRegisterCompany.execute(
                         company = _companyDetails.value,
                         collectionReference = companyCollectionReference,
                         onSuccess = {documentID->
                             viewModelScope.launch { _eventFlow.emit(CompanyDetailsUiEvent.OnContinueToOwnerDetails(documentID)) }
+                            _showProgressBar.value=false
                         },
                         onFailure = {e->
                             _isError.value=true
                             _errorMessage.value=e
+                            _showProgressBar.value=false
                         },
                         localUri = _selectedImageUri.value,
                         imageName = _companyDetails.value.organisationName,

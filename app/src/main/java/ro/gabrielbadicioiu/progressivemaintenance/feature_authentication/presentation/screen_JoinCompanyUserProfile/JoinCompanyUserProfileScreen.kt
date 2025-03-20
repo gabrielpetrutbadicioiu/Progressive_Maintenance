@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -223,18 +224,28 @@ fun JoinCompanyUserProfileScreen(
                 }//if
 
                 val btnEn=viewModel.user.value.firstName.isNotBlank()&& viewModel.user.value.lastName.isNotBlank() && viewModel.user.value.position.isNotBlank()
-                Button(
-                    onClick = {
-                        viewModel.onEvent(CreateUserProfileScreenEvent.OnFinishBtnClick(companyID))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp),
-                    enabled = btnEn,
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
-                ) {
-                    Text(text = stringResource(id = R.string.finish_btn))
+                if (viewModel.showProgressBar.value)
+                {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp) ,
+                        color = colorResource(id = R.color.bar_color)
+                    )
                 }
+                else{
+                    Button(
+                        onClick = {
+                            viewModel.onEvent(CreateUserProfileScreenEvent.OnFinishBtnClick(companyID))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, 0.dp),
+                        enabled = btnEn,
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    ) {
+                        Text(text = stringResource(id = R.string.finish_btn))
+                    }
+                }
+
 
             }
         }

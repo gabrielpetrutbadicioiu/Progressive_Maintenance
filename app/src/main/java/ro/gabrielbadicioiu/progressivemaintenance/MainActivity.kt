@@ -27,19 +27,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_OwnerAccDetailsScreen.OwnerAccDetailsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.SelectCompanyScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_create_pass.CreatePassViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LogInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_OTP.OTPViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signUp_email_validation.EmailValidationViewModel
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameScreen
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_userName.UserNameViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineScreen
@@ -59,11 +51,8 @@ class MainActivity : ComponentActivity() {
                 darkTheme = false
             ) {
                val navController= rememberNavController()
+
                 val loginViewModel=getViewModel<LoginViewModel> ()
-                val emailValidationViewModel=getViewModel<EmailValidationViewModel>()
-                val otpViewModel=getViewModel<OTPViewModel>()
-                val createPasswordViewmodel=getViewModel<CreatePassViewModel>()
-                val userNameViewModel=getViewModel<UserNameViewModel>()
                 val homeScreenViewModel=getViewModel<HomeViewModel>()
                 val addProductionLineViewModel=getViewModel<AddProductionLineViewModel>()
                 val editProdLineViewModel=getViewModel<EditProdLineViewModel>()
@@ -86,31 +75,17 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                            )
                     }
-                    composable<Screens.EmailValidationScreen> {
-                        EmailValidationScreen(viewModel = emailValidationViewModel, navController = navController)
-                    }
-                    composable<Screens.OTPScreen> {
-                        val args= it.toRoute<Screens.OTPScreen>()
-                        OTPScreen(viewModel = otpViewModel, navController = navController, args = args.email)
-                    }
-                    composable<Screens.CreatePassScreen> {
-                        val args =it.toRoute<Screens.CreatePassScreen>()
-                        CreatePassScreen(viewModel = createPasswordViewmodel, navController = navController, args =args.validatedEmail)
-                    }
-                    composable<Screens.UserNameScreen> {
-                        val args=it.toRoute<Screens.UserNameScreen>()
-                        UserNameScreen(
-                            viewModel = userNameViewModel,
-                            navController = navController,
-                            validatedEmail = args.validatedEmail,
-                            validatedPass = args.validatedPass
-                        )
-                    }
+
                     composable<Screens.AddEquipmentScreen> {
                         AddProductionLineScreen(viewModel = addProductionLineViewModel, navController = navController)
                     }
                     composable<Screens.HomeScreen> {
-                        HomeScreen(viewModel = homeScreenViewModel, navController = navController)
+                        val args=it.toRoute<Screens.HomeScreen>()
+                        HomeScreen(viewModel = homeScreenViewModel,
+                            navController = navController,
+                            userId =args.userID,
+                            companyId = args.companyID)
+
                     }
                     composable<Screens.EditProdLineScreen> {
                         val args=it.toRoute<Screens.EditProdLineScreen>()
@@ -142,13 +117,6 @@ class MainActivity : ComponentActivity() {
                             )
                     }
                     composable<Screens.CreateOwnerEmailScreen> {
-                    //    val args=it.toRoute<Screens.CreateOwnerEmailScreen>()
-//                        val companyDetails=Company(
-//                            organisationName = args.organisationName,
-//                            country = args.country,
-//                            industryType = args.industry,
-//                            companyLogoUrl = args.companyLogo
-//                        )
                         CreateOwnerEmailScreen(
                             viewModel =createOwnerEmailViewModel,
                             navController = navController)

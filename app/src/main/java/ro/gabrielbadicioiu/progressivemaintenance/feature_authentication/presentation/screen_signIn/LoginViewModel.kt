@@ -25,6 +25,9 @@ class LoginViewModel(
     //states
     private val _selectedCompany= mutableStateOf(Company())
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _countDownTimer= mutableIntStateOf(90)
     val countDownTimer:State<Int> = _countDownTimer
 
@@ -109,18 +112,22 @@ class LoginViewModel(
                 { _selectedCompany.value = _registeredCompanies.value.find { it.id == _user.value.companyID } ?: Company(organisationName = "pula")}
             }
             is LoginScreenEvent.OnSignInClick->{
+                _showProgressBar.value=true
                 viewModelScope.launch {
                     useCases.onSignIn.execute(
                         email = _user.value.email,
                         pass = _user.value.password,
                         onSuccess = {
                             currentUser->
+                            _userID.value= currentUser?.uid.toString()
+                            _showProgressBar.value=false
                             _unverifiedEmailErr.value=false
                             _showResendBtn.value=false
                             _errorMessage.value=""
                             _isError.value=false
                             if (_user.value.companyName.isEmpty())
                             {
+                                _showProgressBar.value=false
                                 _isError.value=true
                                 _errorMessage.value="You must select the company you work for before logging in."
                             }
@@ -131,6 +138,7 @@ class LoginViewModel(
                                             companyID = _user.value.companyID,
                                             userID = currentUser?.uid.toString(),
                                             onFailure = {e->
+                                                _showProgressBar.value=false
                                                 _isError.value=true
                                                 _errorMessage.value=e
                                                 _clickableErr.value=false
@@ -141,6 +149,7 @@ class LoginViewModel(
                                                 viewModelScope.launch { _eventFlow.emit(LoginScreenUiEvent.OnNavigateToHomeScreen) }
                                             },
                                             onUserNotFound = {
+                                                _showProgressBar.value=false
                                                 _isError.value=true
                                                 _errorMessage.value="Access denied: You are not registered with this company."
                                                 _clickableErr.value=false
@@ -159,8 +168,10 @@ class LoginViewModel(
                             _isError.value=true
                             _errorMessage.value=e
                             _clickableErr.value=false
+                            _showProgressBar.value=false
                         },
                         onUnverifiedEmailErr = {user->
+                            _showProgressBar.value=false
                             _unverifiedEmailErr.value=true
                             _clickableErr.value=true
                             _errorMessage.value="Your email is not verified. Click here to send a verification email."

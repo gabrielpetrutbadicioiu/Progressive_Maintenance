@@ -19,6 +19,9 @@ private val useCases: UserPassUseCases
     private val _password= mutableStateOf("")
     val password:State<String> = _password
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _showPass= mutableStateOf(false)
     val showPass:State<Boolean> = _showPass
 
@@ -67,20 +70,23 @@ private val useCases: UserPassUseCases
                         viewModelScope.launch { _eventFlow.emit(JoinCompanyUserPassUiEvent.OnNavigateToUserProfile(userID = id.toString())) }
                     }
                     else{
+                        _showProgressBar.value=true
                         useCases.onRegisterUser.execute(
                             email = event.email,
                             pass = _password.value,
                             onSuccess = {currentUser->
+
                                 _isError.value=false
                                 _currentUser=currentUser
                                 if (currentUser != null) {
                                     viewModelScope.launch {
                                         _eventFlow.emit(JoinCompanyUserPassUiEvent.OnNavigateToUserProfile(userID = currentUser.uid))
                                     }
-
+                                    _showProgressBar.value=false
                                 }
                             },
                             onFailure = {e->
+                                _showProgressBar.value=false
                                 _isError.value=true
                                 _errorMessage.value=e}
                         )

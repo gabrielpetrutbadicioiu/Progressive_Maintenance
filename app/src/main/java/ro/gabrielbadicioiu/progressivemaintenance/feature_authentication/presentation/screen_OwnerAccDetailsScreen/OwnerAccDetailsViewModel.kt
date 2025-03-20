@@ -26,6 +26,9 @@ class OwnerAccDetailsViewModel(
     ))
     val user:State<UserDetails> = _user
 
+    private val _showProgressBar= mutableStateOf(false)
+    val showProgressBar:State<Boolean> = _showProgressBar
+
     private val _lastNameErr = mutableStateOf(false)
     val lastNameErr:State<Boolean> = _lastNameErr
 
@@ -76,6 +79,7 @@ class OwnerAccDetailsViewModel(
                 _user.value=_user.value.copy(email = event.currentUserEmail, userID = event.currentUserID)
             }
             is OwnerAccDetailsScreenEvent.OnFinishBtnClick->{
+                _showProgressBar.value=true
                 viewModelScope.launch {
                     useCases.onAddUserToCompany.execute(
                         user = _user.value.copy(),
@@ -94,8 +98,10 @@ class OwnerAccDetailsViewModel(
                             _firstNameErr.value=false
                             _errMsg.value=""
                            viewModelScope.launch {_eventFlow.emit(OwnerAccDetailsUiEvent.OnNavigateToSignInScreen)  }
+                            _showProgressBar.value=false
                         },
                         onFailure = {e->
+                            _showProgressBar.value=false
                             _registerErr.value=true
                             _errMsg.value=e
                         },

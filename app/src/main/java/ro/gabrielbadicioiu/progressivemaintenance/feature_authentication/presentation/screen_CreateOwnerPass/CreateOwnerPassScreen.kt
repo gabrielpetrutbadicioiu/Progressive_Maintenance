@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Lock
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -188,23 +190,33 @@ fun CreateOwnerPassScreen(
                     ) {}
                 }
                     val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
-                Button(
-                    onClick = {
+                if (viewModel.showProgressBar.value)
+                {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp) ,
+                        color = colorResource(id = R.color.bar_color)
+                    )
+                }
+                else{
+                    Button(
+                        onClick = {
                             viewModel.onEvent(CreateOwnerPassEvent.OnContinueBtnClick(
                                 email=email,
                                 pass = viewModel.password.value,
                                 poppedBackStack = poppedBackStack
                             ))
 
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp),
-                    enabled = enable,
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
-                ) {
-                    Text(text = stringResource(id = R.string.continue_btn))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, 0.dp),
+                        enabled = enable,
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    ) {
+                        Text(text = stringResource(id = R.string.continue_btn))
+                    }
                 }
+
             }
         }
     }

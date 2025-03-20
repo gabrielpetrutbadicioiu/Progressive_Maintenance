@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,6 +53,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
@@ -86,7 +89,7 @@ fun LogInScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is LoginViewModel.LoginScreenUiEvent.OnNavigateToHomeScreen->{
-                    navController.navigate(Screens.HomeScreen)
+                    navController.navigate(Screens.HomeScreen(companyID = viewModel.user.value.companyID, userID = viewModel.userID.value))
                 }
                 is LoginViewModel.LoginScreenUiEvent.OnNavigateToJoinCompanyScreen->{
                     navController.navigate(Screens.JoinSelectCompanyScreen)
@@ -121,6 +124,7 @@ fun LogInScreen(
                             Text(text = stringResource(id = R.string.SignIn_title),
                                 color = colorResource(id = R.color.text_color),
                                 )
+                            
 //                            Image(
 //                                painter = painterResource(id = R.drawable.ic_icon),
 //                                contentDescription = stringResource(id = R.string.image_descr),
@@ -144,6 +148,7 @@ fun LogInScreen(
                 verticalArrangement = Arrangement.Center)
             {
                 item {
+
                     Image(
                         painter = painterResource(id = R.drawable.auth_image),
                         contentDescription = stringResource(
@@ -162,6 +167,9 @@ fun LogInScreen(
                 }
 
                 item {
+                 Text(text = viewModel.user.value.companyID)
+//                Text(text = viewModel.companyID.value)
+                //    Text(text = viewModel.userID.value)
     //Email
      OutlinedTextField(
         modifier = Modifier
@@ -292,7 +300,7 @@ fun LogInScreen(
                             .padding(8.dp)
                     )
                 }
-                item { 
+                item {
                     if (viewModel.showResendBtn.value)
                     {
 
@@ -310,20 +318,31 @@ fun LogInScreen(
 
                     }
                 }
-
+//sign in btn
                 item {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.bar_color)),
-                        onClick = { viewModel.onEvent(LoginScreenEvent.OnSignInClick)},
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.SignIn_title),
-                            color = colorResource(id =R.color.text_color),
-                            fontSize = 18.sp)
+                    if (viewModel.showProgressBar.value)
+                    {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(30.dp) ,
+                            color = colorResource(id = R.color.bar_color)
+                        )
                     }
+                    else
+                    {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.bar_color)),
+                            onClick = { viewModel.onEvent(LoginScreenEvent.OnSignInClick)},
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.SignIn_title),
+                                color = colorResource(id =R.color.text_color),
+                                fontSize = 18.sp)
+                        }
+                    }
+
                 }
                 item {
                     TextButton(onClick = { viewModel.onEvent(LoginScreenEvent.OnJoinCompanyClick)  }) {

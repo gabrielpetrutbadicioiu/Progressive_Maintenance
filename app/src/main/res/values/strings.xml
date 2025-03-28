@@ -88,4 +88,6 @@
     <string name="get_otp_hint">Contact company Owner for the OTP*</string>
     <string name="confirm_password">Confirm password</string>
     <string name="resend">Resend</string>
+    <string name="Hi">Hi</string>
+    <string name="wbk">Welcome Back!</string>
 </resources>

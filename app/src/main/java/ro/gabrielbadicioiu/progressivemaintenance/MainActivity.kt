@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProgressiveMaintenanceTheme(
-                darkTheme = false
+                darkTheme = true
             ) {
                val navController= rememberNavController()
 
@@ -76,8 +76,13 @@ class MainActivity : ComponentActivity() {
                            )
                     }
 
-                    composable<Screens.AddEquipmentScreen> {
-                        AddProductionLineScreen(viewModel = addProductionLineViewModel, navController = navController)
+                    composable<Screens.AddProductionLineScreen> {
+                        val args=it.toRoute<Screens.AddProductionLineScreen>()
+                        AddProductionLineScreen(
+                            viewModel = addProductionLineViewModel,
+                            navController = navController,
+                            companyID = args.companyID,
+                            userID = args.userID)
                     }
                     composable<Screens.HomeScreen> {
                         val args=it.toRoute<Screens.HomeScreen>()

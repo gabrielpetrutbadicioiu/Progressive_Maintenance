@@ -3,6 +3,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain
 import com.google.firebase.firestore.CollectionReference
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 interface CompaniesRepository {
     suspend fun registerCompany(
@@ -17,6 +18,19 @@ interface CompaniesRepository {
         user: UserDetails,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
+    )
+
+    suspend fun addProductionLineToCompany(
+        companyID:String,
+        productionLine: ProductionLine,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+
+    suspend fun fetchProductionLines(
+        companyID: String,
+        onResult: (List<ProductionLine>)->Unit,
+        onFailure:(String)->Unit
     )
 
     suspend fun getAllCompanies(

@@ -10,6 +10,7 @@ data class ProductionLine(
     fun toFirebaseDocument() :HashMap<String, Any>{
         return hashMapOf(
             "lineName" to lineName,
+            "id" to id,
             "equipments" to equipments.map
             { equipment -> hashMapOf(
                 "name" to equipment.name

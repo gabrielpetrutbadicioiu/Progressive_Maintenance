@@ -1,9 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn
 
 
-import android.widget.Space
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,6 +25,7 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -53,12 +51,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.AuthenticationLottie
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.PickCompanyAlertDialog
 
@@ -148,28 +145,25 @@ fun LogInScreen(
                 verticalArrangement = Arrangement.Center)
             {
                 item {
-
-                    Image(
-                        painter = painterResource(id = R.drawable.auth_image),
-                        contentDescription = stringResource(
-                            id = R.string.image_description
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp, 0.dp)
-                            .size(128.dp)
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(6.dp)
-                    )
+AuthenticationLottie()
+//                    Image(
+//                        painter = painterResource(id = R.drawable.auth_image),
+//                        contentDescription = stringResource(
+//                            id = R.string.image_description
+//                        ),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(4.dp, 0.dp)
+//                            .size(128.dp)
+//                    )
+//                    Spacer(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(6.dp)
+//                    )
                 }
 
                 item {
-                 Text(text = viewModel.user.value.companyID)
-//                Text(text = viewModel.companyID.value)
-                //    Text(text = viewModel.userID.value)
     //Email
      OutlinedTextField(
         modifier = Modifier
@@ -275,7 +269,11 @@ fun LogInScreen(
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = viewModel.user.value.rememberMe,
-                            onCheckedChange ={viewModel.onEvent(LoginScreenEvent.OnCheckedChange)}, )
+                            onCheckedChange ={viewModel.onEvent(LoginScreenEvent.OnCheckedChange)},
+                            colors = CheckboxDefaults.colors(
+                                checkmarkColor = Color.White,
+                                checkedColor = colorResource(id = R.color.btn_color)
+                                ))
                         Text(text = stringResource(id = R.string.remember_me))
                     }
                 }
@@ -333,7 +331,7 @@ fun LogInScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
-                            colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.bar_color)),
+                            colors =ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color)),
                             onClick = { viewModel.onEvent(LoginScreenEvent.OnSignInClick)},
                         ) {
                             Text(
@@ -345,13 +343,19 @@ fun LogInScreen(
 
                 }
                 item {
-                    TextButton(onClick = { viewModel.onEvent(LoginScreenEvent.OnJoinCompanyClick)  }) {
+                    TextButton(onClick = { viewModel.onEvent(LoginScreenEvent.OnJoinCompanyClick)  },
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = colorResource(id = R.color.btn_color),
+                            containerColor = Color.Transparent)) {
                         Text(text = stringResource(id = R.string.create_acc_txt))
                     }
                 }
                 item {
                     TextButton(onClick = {
-                        viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) }) {
+                        viewModel.onEvent(LoginScreenEvent.OnRegisterCompanyClick) },
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = colorResource(id = R.color.btn_color),
+                            containerColor = Color.Transparent)) {
                         Text(text = stringResource(id = R.string.register_company_txt))
                     }
                 }

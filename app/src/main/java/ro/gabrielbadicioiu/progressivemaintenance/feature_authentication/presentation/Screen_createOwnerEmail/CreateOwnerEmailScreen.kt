@@ -1,7 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -41,6 +39,7 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.Composables.ExpandableText
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.AuthenticationLottie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,15 +101,16 @@ fun CreateOwnerEmailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center)
             {
-                Image(
-                    painter = painterResource(id = R.drawable.auth_image),
-                    contentDescription = stringResource(
-                        id = R.string.image_description
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
-                )
+                AuthenticationLottie()
+//                Image(
+//                    painter = painterResource(id = R.drawable.auth_image),
+//                    contentDescription = stringResource(
+//                        id = R.string.image_description
+//                    ),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(16.dp, 0.dp)
+//                )
                 ExpandableText(
                     shortText = stringResource(id = R.string.short_text) ,
                     fullText = stringResource(id = R.string.full_text),

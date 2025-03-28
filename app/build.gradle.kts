@@ -121,5 +121,7 @@ dependencies {
 
     //upload files to firebase(ex images)
     implementation(libs.firebase.storage)
+    //lottie
+    implementation(libs.lottie.compose)
 
 }

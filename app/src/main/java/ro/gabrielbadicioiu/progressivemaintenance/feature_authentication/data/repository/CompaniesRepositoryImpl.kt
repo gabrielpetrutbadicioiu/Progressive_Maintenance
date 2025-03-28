@@ -11,6 +11,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 class CompaniesRepositoryImpl:CompaniesRepository {
     override suspend fun registerCompany(
@@ -55,6 +56,52 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             }
             .addOnFailureListener {e->
                 onFailure("Error adding user to company: ${e.message}")
+            }
+    }
+
+    override suspend fun addProductionLineToCompany(
+        companyID: String,
+        productionLine: ProductionLine,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        val db=Firebase.firestore
+      val docRef=  db.collection(FirebaseCollections.COMPANIES)//accesez colectia
+            .document(companyID)//accesez documentul
+            .collection(FirebaseCollections.PRODUCTION_LINES)//creaza/alege colectia
+            .document()//adauga document cu id generat automat
+            val prodLine=productionLine.copy(id = docRef.id)//actualizam id-ul generat
+            docRef.set(prodLine)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message.toString())
+            }
+    }
+
+    override suspend fun fetchProductionLines(
+        companyID: String,
+        onResult: (List<ProductionLine>) -> Unit,
+        onFailure:(String)->Unit
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .addSnapshotListener { snapShot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message.toString())
+                }
+                if (snapShot!=null)
+                {
+                    val productionLines=snapShot.documents.mapNotNull { documentSnapshot ->
+                        val line=documentSnapshot.toObject(ProductionLine::class.java)
+                        line?.copy(id = documentSnapshot.id)
+                    }
+                    onResult(productionLines)
+                }
             }
     }
 

@@ -51,8 +51,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnAddEquipmentClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnDoneBtnClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentDelete
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnEquipmentNameChange
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.OnProductionLineNameChange
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.EditProdLineUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.LoadProdLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.OnDeleteEditEquipment
@@ -60,6 +58,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.OnDoneEdit
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.OnEquipmentEdit
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.FetchProductionLines
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.GetUserInCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnExpandBtnClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
@@ -114,7 +113,8 @@ val appModule= module {
 single{
     HomeScreenUseCases(
         fetchProductionLines = FetchProductionLines(get()),
-        onExpandBtnClick = OnExpandBtnClick()
+        onExpandBtnClick = OnExpandBtnClick(),
+        getUserById = GetUserInCompany(repository = get())
     )
 }
     viewModel {
@@ -123,15 +123,15 @@ single{
     //add production line screen
     single{
         AddProductionLineScreenUseCases(
-            onProductionLineNameChange = OnProductionLineNameChange(),
             onAddEquipmentClick = OnAddEquipmentClick(),
-            onEquipmentNameChange = OnEquipmentNameChange(),
             onEquipmentDelete = OnEquipmentDelete(),
-            onDoneBtnClick = OnDoneBtnClick(get())
+            onDoneBtnClick = OnDoneBtnClick(repository = get())
         )
     }
     viewModel {
-        AddProductionLineViewModel(get())
+        AddProductionLineViewModel(
+            useCases = get()
+        )
     }
 
 //edit production line screen

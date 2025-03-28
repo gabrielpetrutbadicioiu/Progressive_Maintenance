@@ -6,7 +6,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Prod
 class OnAddEquipmentClick {
     fun execute(productionLine:ProductionLine):ProductionLine
     {
-
         return productionLine.copy(equipments = productionLine.equipments+Equipment())
     }
 }

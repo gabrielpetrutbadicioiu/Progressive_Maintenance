@@ -1,16 +1,14 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine
 
-import com.google.firebase.firestore.FirebaseFirestore
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
 
 class OnDoneBtnClick(
-    private val repository: ProductionLineRepository
+    private val repository: CompaniesRepository
 ){
     suspend fun execute(
-        db:FirebaseFirestore,
-        collection:String,
         productionLine: ProductionLine,
+        companyID:String,
         onSuccess:()->Unit,
         onFailure:(String)->Unit,
         onInvalidName:(String)->Unit
@@ -23,14 +21,13 @@ class OnDoneBtnClick(
         else{
             val cleanList= productionLine.equipments.filter { equipment -> equipment.name.isNotEmpty()  }
             val newList= productionLine.copy(equipments = cleanList)
-            val document= newList.toFirebaseDocument()
-          repository.addProductionLine(
-              db = db,
-              collection = collection,
-              document = document,
+          repository.addProductionLineToCompany(
+              companyID = companyID,
               productionLine = newList,
               onSuccess = {onSuccess()},
-              onFailure = {e-> onFailure(e)}
+              onFailure = {e->
+                  onFailure(e)
+              }
           )
         }
     }

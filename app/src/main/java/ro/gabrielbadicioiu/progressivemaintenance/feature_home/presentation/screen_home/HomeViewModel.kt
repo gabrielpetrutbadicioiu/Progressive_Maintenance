@@ -4,21 +4,32 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 
 class HomeViewModel(
     private val useCases: HomeScreenUseCases
 ):ViewModel() {
-    private val db=Firebase.firestore
     //states
+    private val _companyID= mutableStateOf("")
+    val companyID:State<String> = _companyID
+
+    private val _userID= mutableStateOf("")
+    val userID:State<String> = _userID
+
+    private val _userDetails= mutableStateOf(UserDetails())
+    val userDetails:State<UserDetails> = _userDetails
+
+    private val _getUserErr= mutableStateOf(false)
+    val getUserErr:State<Boolean> = _getUserErr//todo
+
+    private val _getUserErrMsg= mutableStateOf("")
+    val getUserErrMsg:State<String> = _getUserErrMsg
    private val  _productionLineList= mutableStateOf<List<ProductionLine>>(emptyList())
     val productionLineList:State<List<ProductionLine>> = _productionLineList
 
@@ -36,7 +47,7 @@ class HomeViewModel(
     val eventFlow=_eventFlow.asSharedFlow()
     sealed class HomeScreenUiEvent()
     {
-        data object OnFabClick: HomeScreenUiEvent()
+        data object OnAddProductionLineClick: HomeScreenUiEvent()
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
@@ -46,27 +57,32 @@ class HomeViewModel(
     {
         when(event)
         {
+            is HomeScreenEvent.OnFetchArgumentData->{
+                _userID.value=event.userID
+                _companyID.value=event.companyID
+            }
+
             is HomeScreenEvent.OnFetchProductionLines->{
                 _showProgressBar.value=true
                 viewModelScope.launch {
                     useCases.fetchProductionLines.execute(
-                        db = db,
-                        collection = FirebaseCollections.PRODUCTION_LINES,
-                        onSuccess = {result->
-                            _showProgressBar.value=false
+                        onResult = {productionLines ->
+                            _productionLineList.value=productionLines
                             _fetchProdLineErr.value=false
                             _failedToFetchProdLineErrMsg.value=""
-                            _productionLineList.value=result},
+                                   },
                         onFailure = {e->
-                            _showProgressBar.value=false
                             _fetchProdLineErr.value=true
                             _failedToFetchProdLineErrMsg.value=e
-                            viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.ToastMessage(e)) } })
+                            _productionLineList.value= emptyList()
+                        },
+                        companyID =_companyID.value
+                    )
                 }
             }
             is HomeScreenEvent.OnAddProductionLineClick -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(HomeScreenUiEvent.OnFabClick)
+                    _eventFlow.emit(HomeScreenUiEvent.OnAddProductionLineClick)
                 }
             }
             is HomeScreenEvent.OnExpandBtnClick->{
@@ -79,6 +95,24 @@ class HomeViewModel(
             }
             is HomeScreenEvent.OnNavigateUp->{
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateTo(Screens.SignInScreen)) }
+            }
+            is HomeScreenEvent.OnGetUserById->{
+                viewModelScope.launch {
+                    useCases.getUserById.execute(
+                        userId = _userID.value,
+                        companyId = _companyID.value,
+                        onFailure = {e->
+                            _getUserErr.value=true
+                            _getUserErrMsg.value=e
+
+                        },
+                        onSuccess = {user->
+                            _getUserErr.value=false
+                            _getUserErrMsg.value=""
+                            _userDetails.value=user.copy()
+                        }
+                    )
+                }
             }
 
         }

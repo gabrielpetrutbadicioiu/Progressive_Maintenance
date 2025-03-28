@@ -1,6 +1,5 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,6 +42,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.AuthenticationLottie
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.components.PickCompanyAlertDialog
 
@@ -123,20 +122,21 @@ fun JoinSelectCompanyScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center)
             {
-                Image(
-                    painter = painterResource(id = R.drawable.auth_image),
-                    contentDescription = stringResource(
-                        id = R.string.image_description
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp, 0.dp)
-                )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(6.dp)
-                )
+                AuthenticationLottie()
+//                Image(
+//                    painter = painterResource(id = R.drawable.auth_image),
+//                    contentDescription = stringResource(
+//                        id = R.string.image_description
+//                    ),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(4.dp, 0.dp)
+//                )
+//                Spacer(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(6.dp)
+//                )
                 //email
                 OutlinedTextField(
                     modifier = Modifier

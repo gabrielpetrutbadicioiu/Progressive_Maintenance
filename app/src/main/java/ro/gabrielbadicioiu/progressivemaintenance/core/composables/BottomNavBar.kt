@@ -1,15 +1,11 @@
 package ro.gabrielbadicioiu.progressivemaintenance.core.composables
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
@@ -17,14 +13,12 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.BottomNavigationItem
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.AddProductionLineLottie
 
 @Composable
 fun BottomNavBar(
@@ -75,15 +69,18 @@ fun BottomNavBar(
                     NavigationBarItem(
                         selected = false ,
                         onClick = { onAddEquipmentClick() },
-                        icon = { Icon(
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(CircleShape)
-                                .background(colorResource(id = R.color.add_btn_color))
-                                .padding(8.dp),
-                            imageVector = Icons.Rounded.Add,
-                            tint = colorResource(id = R.color.text_color),
-                            contentDescription = stringResource(id = R.string.icon_descr)) },
+                        icon = {
+                            AddProductionLineLottie()
+//                            Icon(
+//                            modifier = Modifier
+//                                .size(56.dp)
+//                                .clip(CircleShape)
+//                                .background(colorResource(id = R.color.add_btn_color))
+//                                .padding(8.dp),
+//                            imageVector = Icons.Rounded.Add,
+//                            tint = colorResource(id = R.color.text_color),
+//                            contentDescription = stringResource(id = R.string.icon_descr))
+                               },
 
                     )
                 }

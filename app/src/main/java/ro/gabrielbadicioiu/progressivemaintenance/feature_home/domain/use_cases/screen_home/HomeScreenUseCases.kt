@@ -2,5 +2,6 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases
 
 data class HomeScreenUseCases(
     val fetchProductionLines: FetchProductionLines,
-    val onExpandBtnClick: OnExpandBtnClick
+    val onExpandBtnClick: OnExpandBtnClick,
+    val getUserById: GetUserInCompany
 )

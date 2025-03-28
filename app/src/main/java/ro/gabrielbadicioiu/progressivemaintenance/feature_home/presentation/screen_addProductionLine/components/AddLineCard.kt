@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,7 +44,8 @@ fun AddLineCard(
    onLineNameChange:(String)->Unit,
    onEquipmentNameChange:(String, Int)->Unit,
     onDoneBtnClick:()->Unit,
-    onCancelBtnClick:()->Unit
+    onCancelBtnClick:()->Unit,
+    showProgressBar:Boolean
 )
 {
     Card(
@@ -149,13 +151,20 @@ fun AddLineCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically) {
-                    Button(
-                        onClick = {
-                            onDoneBtnClick()
-                        }
-                    ) {
-                        Text(text = stringResource(id = R.string.done_btn))
+                    if (showProgressBar)
+                    {
+                        CircularProgressIndicator()
                     }
+                    else{
+                        Button(
+                            onClick = {
+                                onDoneBtnClick()
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.done_btn))
+                        }
+                    }
+
                     Button(onClick = {
                         onCancelBtnClick()
                     }) {

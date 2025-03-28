@@ -1,7 +1,9 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,33 +16,37 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Troubleshoot
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.EmptyScreenCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineCard
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineLottie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,13 +59,15 @@ fun HomeScreen(
 {
     val context= LocalContext.current
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(HomeScreenEvent.OnFetchArgumentData(companyID = companyId, userID = userId))
         viewModel.onEvent(HomeScreenEvent.OnFetchProductionLines)
+        viewModel.onEvent(HomeScreenEvent.OnGetUserById)
         viewModel.eventFlow.collectLatest {
             event->
             when(event)
             {
-                is HomeViewModel.HomeScreenUiEvent.OnFabClick ->{
-                    navController.navigate(Screens.AddEquipmentScreen)
+                is HomeViewModel.HomeScreenUiEvent.OnAddProductionLineClick ->{
+                    navController.navigate(Screens.AddProductionLineScreen(companyID = companyId, userID = userId))
                 }
                 is HomeViewModel.HomeScreenUiEvent.ToastMessage->{
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
@@ -77,32 +85,63 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
     ) {
-        val scrollBehavior=TopAppBarDefaults.pinnedScrollBehavior()
+        val scrollBehavior=TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopAppBar(
+                LargeTopAppBar(
                     navigationIcon = {
-                        Row(horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { viewModel.onEvent(HomeScreenEvent.OnNavigateUp)}) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBackIosNew,
-                                    contentDescription = stringResource(id = R.string.icon_descr),
-                                    tint = colorResource(id = R.color.text_color))
+
+                            Row(horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { viewModel.onEvent(HomeScreenEvent.OnNavigateUp)}) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowBackIosNew,
+                                        contentDescription = stringResource(id = R.string.icon_descr),
+                                        tint = colorResource(id = R.color.text_color))
+                                }
+                                Text(text = stringResource(id = R.string.SignIn_title),
+                                    color = colorResource(id = R.color.text_color))
                             }
-                            Text(text = stringResource(id = R.string.SignIn_title),
-                                color = colorResource(id = R.color.text_color))
-                        }
+
+
                     },
-                    title = { /*TODO*/
+                    title = { //todo
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            if (scrollBehavior.state.collapsedFraction<0.5f)
+                            {
+                                Column {
+                                    Text(text =
+                                    "${stringResource(id = R.string.Hi)} ${viewModel.userDetails.value.firstName} ${viewModel.userDetails.value.lastName.firstOrNull().toString()},",
+                                        fontSize = 18.sp)
+                                    Text(text = stringResource(id = R.string.wbk),
+                                        fontSize = 24.sp)
+                                }
+                                if (viewModel.userDetails.value.profilePicture.isEmpty())
+                                {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.auth_image),
+                                        contentDescription = stringResource(id = R.string.image_description),
+                                        modifier = Modifier
+                                            .size(80.dp)
+                                            .clip(shape = CircleShape))
+                                }
+                                else{
+                                    AsyncImage(model =viewModel.userDetails.value.profilePicture,
+                                        contentDescription = stringResource(id = R.string.image_description),
+                                        modifier = Modifier
+                                            .size(65.dp)
+                                            .clip(CircleShape),
+                                        contentScale = ContentScale.Crop)
+                                }
+
+                            }
 
                         }
                     },
@@ -155,36 +194,16 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top) {
-                item {   Text(text = companyId)
-                    Text(text = userId) }
-                if (viewModel.showProgressBar.value)
+                verticalArrangement = Arrangement.Center) {
+                if (viewModel.productionLineList.value.isEmpty())
                 {
-                    item {
-
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(30.dp) ,
-                            color = colorResource(id = R.color.bar_color),
-
-                        )
-                    }
+                    item { ProductionLineLottie() }
+                    if (viewModel.fetchProdLineErr.value)
+                        item { Text(text = viewModel.failedToFetchProdLinesErrMsg.value) }
                 }
                 else{
-                    if (viewModel.fetchProdLineErr.value)
-                    {
-                        item {
-                            Text(text = viewModel.failedToFetchProdLinesErrMsg.value)
-                        }
-
-                    }
-                    else{
-                        if(viewModel.productionLineList.value.isEmpty())
-                        {
-                            item {EmptyScreenCard()  }
-                        }
-                        else{
-                            items(viewModel.productionLineList.value.size)
-                            {index->
+                    items(viewModel.productionLineList.value.size)
+                        {index->
                                 ProductionLineCard(
                                     productionLine = viewModel.productionLineList.value[index],
                                     onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
@@ -192,15 +211,52 @@ fun HomeScreen(
                                     onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))}
                                 )
                             }
-
-                        }
-                    }
-
                 }
+//                item {   Text(text = companyId)
+//                    Text(text = userId) }
+//                if (viewModel.showProgressBar.value)
+//                {
+//                    item {
+//
+//                        CircularProgressIndicator(
+//                            modifier = Modifier.size(30.dp) ,
+//                            color = colorResource(id = R.color.bar_color),
+//
+//                        )
+//                    }
+//                }
+//                else{
+//                    if (viewModel.fetchProdLineErr.value)
+//                    {
+//                        item {
+//                            Text(text = viewModel.failedToFetchProdLinesErrMsg.value)
+//                        }
+//
+//                    }
+//                    else{
+//                        if(viewModel.productionLineList.value.isEmpty())
+//                        {
+//                            item {EmptyScreenCard()  }
+//                        }
+//                        else{
+//                            items(viewModel.productionLineList.value.size)
+//                            {index->
+//                                ProductionLineCard(
+//                                    productionLine = viewModel.productionLineList.value[index],
+//                                    onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
+//                                    isExpanded = viewModel.productionLineList.value[index].isExpanded,
+//                                    onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))}
+//                                )
+//                            }
+//
+//                        }
+//                    }
+//
+//                }
 
 
 
-            }
+            }//lazy column
 
 
 

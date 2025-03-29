@@ -170,4 +170,36 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             }
 
     }
+
+    override suspend fun getProductionLineById(
+        companyId: String,
+        productionLineId: String,
+        onSuccess: ( ProductionLine) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore.collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(productionLineId)
+            .get()
+            .addOnSuccessListener { result->
+                if (result.exists())
+                {
+                    val productionLine=result.toObject(ProductionLine::class.java)
+                    if (productionLine!=null)
+                    {
+                        onSuccess(productionLine)
+                    }
+                    else{
+                        onFailure("Production line is null")
+                    }
+                }
+                else{
+                    onFailure("Production line not found")
+                }
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message.toString())
+            }
+    }
 }

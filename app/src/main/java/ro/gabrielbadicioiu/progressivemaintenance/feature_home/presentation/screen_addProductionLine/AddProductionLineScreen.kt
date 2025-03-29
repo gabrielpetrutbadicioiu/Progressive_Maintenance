@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +57,6 @@ val context= LocalContext.current
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.White
     ) {
         Scaffold(
             modifier = Modifier

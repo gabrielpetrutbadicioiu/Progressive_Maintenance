@@ -1,35 +1,26 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine
 
-import com.google.firebase.firestore.FirebaseFirestore
-import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
 
 class LoadProdLine(
-    private val repository: ProductionLineRepository
+    private val repository:CompaniesRepository
 ){
 
     suspend fun execute(
-        id:String,
-        db:FirebaseFirestore,
-        onSuccess:(ProductionLine?)->Unit,
+        companyId:String,
+        productionLineId:String,
+        onSuccess:(ProductionLine)->Unit,
         onFailure:(String)->Unit){
-        repository.fetchProductionLines(
-            db = db,
-            collection = FirebaseCollections.PRODUCTION_LINES,
-            onSuccess = { prodLineList->
-
-                val editedProdLine=prodLineList.find { productionLine -> productionLine.id==id }
-                if(editedProdLine==null)
-                {
-                    onFailure("An error occurred!")
-                }
-                else {
-                    onSuccess(editedProdLine)
-                }
-
+        repository.getProductionLineById(
+            companyId = companyId,
+            productionLineId = productionLineId,
+            onSuccess = {productionLine ->
+                onSuccess(productionLine)
             },
-            onFailure = {onFailure("Failed to load production line!")}
+            onFailure = {e->
+                onFailure(e)
+            }
         )
     }
 }

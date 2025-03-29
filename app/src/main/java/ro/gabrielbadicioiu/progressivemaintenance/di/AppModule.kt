@@ -137,7 +137,7 @@ single{
 //edit production line screen
     single{
         EditProdLineUseCases(
-            loadProdLine = LoadProdLine(get()),
+            loadProdLine = LoadProdLine(repository = get()),
             onEquipmentEdit = OnEquipmentEdit(),
             onDeleteEditEquipment = OnDeleteEditEquipment(),
             onDoneEdit = OnDoneEdit(get()),

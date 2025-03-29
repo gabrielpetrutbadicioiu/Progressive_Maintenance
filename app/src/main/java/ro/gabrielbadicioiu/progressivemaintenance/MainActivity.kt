@@ -97,7 +97,9 @@ class MainActivity : ComponentActivity() {
                         EditProdLineScreen(
                             viewModel = editProdLineViewModel,
                             navController = navController,
-                            prodLineID = args.prodLineID)
+                            prodLineId = args.productionLineId,
+                            userId = args.userID,
+                            companyId = args.companyId)
                     }
                     composable<Screens.RegisterCompanyMailScreen> {
                         RegisterCompanyEmailScreen()

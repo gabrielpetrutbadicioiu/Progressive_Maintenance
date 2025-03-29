@@ -27,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
-import java.util.Locale
 
 
 @Composable
@@ -50,7 +49,7 @@ fun ProductionLineCard(
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = productionLine.lineName.uppercase(Locale.ROOT),
+                    Text(text = productionLine.lineName,
                         style = MaterialTheme.typography.titleMedium,
                         color = colorResource(id = R.color.text_color))
                     Row(modifier = Modifier.wrapContentSize(),

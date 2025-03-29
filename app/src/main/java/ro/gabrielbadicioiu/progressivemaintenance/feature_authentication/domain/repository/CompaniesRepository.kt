@@ -46,4 +46,10 @@ interface CompaniesRepository {
         onFailure: (String) -> Unit,
         onUserNotFound:()->Unit
     )
+    suspend fun getProductionLineById(
+        companyId: String,
+        productionLineId:String,
+        onSuccess: ( ProductionLine) -> Unit,
+        onFailure: (String) -> Unit
+    )
 }

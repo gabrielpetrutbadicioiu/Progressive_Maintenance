@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Troubleshoot
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -41,10 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineLottie
 
@@ -73,7 +74,10 @@ fun HomeScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is HomeViewModel.HomeScreenUiEvent.OnEditBtnClick->{
-                    navController.navigate(Screens.EditProdLineScreen(prodLineID = event.id))
+                    navController.navigate(Screens.EditProdLineScreen(
+                        companyId = companyId,
+                        userID = userId,
+                        productionLineId =event.id ))
                 }
                 is HomeViewModel.HomeScreenUiEvent.OnNavigateTo->{
                     navController.navigate(event.screen)
@@ -181,10 +185,10 @@ fun HomeScreen(
                 FloatingActionButton(
                     modifier = Modifier.padding(4.dp),
                     shape = CircleShape,
-                    containerColor = colorResource(id = R.color.bar_color),
+                    containerColor = colorResource(id = R.color.btn_color),
                     contentColor = colorResource(id = R.color.text_color),
                     onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Troubleshoot, contentDescription = stringResource(id = R.string.warning_icon_descr))
+                    DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.ic_ai_lottie), size = 60.dp)
                 }
             },
         ) {

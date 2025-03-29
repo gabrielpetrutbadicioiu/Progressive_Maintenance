@@ -11,7 +11,7 @@ sealed class Screens {
     @Serializable
     data class HomeScreen(val companyID:String, val userID:String):Screens()
     @Serializable
-    data class EditProdLineScreen(val prodLineID:String):Screens()
+    data class EditProdLineScreen(val companyId:String, val userID: String, val productionLineId:String):Screens()
     @Serializable
     data object RegisterCompanyMailScreen:Screens()
     @Serializable

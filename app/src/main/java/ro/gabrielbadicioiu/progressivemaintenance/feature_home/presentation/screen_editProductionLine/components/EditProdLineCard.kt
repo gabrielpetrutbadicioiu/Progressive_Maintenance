@@ -70,8 +70,7 @@ fun EditProdLineCard(
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color),
-                        unfocusedBorderColor = colorResource(id = R.color.unfocused_color)
+                        focusedBorderColor = colorResource(id = R.color.text_color)
                     ),
                     shape = RoundedCornerShape(16.dp),
                     placeholder = {
@@ -101,8 +100,7 @@ fun EditProdLineCard(
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color),
-                        unfocusedBorderColor = colorResource(id = R.color.unfocused_color)
+                        focusedBorderColor = colorResource(id = R.color.text_color)
                     ),
                     trailingIcon = { IconButton(onClick = {
                         onDeleteEquipment(index)
@@ -138,11 +136,11 @@ fun EditProdLineCard(
                         Icon(
                             imageVector = Icons.Outlined.Add,
                             contentDescription = stringResource(id = R.string.icon_btn_descr),
-                            tint = colorResource(id = R.color.text_color)
+                            tint = colorResource(id = R.color.btn_color)
                         )
                         Text(
                             text = stringResource(id = R.string.add_equipment_to_line),
-                            color = colorResource(id = R.color.text_color)
+                            color = colorResource(id = R.color.btn_color)
                         )
                     }
                 }
@@ -155,13 +153,15 @@ fun EditProdLineCard(
                     Button(
                         onClick = {
                             onDoneBtnClick()
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))
                     ) {
                         Text(text = stringResource(id = R.string.done_btn))
                     }
                     Button(onClick = {
                         onCancelBtnClick()
-                    }) {
+                    },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
                         Text(text = stringResource(id = R.string.cancel_btn))
                     }
                 }

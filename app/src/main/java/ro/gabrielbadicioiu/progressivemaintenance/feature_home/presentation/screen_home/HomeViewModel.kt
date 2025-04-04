@@ -114,6 +114,20 @@ class HomeViewModel(
                     )
                 }
             }
+            is HomeScreenEvent.OnProductionLineListener->{
+                viewModelScope.launch {
+                    useCases.onProductionLineListener.execute(
+                        companyId = _companyID.value,
+                        onProductionLineAdded = {addedLineId ->
+                            //todo
+                            onEvent(HomeScreenEvent.OnFetchProductionLines)
+                        },
+                        onProductionLineUpdated = {updatedLineId ->  },//todo
+                        onProductionLineRemoved = {removedLineId ->  },//todo
+                        onFailure = {e->}//todo
+                    )
+                }
+            }
 
         }
     }

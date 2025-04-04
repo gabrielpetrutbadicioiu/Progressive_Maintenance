@@ -6,7 +6,8 @@ data class ProductionLine(
     val lineName:String="",
     val id:String="",
     val isExpanded:Boolean=false,
-    val equipments:List<Equipment> = listOf(Equipment())){
+    val equipments:List<Equipment> = listOf(Equipment()),
+    val addedModifiedByUserId:String=""){
     fun toFirebaseDocument() :HashMap<String, Any>{
         return hashMapOf(
             "lineName" to lineName,

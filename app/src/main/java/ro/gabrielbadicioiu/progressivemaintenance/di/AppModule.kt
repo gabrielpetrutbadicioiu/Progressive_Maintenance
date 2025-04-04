@@ -61,6 +61,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.GetUserInCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnExpandBtnClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnProductionLineListener
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
@@ -114,7 +115,8 @@ single{
     HomeScreenUseCases(
         fetchProductionLines = FetchProductionLines(get()),
         onExpandBtnClick = OnExpandBtnClick(),
-        getUserById = GetUserInCompany(repository = get())
+        getUserById = GetUserInCompany(repository = get()),
+        onProductionLineListener = OnProductionLineListener(repository = get())
     )
 }
     viewModel {

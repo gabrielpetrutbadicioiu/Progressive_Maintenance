@@ -52,4 +52,13 @@ interface CompaniesRepository {
         onSuccess: ( ProductionLine) -> Unit,
         onFailure: (String) -> Unit
     )
+
+    suspend fun productionLinesListener(
+        companyID: String,
+        onProductionLineAdded:(addedLineId:String)->Unit,
+        onProductionLineRemoved:(removedLineId:String)->Unit,
+        onProductionLineUpdated:(updatedLineId:String)->Unit,
+        onFailure:(String)->Unit
+    )
+
 }

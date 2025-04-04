@@ -7,6 +7,7 @@ sealed class HomeScreenEvent {
     data object OnAddProductionLineClick: HomeScreenEvent()
     data object OnNavigateUp:HomeScreenEvent()
     data object OnGetUserById:HomeScreenEvent()
+    data object OnProductionLineListener:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()

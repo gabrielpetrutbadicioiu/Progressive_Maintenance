@@ -24,7 +24,7 @@ class AddProductionLineViewModel(
     val isError:State<Boolean> = _isError
 
     private val _companyID = mutableStateOf("")
-
+    private val _currentUserId= mutableStateOf("")
     private val _showProgressBar= mutableStateOf(false)
      val showProgressBar:State<Boolean> = _showProgressBar
 
@@ -88,6 +88,8 @@ class AddProductionLineViewModel(
             }
             is AddProductionLineEvent.OnGetArgumentData->{
                 _companyID.value=event.companyID
+                _currentUserId.value=event.currentUserId
+                _productionLine.value=_productionLine.value.copy(addedModifiedByUserId = event.currentUserId)
                 _showProgressBar.value=false
             }
         }

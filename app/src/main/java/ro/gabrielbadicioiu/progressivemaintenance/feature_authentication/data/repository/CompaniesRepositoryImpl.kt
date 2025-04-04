@@ -2,9 +2,11 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.r
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
@@ -77,6 +79,50 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             }
             .addOnFailureListener { e->
                 onFailure(e.message.toString())
+            }
+    }
+
+    override suspend fun productionLinesListener(
+        companyID: String,
+        onProductionLineAdded: (addedLineId: String) -> Unit,
+        onProductionLineRemoved: (removedLineId: String) -> Unit,
+        onProductionLineUpdated: (updatedLineId: String) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore.collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseCollections.COMPANIES)
+            .addSnapshotListener { snapshots, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message.toString())
+                    return@addSnapshotListener
+                }
+                if (snapshots!=null)
+                {
+                    for (dc in snapshots.documentChanges)//iteram prin toate documentele care s-au schimbat
+                    {
+                        if (dc.type==DocumentChange.Type.ADDED)
+                        {
+                            val addedLine=dc.document.toObject(ProductionLine::class.java)
+                            onProductionLineAdded(addedLine.id)
+                        }
+                        if (dc.type==DocumentChange.Type.REMOVED)
+                        {
+                            val removedLine=dc.document.toObject(ProductionLine::class.java)
+                            onProductionLineRemoved(removedLine.id)
+                        }
+                        if (dc.type==DocumentChange.Type.MODIFIED)
+                        {
+                            val modifiedLine=dc.document.toObject(ProductionLine::class.java)
+                            onProductionLineUpdated(modifiedLine.id)
+                        }
+
+                    }
+                }
+                else{
+                    onFailure("snapshot is null")
+                }
             }
     }
 
@@ -202,4 +248,5 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 onFailure(e.message.toString())
             }
     }
+
 }

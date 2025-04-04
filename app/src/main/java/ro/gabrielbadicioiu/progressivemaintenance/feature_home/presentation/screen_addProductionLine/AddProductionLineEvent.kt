@@ -7,6 +7,6 @@ sealed class AddProductionLineEvent {
     data class OnProductionLineNameChange(val name:String):AddProductionLineEvent()
     data class OnEquipmentNameChange(val name:String, val index:Int):AddProductionLineEvent()
     data class OnEquipmentDelete(val index:Int):AddProductionLineEvent()
-    data class OnGetArgumentData(val companyID:String):AddProductionLineEvent()
+    data class OnGetArgumentData(val companyID:String, val currentUserId:String):AddProductionLineEvent()
 
 }

@@ -63,6 +63,7 @@ fun HomeScreen(
         viewModel.onEvent(HomeScreenEvent.OnFetchArgumentData(companyID = companyId, userID = userId))
         viewModel.onEvent(HomeScreenEvent.OnFetchProductionLines)
         viewModel.onEvent(HomeScreenEvent.OnGetUserById)
+        viewModel.onEvent(HomeScreenEvent.OnProductionLineListener)
         viewModel.eventFlow.collectLatest {
             event->
             when(event)

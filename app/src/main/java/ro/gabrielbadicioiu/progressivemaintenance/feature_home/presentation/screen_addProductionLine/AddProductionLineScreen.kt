@@ -40,7 +40,7 @@ fun AddProductionLineScreen(
 ){
 val context= LocalContext.current
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(AddProductionLineEvent.OnGetArgumentData(companyID = companyID))
+        viewModel.onEvent(AddProductionLineEvent.OnGetArgumentData(companyID = companyID, currentUserId = userID))
         viewModel.eventFlow.collectLatest { event->
             when(event){
                 is AddProductionLineViewModel.AddEquipmentUiEvent.OnExitScreen->{

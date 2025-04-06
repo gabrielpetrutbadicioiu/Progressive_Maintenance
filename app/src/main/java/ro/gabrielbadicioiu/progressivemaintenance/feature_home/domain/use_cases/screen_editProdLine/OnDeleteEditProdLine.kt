@@ -1,25 +1,23 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine
 
-import com.google.firebase.firestore.FirebaseFirestore
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 class OnDeleteEditProdLine (
-    private val repository: ProductionLineRepository
+    private val repository: CompaniesRepository
 ){
     suspend fun execute(
-        db:FirebaseFirestore,
-        collection:String,
-        documentID:String,
+        deletedProductionLine: ProductionLine,
+        companyId:String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     )
     {
         repository.deleteProductionLine(
-            db = db,
-            collection = collection,
-            documentID = documentID,
-            onSuccess = {onSuccess()},
-            onFailure = {e-> onFailure(e)}
+            companyId = companyId,
+            productionLine =deletedProductionLine ,
+            onFailure = {e->onFailure(e)},
+            onSuccess={onSuccess()}
         )
     }
 }

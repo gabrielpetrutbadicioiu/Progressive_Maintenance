@@ -6,7 +6,6 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
@@ -123,6 +122,43 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 else{
                     onFailure("snapshot is null")
                 }
+            }
+    }
+
+    override suspend fun updateProductionLine(
+        companyId: String,
+        productionLine:ProductionLine,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(productionLine.id)
+            .set(productionLine)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message.toString()) }
+
+    }
+
+    override suspend fun deleteProductionLine(
+        companyId: String,
+        productionLine: ProductionLine,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(productionLine.id)
+            .delete()
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message?:"Null deleting error")
             }
     }
 

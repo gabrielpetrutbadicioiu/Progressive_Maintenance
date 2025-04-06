@@ -60,5 +60,17 @@ interface CompaniesRepository {
         onProductionLineUpdated:(updatedLineId:String)->Unit,
         onFailure:(String)->Unit
     )
+    suspend fun updateProductionLine(
+        companyId: String,
+        productionLine:ProductionLine,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit
+    )
+    suspend fun deleteProductionLine(
+        companyId: String,
+        productionLine: ProductionLine,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit
+    )
 
 }

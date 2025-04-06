@@ -19,6 +19,14 @@ class EditProdLineViewModel(
     private var userId:String=""
     private var prodLineId:String=""
 //states
+    private val _isEmptyNameErr= mutableStateOf(false)
+    val isEmptyNameErr:State<Boolean> = _isEmptyNameErr
+
+    private val _emptyNameErrMsg= mutableStateOf("")
+    val emptyNameErrMsg:State<String> = _emptyNameErrMsg
+
+    private val _isUpdateErr= mutableStateOf(false)
+    val isUpdateErr:State<Boolean> = _isUpdateErr
 
     private val _editedProdLine= mutableStateOf(ProductionLine())
     val editedProdLine:State<ProductionLine> = _editedProdLine
@@ -31,6 +39,9 @@ class EditProdLineViewModel(
 
     private val _errMsg= mutableStateOf("")
     val errMsg:State<String> = _errMsg
+
+    private  val _isError= mutableStateOf(false)
+    val isError:State<Boolean> = _isError
 //one time events
     private val _eventFlow= MutableSharedFlow<EditProdLineUiEvent>()
     val eventFlow= _eventFlow.asSharedFlow()
@@ -51,6 +62,7 @@ class EditProdLineViewModel(
             is EditProdLineEvent.OnFetchEditedLine->
                 {
                     try {
+                        companyId=event.companyId
                         viewModelScope.launch {
                             useCases.loadProdLine.execute(
                                 companyId = event.companyId,
@@ -88,45 +100,75 @@ class EditProdLineViewModel(
             }
 
             is EditProdLineEvent.OnUpdateProdLine->{
-//                viewModelScope.launch {
-//                    useCases.onDoneEdit.execute(
-//                        db = db,
-//                        collection = FirebaseCollections.PRODUCTION_LINES,
-//                        updatedLine = _editedProdLine.value,
-//                        onSuccess = {onExitScreen()},
-//                        onFailure = {e->
-//                            viewModelScope.launch { _eventFlow.emit(EditProdLineUiEvent.ToastMessage(e)) }
-//                        },
-//                        onEmptyName = {e->
-//                            _isError.value=true
-//                            viewModelScope.launch { _eventFlow.emit(EditProdLineUiEvent.ToastMessage(e)) }
-//                        }
-//                    )
-//                }
+
+                viewModelScope.launch {
+                    try {
+                        useCases.onDoneEdit.execute(
+                            companyId = companyId,
+                            updatedLine = _editedProdLine.value,
+                            onSuccess = {
+                                onNavigateBack()
+                            },
+                            onFailure = {e->
+                                _isUpdateErr.value=true
+                                _errMsg.value= e
+                            },
+                            onEmptyName = {e->
+                                _isEmptyNameErr.value=true
+                                _emptyNameErrMsg.value=e
+                                viewModelScope.launch { _eventFlow.emit(EditProdLineUiEvent.ToastMessage(e)) }
+                            }
+
+                        )
+                    } catch (e:Exception)
+                    {
+                        _isError.value=true
+                        _errMsg.value=e.message.toString()
+                    }
+
+
+                }
             }
             is EditProdLineEvent.OnDeleteClick->{_showDialog.value=true}
             is EditProdLineEvent.OnAlertDialogDismiss->{_showDialog.value=false}
-            is EditProdLineEvent.OnDeleteDialogConfirm->{
-//                viewModelScope.launch {
-//                    useCases.onDeleteEditProdLine.execute(
-//                        db = db,
-//                        collection =FirebaseCollections.PRODUCTION_LINES,
-//                        documentID = _editedProdLine.value.id,
-//                        onSuccess = {
-//                            _showDialog.value=false
-//                            onExitScreen()
-//                        },
-//                        onFailure = {e->
-//                            viewModelScope.launch {_eventFlow.emit(EditProdLineUiEvent.ToastMessage(e))}
-//                        }
-//                    )
-//                }
+            is EditProdLineEvent.OnDeleteDialogConfirm->
+                {
+                    val lineName=_editedProdLine.value.lineName
+                    viewModelScope.launch {
+                        try {
+                            useCases.onDeleteEditProdLine.execute(
+                                deletedProductionLine = _editedProdLine.value.copy(),
+                                companyId = companyId,
+                                onSuccess = {
+                                    viewModelScope.launch {
+                                        _eventFlow.emit(EditProdLineUiEvent.ToastMessage("Production line '$lineName' successfully deleted."))
+                                        _showDialog.value=false
+                                        onNavigateBack()
+                                    }
+
+                                },
+                                onFailure = {e->
+                                    _isError.value=true
+                                    _errMsg.value=e
+                                    _showDialog.value=false
+                                }
+                            )
+                        }catch (e:Exception)
+                        {
+                            _isError.value=true
+                            _errMsg.value=e.message?:"Error deleting production line"
+                            _showDialog.value=false
+                        }
+
+                    }
             }
             }//when
         }//onEvent
     private fun onNavigateBack()
-    {
-
+    {   _isError.value=false
+        _isUpdateErr.value=false
+        _isEmptyNameErr.value=false
+        _emptyNameErrMsg.value=""
         _editedProdLine.value=ProductionLine()
         _errMsg.value=""
         _fetchProdLineErr.value=false

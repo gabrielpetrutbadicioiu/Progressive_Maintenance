@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +40,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Prod
 fun EditProdLineCard(
     productionLine: ProductionLine,
     emptyNameError:Boolean,
+    emptyNameErrorMsg:String,
+    errorMsg:String,
+    isError:Boolean,
     onAddEquipmentClick:()->Unit,
     onDeleteEquipment:(Int)->Unit,
     onLineNameChange:(String)->Unit,
@@ -145,6 +150,33 @@ fun EditProdLineCard(
                     }
                 }
             }//item
+            //err msg
+            item {
+                if (emptyNameError)
+                {
+                    IconTextField(
+                        text =emptyNameErrorMsg ,
+                        icon = Icons.Default.WarningAmber,
+                        color = Color.Red ,
+                        iconSize = 24,
+                        textSize =20 ,
+                        clickEn = false
+                    ) {
+
+                    }
+                }
+                if (isError)
+                {
+                    IconTextField(
+                        text =errorMsg ,
+                        icon = Icons.Default.WarningAmber,
+                        color = Color.Red ,
+                        iconSize = 24,
+                        textSize =20 ,
+                        clickEn = false
+                    ) {}
+                }
+            }
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

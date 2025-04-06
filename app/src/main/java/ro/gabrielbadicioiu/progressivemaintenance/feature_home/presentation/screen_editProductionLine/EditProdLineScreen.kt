@@ -116,7 +116,7 @@ fun EditProdLineScreen(
                 else{
                     EditProdLineCard(
                         productionLine =viewModel.editedProdLine.value ,
-                        emptyNameError = false,//todo
+                        emptyNameError = viewModel.isEmptyNameErr.value,
                         onAddEquipmentClick = { viewModel.onEvent(EditProdLineEvent.OnAddEquipment)},
                         onDeleteEquipment ={index-> viewModel.onEvent(EditProdLineEvent.OnDeleteEditEquipment(index))} ,
                         onLineNameChange ={name->viewModel.onEvent(EditProdLineEvent.OnProdLineNameChange(name))} ,
@@ -125,7 +125,10 @@ fun EditProdLineScreen(
                         },
                         onDoneBtnClick = { viewModel.onEvent(EditProdLineEvent.OnUpdateProdLine) },
                         onCancelBtnClick = {viewModel.onEvent(EditProdLineEvent.OnNavigateBack)},
-                        onDeleteProdLineClick = {viewModel.onEvent(EditProdLineEvent.OnDeleteClick)})
+                        onDeleteProdLineClick = {viewModel.onEvent(EditProdLineEvent.OnDeleteClick)},
+                        emptyNameErrorMsg = viewModel.emptyNameErrMsg.value,
+                        errorMsg = viewModel.errMsg.value,
+                        isError = viewModel.isError.value)
                 }
 
             }

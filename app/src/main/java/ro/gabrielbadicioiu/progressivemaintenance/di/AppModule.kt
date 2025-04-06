@@ -142,7 +142,7 @@ single{
             loadProdLine = LoadProdLine(repository = get()),
             onEquipmentEdit = OnEquipmentEdit(),
             onDeleteEditEquipment = OnDeleteEditEquipment(),
-            onDoneEdit = OnDoneEdit(get()),
+            onDoneEdit = OnDoneEdit(repository = get()),
             onDeleteEditProdLine = OnDeleteEditProdLine(get())
         )
     }

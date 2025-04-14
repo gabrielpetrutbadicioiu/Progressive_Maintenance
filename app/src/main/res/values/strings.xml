@@ -90,4 +90,17 @@
     <string name="resend">Resend</string>
     <string name="Hi">Hi</string>
     <string name="wbk">Welcome Back!</string>
+    <string name="edit_prod_lin">Edit production line</string>
+    <string name="team_members">Team members</string>
+    <string name="add_prodLine">Add new production line</string>
+    <string name="promote_admin">Promote to Admin</string>
+    <string name="promote_owner">Promote to OWNER</string>
+    <string name="demote">Demote to User</string>
+    <string name="update_position">Edit user\'s position</string>
+    <string name="kick">Kick</string>
+    <string name="edit_position_placeholder">Update user\'s job title</string>
+    <string name="kick_alert1">Do you really want to remove</string>
+    <string name="kick_alert2">from the company?</string>
+    <string name="cannot_undone_action">This action cannot be undone!</string>
+
 </resources>

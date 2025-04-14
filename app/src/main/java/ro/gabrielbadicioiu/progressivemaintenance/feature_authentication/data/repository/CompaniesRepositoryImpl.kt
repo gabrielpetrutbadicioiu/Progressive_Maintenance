@@ -142,6 +142,22 @@ class CompaniesRepositoryImpl:CompaniesRepository {
 
     }
 
+    override suspend fun updateUser(
+        companyId: String,
+        user: UserDetails,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseSubCollections.USERS)
+            .document(user.userID)
+            .set(user)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e->onFailure(e.message?:"Failed to update user!") }
+    }
+
     override suspend fun deleteProductionLine(
         companyId: String,
         productionLine: ProductionLine,
@@ -160,6 +176,35 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             .addOnFailureListener { e->
                 onFailure(e.message?:"Null deleting error")
             }
+    }
+
+    override suspend fun fetchAllUsersInCompany(
+        companyID: String,
+        onResult: (List<UserDetails>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseSubCollections.USERS)
+            .addSnapshotListener { snapShot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Failed to fetch users")
+                    return@addSnapshotListener
+                }
+                if (snapShot!=null)
+                {
+                    val userList=snapShot.documents.mapNotNull { documentSnapshot ->
+                        documentSnapshot.toObject(UserDetails::class.java)
+                    }
+                    onResult(userList)
+                }
+                else{
+                    onFailure("Failed to fetch users, snapshot is null")
+                }
+            }
+
     }
 
     override suspend fun fetchProductionLines(

@@ -37,7 +37,9 @@ sealed class Screens {
     @Serializable
     data object JoinSelectCompanyScreen:Screens()
     @Serializable
-    data class JoinCompanyUserPassword(val companyID:String, val email:String, val hasPoppedBackStack:Boolean)
+    data class JoinCompanyUserPassword(val companyID:String, val email:String, val hasPoppedBackStack:Boolean):Screens()
     @Serializable
-    data class JoinCompanyCreateUserProfile(val companyID:String, val userID:String, val email:String)
+    data class JoinCompanyCreateUserProfile(val companyID:String, val userID:String, val email:String):Screens()
+    @Serializable
+    data class MembersScreenRoute(val companyID: String, val userId:String):Screens()
 }

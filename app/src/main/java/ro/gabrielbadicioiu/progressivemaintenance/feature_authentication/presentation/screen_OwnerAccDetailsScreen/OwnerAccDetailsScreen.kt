@@ -45,9 +45,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,12 +128,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
 
                 if(viewModel.user.value.profilePicture.isEmpty())
                 {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(id = R.string.icon_descr),
-                        modifier = Modifier.size(128.dp),
-                        tint = Color.DarkGray,
-                    )
+                    DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.profile_pic), size =128.dp )
                 }
                 else{
                     AsyncImage(model =viewModel.selectedImageUri.value,
@@ -151,7 +148,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(16.dp, 0.dp),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                 ) {
                     Text(text = stringResource(id = R.string.select_profile_pic))
                 }
@@ -224,14 +221,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 }
 
                     val btnEn=viewModel.user.value.firstName.isNotBlank()&& viewModel.user.value.lastName.isNotBlank() && viewModel.user.value.position.isNotBlank()
-                if (viewModel.showProgressBar.value)
-                {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(30.dp) ,
-                        color = colorResource(id = R.color.bar_color)
-                    )
-                }
-                else{
+
                     Button(
                         onClick = {
                             viewModel.onEvent(OwnerAccDetailsScreenEvent.OnFinishBtnClick(companyDocumentID))
@@ -240,11 +230,20 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                             .fillMaxWidth()
                             .padding(16.dp, 0.dp),
                         enabled = btnEn,
-                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                     ) {
-                        Text(text = stringResource(id = R.string.finish_btn))
+                        if (viewModel.showProgressBar.value)
+                        {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp) ,
+                                color = colorResource(id = R.color.bar_color)
+                            )
+                        }else{
+                            Text(text = stringResource(id = R.string.finish_btn))
+                        }
+
                     }
-                }
+
 
 
 

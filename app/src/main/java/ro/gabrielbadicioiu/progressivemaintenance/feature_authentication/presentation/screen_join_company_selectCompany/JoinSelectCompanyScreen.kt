@@ -123,20 +123,7 @@ fun JoinSelectCompanyScreen(
                 verticalArrangement = Arrangement.Center)
             {
                 AuthenticationLottie()
-//                Image(
-//                    painter = painterResource(id = R.drawable.auth_image),
-//                    contentDescription = stringResource(
-//                        id = R.string.image_description
-//                    ),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(4.dp, 0.dp)
-//                )
-//                Spacer(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(6.dp)
-//                )
+
                 //email
                 OutlinedTextField(
                     modifier = Modifier
@@ -165,7 +152,7 @@ fun JoinSelectCompanyScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
-                    isError = false,//todo
+                    isError = false,
                     value = viewModel.selectedCompany.value.organisationName,
                     readOnly = true,
                     onValueChange ={ },
@@ -240,7 +227,7 @@ fun JoinSelectCompanyScreen(
                         .fillMaxWidth()
                         .padding(16.dp, 0.dp),
                     enabled = viewModel.emailMatchesPattern.value && viewModel.selectedCompany.value.organisationName.isNotEmpty(),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                 ) {
                     Text(text = stringResource(id = R.string.continue_btn))
                 }

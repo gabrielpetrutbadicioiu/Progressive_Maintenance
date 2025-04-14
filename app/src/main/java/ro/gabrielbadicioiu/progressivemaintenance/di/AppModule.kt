@@ -65,6 +65,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.FetchUsersInCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.MembersScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnChangeUserRank
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnUpdateUserPosition
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
 
 
 val appModule= module {
@@ -109,7 +114,18 @@ val appModule= module {
     viewModel {
         LoginViewModel(get())
     }
-
+// Members screen
+    single{
+        MembersScreenUseCases(
+            getUserInCompany = GetUserInCompany(repository = get()),
+            getAllUsersInCompany = FetchUsersInCompany(repository = get()),
+            onChangeUserRank = OnChangeUserRank(repository = get()),
+            onUpdateUserPosition = OnUpdateUserPosition(repository = get())
+        )
+    }
+    viewModel {
+        MembersScreenViewModel(useCases = get())
+    }
     //home screen
 single{
     HomeScreenUseCases(

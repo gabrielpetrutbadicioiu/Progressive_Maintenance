@@ -8,6 +8,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import ro.gabrielbadicioiu.progressivemaintenance.R
@@ -26,7 +27,8 @@ Column(modifier = Modifier.wrapContentSize(),
         fontSize = 12.sp)
     TextButton(onClick = { onExpandClick() }) {
         Text(text = if (isExpanded) stringResource(id = R.string.read_less) else stringResource(id = R.string.read_more),
-            fontSize = 10.sp)
+            fontSize = 10.sp,
+            color = colorResource(id = R.color.btn_color))
     }
 }
 }

@@ -26,11 +26,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 
 @Composable
 fun ProductionLineCard(
+    userRank: String,
     productionLine: ProductionLine,
     onExpandClick:()->Unit,
     onEditClick:()->Unit,
@@ -56,11 +58,16 @@ fun ProductionLineCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {
 
-                        IconButton(onClick = {onEditClick() }) {
-                            Icon(imageVector =Icons.Default.Edit,
-                                contentDescription = stringResource(id = R.string.icon_btn_descr),
-                                tint = colorResource(id = R.color.text_color))
+                        //edit
+                        if (userRank!=UserRank.USER.name)
+                        {
+                            IconButton(onClick = {onEditClick() }) {
+                                Icon(imageVector =Icons.Default.Edit,
+                                    contentDescription = stringResource(id = R.string.icon_btn_descr),
+                                    tint = colorResource(id = R.color.text_color))
+                            }
                         }
+
                         IconButton(onClick = { onExpandClick() }) {
                             val icon= if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown
                             Icon(imageVector =icon,

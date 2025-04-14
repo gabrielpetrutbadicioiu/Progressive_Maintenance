@@ -113,20 +113,7 @@ fun CreateOwnerPassScreen(
                 verticalArrangement = Arrangement.Center)
             {
                 AuthenticationLottie()
-//                Image(
-//                    painter = painterResource(id = R.drawable.auth_image),
-//                    contentDescription = stringResource(
-//                        id = R.string.image_description
-//                    ),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp, 0.dp)
-//                )
-//                Spacer(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(8.dp)
-//                )
+
                 //password
                 OutlinedTextField(
                     modifier = Modifier
@@ -190,14 +177,6 @@ fun CreateOwnerPassScreen(
                     ) {}
                 }
                     val enable=viewModel.password.value.length>8 && viewModel.password.value== viewModel.confPass.value && viewModel.password.value.isNotEmpty() &&viewModel.password.value.matches(Regex(".*[A-Z].*")) && viewModel.password.value.matches(Regex(".*\\d.*"))
-                if (viewModel.showProgressBar.value)
-                {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(30.dp) ,
-                        color = colorResource(id = R.color.bar_color)
-                    )
-                }
-                else{
                     Button(
                         onClick = {
                             viewModel.onEvent(CreateOwnerPassEvent.OnContinueBtnClick(
@@ -211,11 +190,21 @@ fun CreateOwnerPassScreen(
                             .fillMaxWidth()
                             .padding(16.dp, 0.dp),
                         enabled = enable,
-                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                     ) {
-                        Text(text = stringResource(id = R.string.continue_btn))
+                        if (viewModel.showProgressBar.value)
+                        {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp) ,
+                                color = colorResource(id = R.color.bar_color)
+                            )
+                        }
+                        else{
+                            Text(text = stringResource(id = R.string.continue_btn))
+                        }
+
                     }
-                }
+
 
             }
         }

@@ -20,7 +20,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 @Composable
 fun AuthenticationLottie()
 {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ic_authentication))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.auth_lottie))
     val progress by animateLottieCompositionAsState(
         isPlaying = true,
         composition = composition,

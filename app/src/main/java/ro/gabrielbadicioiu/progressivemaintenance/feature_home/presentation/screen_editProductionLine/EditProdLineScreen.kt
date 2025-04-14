@@ -81,16 +81,17 @@ fun EditProdLineScreen(
                                     contentDescription = stringResource(id = R.string.icon_descr),
                                     tint = colorResource(id = R.color.text_color))
                             }
-                            Text(text = stringResource(id = R.string.home_btn),
-                                color = colorResource(id = R.color.text_color))
+
                         }
                     },
                     title = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
+                            horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
-                        ) {}
+                        ) {
+                            Text(text = stringResource(id = R.string.edit_prod_lin))
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colorResource(id = R.color.bar_color),

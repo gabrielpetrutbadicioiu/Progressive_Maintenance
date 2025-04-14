@@ -38,6 +38,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
 
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -65,6 +67,7 @@ class MainActivity : ComponentActivity() {
                 val joinSelectCompanyViewModel=getViewModel<JoinSelectCompanyViewModel>()
                 val joinCompanyUserPasswordScreenViewModel=getViewModel<JoinCompanyUserPasswordScreenViewModel> ()
                 val createUserProfileViewModel=getViewModel<CreateUserProfileViewModel>()
+                val membersScreenViewModel=getViewModel<MembersScreenViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -180,6 +183,14 @@ class MainActivity : ComponentActivity() {
                             userID = args.userID,
                             email = args.email
                         )
+                    }
+                    composable<Screens.MembersScreenRoute> {
+                        val args=it.toRoute<Screens.MembersScreenRoute>()
+                        MembersScreen(
+                            companyId = args.companyID,
+                            userId =args.userId ,
+                            viewModel = membersScreenViewModel,
+                            navController = navController)
                     }
                 }//navHost
 

@@ -102,15 +102,7 @@ fun CreateOwnerEmailScreen(
                 verticalArrangement = Arrangement.Center)
             {
                 AuthenticationLottie()
-//                Image(
-//                    painter = painterResource(id = R.drawable.auth_image),
-//                    contentDescription = stringResource(
-//                        id = R.string.image_description
-//                    ),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp, 0.dp)
-//                )
+
                 ExpandableText(
                     shortText = stringResource(id = R.string.short_text) ,
                     fullText = stringResource(id = R.string.full_text),
@@ -162,7 +154,7 @@ fun CreateOwnerEmailScreen(
                         .fillMaxWidth()
                         .padding(16.dp, 0.dp),
                     enabled = viewModel.inputEmail.value.isNotEmpty(),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                 ) {
                     Text(text = stringResource(id = R.string.continue_btn))
                 }

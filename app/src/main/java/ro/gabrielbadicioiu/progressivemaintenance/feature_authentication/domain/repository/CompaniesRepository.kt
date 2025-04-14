@@ -33,11 +33,18 @@ interface CompaniesRepository {
         onFailure:(String)->Unit
     )
 
+    suspend fun fetchAllUsersInCompany(
+        companyID: String,
+        onResult: (List<UserDetails>) -> Unit,
+        onFailure: (String) -> Unit
+    )
+
     suspend fun getAllCompanies(
         collectionReference: CollectionReference,
         onSuccess: (List<Company>) -> Unit,
         onFailure: (String) -> Unit
     )
+
 
     suspend fun getUserInCompany(
         currentUserID:String,
@@ -63,6 +70,12 @@ interface CompaniesRepository {
     suspend fun updateProductionLine(
         companyId: String,
         productionLine:ProductionLine,
+        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit
+    )
+    suspend fun updateUser(
+        companyId: String,
+        user: UserDetails,
         onFailure: (String) -> Unit,
         onSuccess: () -> Unit
     )

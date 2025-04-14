@@ -48,6 +48,7 @@ class HomeViewModel(
     sealed class HomeScreenUiEvent()
     {
         data object OnAddProductionLineClick: HomeScreenUiEvent()
+        data object OnMembersScreenClick:HomeScreenUiEvent()
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
@@ -127,6 +128,9 @@ class HomeViewModel(
                         onFailure = {e->}//todo
                     )
                 }
+            }
+            is HomeScreenEvent.OnMembersScreenClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnMembersScreenClick) }
             }
 
         }

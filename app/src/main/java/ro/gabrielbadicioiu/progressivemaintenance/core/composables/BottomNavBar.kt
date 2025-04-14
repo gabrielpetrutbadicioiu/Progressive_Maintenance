@@ -1,141 +1,103 @@
 package ro.gabrielbadicioiu.progressivemaintenance.core.composables
 
 
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.Groups2
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.core.BottomNavigationItem
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.AddProductionLineLottie
+import ro.gabrielbadicioiu.progressivemaintenance.core.ActiveScreen
+
 
 @Composable
 fun BottomNavBar(
-    selectedItemIndex:Int,
-    onClick:()->Unit,
-    onAddEquipmentClick:()->Unit
+    activeScreen: ActiveScreen,
+    userRank: String,
+    hasHomeBadge:Boolean,
+    onHomeClick:()->Unit,
+    onActionBtnClick:()->Unit,
+    onProfileScreenClick:()->Unit,
+    onMembersClick:()->Unit,
+    onStatisticsClick:()->Unit
 )
 {
-    val items = listOf(
-        BottomNavigationItem(
-            title = stringResource(id = R.string.home_btn),
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
-        ),
-        BottomNavigationItem(
-            title = "Home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
-        ),
-        BottomNavigationItem(
-            title = "",
-            selectedIcon = Icons.Filled.Add,
-            unselectedIcon = Icons.Outlined.Add,
-            hasNews = false,
-        ),
-        BottomNavigationItem(
-            title = "Home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
-        ),
-        BottomNavigationItem(
-            title = "Home",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            hasNews = false
-        )
-    )//items list
 
-    NavigationBar(
-        containerColor = colorResource(id = R.color.bar_color)
-    ) {
-            items.forEachIndexed{index, bottomNavigationItem->
-                if (bottomNavigationItem.title.isEmpty())
-                {
-                    NavigationBarItem(
-                        selected = false ,
-                        onClick = { onAddEquipmentClick() },
-                        icon = {
-                            AddProductionLineLottie()
-//                            Icon(
-//                            modifier = Modifier
-//                                .size(56.dp)
-//                                .clip(CircleShape)
-//                                .background(colorResource(id = R.color.add_btn_color))
-//                                .padding(8.dp),
-//                            imageVector = Icons.Rounded.Add,
-//                            tint = colorResource(id = R.color.text_color),
-//                            contentDescription = stringResource(id = R.string.icon_descr))
-                               },
-
-                    )
-                }
-                else{
-                    NavigationBarItem(
-                        selected =selectedItemIndex==index ,
-                        onClick = { /*TODO*/
-                            onClick()
-                        },
-                        label = {
-                            Text(text = bottomNavigationItem.title,
-                                color = colorResource(id = R.color.text_color))
-                        },
-
-                        icon = { /*TODO*/
-                            BadgedBox(
-                                badge = {
-                                    if (bottomNavigationItem.badgeCount!=null)
-                                    {
-                                        Badge{
-                                            Text(text = bottomNavigationItem.badgeCount.toString())
-                                        }
-                                    }
-                                    else{
-                                        if (bottomNavigationItem.hasNews)
-                                        {
-                                            Badge()
-                                        }
-                                    }
-
-                                })//badgeBox
-                            {
-                                Icon(
-                                    imageVector = if(index==selectedItemIndex)
-                                    {
-                                        bottomNavigationItem.selectedIcon
-                                    }
-                                    else {
-                                        bottomNavigationItem.unselectedIcon
-                                    },
-
-                                    contentDescription =bottomNavigationItem.title,
-                                    tint = if(index==selectedItemIndex)
-                                    {
-                                        Color.Black
-                                    }
-                                    else {
-                                        colorResource(id = R.color.text_color)
-                                    })
-                            }
+    NavigationBar(containerColor = colorResource(id = R.color.bar_color)) {
+        //home
+        NavigationBarItem(
+            selected =false,
+            onClick = { onHomeClick() },
+            icon = { 
+                BadgedBox(badge ={
+                        if (hasHomeBadge)
+                        {
+                            Badge()
                         }
-                    )//navigationBarItem
+                } ) {
+                        Icon(imageVector =Icons.Outlined.Home,
+                            contentDescription = stringResource(id = R.string.icon_descr),
+                            tint = if (activeScreen==ActiveScreen.HOME) colorResource(id = R.color.btn_color) else Color.White,
+                            modifier = Modifier.size(32.dp)
+                            )
                 }
-
-
-            }
+            })
+        //statistics
+        //aici poti sa pui top 3 erori frecvente, timp de aparitie, etc acum il vad asa pe fiecare linie, dintr-un dropdown menu selectezi linia si iti da statistica
+        NavigationBarItem(
+            selected = activeScreen==ActiveScreen.STATISTICS,
+            onClick = { onStatisticsClick() },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.BarChart,
+                    contentDescription = stringResource(id = R.string.icon_descr),
+                    tint = if (activeScreen==ActiveScreen.PROFILE) colorResource(id = R.color.btn_color) else Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
+            })
+        //action button
+        FloatingActionButton(onClick = { onActionBtnClick() },
+            containerColor = if (userRank==UserRank.USER.name)colorResource(id = R.color.btn_color) else Color.Transparent,
+            shape = CircleShape) {
+            val spec=if (userRank==UserRank.USER.name) LottieCompositionSpec.RawRes(R.raw.ic_ai_lottie) else LottieCompositionSpec.RawRes(R.raw.ic_add_prod_line)
+            DisplayLottie(spec =spec , size = 65.dp)
+        }
+        //members
+        NavigationBarItem(selected =false,
+            onClick = { onMembersClick() },
+            icon = {
+                Icon(imageVector = Icons.Outlined.Groups2,
+                    contentDescription = stringResource(id = R.string.icon_descr),
+                    tint = if (activeScreen==ActiveScreen.MEMBERS) colorResource(id = R.color.btn_color) else Color.White,
+                    modifier = Modifier.size(32.dp)
+                    )
+            })
+        //profile
+        NavigationBarItem(
+            selected = activeScreen==ActiveScreen.PROFILE,
+            onClick = { onProfileScreenClick() },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.AccountCircle,
+                    contentDescription = stringResource(id = R.string.icon_descr),
+                    tint = if (activeScreen==ActiveScreen.PROFILE) colorResource(id = R.color.btn_color) else Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
+            })
     }
 }

@@ -158,7 +158,7 @@ fun CompanyDetailsScreen(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(16.dp, 0.dp),
-                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                    colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                 ) {
                     Text(text = stringResource(id = R.string.pick_company_logo))
                 }
@@ -228,25 +228,28 @@ fun CompanyDetailsScreen(
                         clickEn =false
                     ) {}
                 }
-                if (viewModel.showProgressBar.value)
-                {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(30.dp) ,
-                        color = colorResource(id = R.color.bar_color)
-                    )
-                }
-                else{
+
                     Button(
                         onClick = {viewModel.onEvent(CompanyDetailsScreenEvent.OnContinueClick) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp, 0.dp),
                         enabled = viewModel.companyDetails.value.organisationName.isNotEmpty()&&viewModel.companyDetails.value.industryType.isNotEmpty()&&viewModel.companyDetails.value.country.isNotEmpty(),
-                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.bar_color))
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                     ) {
-                        Text(text = stringResource(id = R.string.continue_btn))
+                        if (viewModel.showProgressBar.value)
+                        {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp) ,
+                                color = colorResource(id = R.color.bar_color)
+                            )
+                        }
+                        else{
+                            Text(text = stringResource(id = R.string.continue_btn))
+                        }
+
                     }
-                }
+
 
             }
         }

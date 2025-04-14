@@ -5,16 +5,19 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -43,9 +46,11 @@ import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.ActiveScreen
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.components.ProductionLineLottie
 
@@ -82,6 +87,9 @@ fun HomeScreen(
                 }
                 is HomeViewModel.HomeScreenUiEvent.OnNavigateTo->{
                     navController.navigate(event.screen)
+                }
+                is HomeViewModel.HomeScreenUiEvent.OnMembersScreenClick->{
+                    navController.navigate(Screens.MembersScreenRoute(companyID = companyId, userId = userId))
                 }
             }
         }
@@ -138,16 +146,43 @@ fun HomeScreen(
                                             .clip(shape = CircleShape))
                                 }
                                 else{
-                                    AsyncImage(model =viewModel.userDetails.value.profilePicture,
-                                        contentDescription = stringResource(id = R.string.image_description),
-                                        modifier = Modifier
-                                            .size(65.dp)
-                                            .clip(CircleShape),
-                                        contentScale = ContentScale.Crop)
+
+                                    BadgedBox(badge = {
+                                        Row {
+                                            if (viewModel.userDetails.value.rank==UserRank.OWNER.name)
+                                            {
+                                                DisplayLottie(
+                                                    spec = LottieCompositionSpec.RawRes(R.raw.premium_badge),
+                                                    size = 25.dp)
+                                            }
+                                            if (viewModel.userDetails.value.rank==UserRank.ADMIN.name)
+                                            {
+                                                DisplayLottie(
+                                                    spec = LottieCompositionSpec.RawRes(R.raw.elite_badge),
+                                                    size =25.dp )
+                                            }
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                        }
+                                    
+                                    }
+                                        
+                                    ) {
+                                        Row {
+                                            AsyncImage(model =viewModel.userDetails.value.profilePicture,
+                                                contentDescription = stringResource(id = R.string.image_description),
+                                                modifier = Modifier
+                                                    .size(65.dp)
+                                                    .clip(CircleShape),
+                                                contentScale = ContentScale.Crop,
+                                            )
+                                            Spacer(modifier = Modifier.width(26.dp))
+                                        }
+
+                                    }
+
                                 }
 
                             }
-
                         }
                     },
                     //search interventions
@@ -177,20 +212,38 @@ fun HomeScreen(
                     )//topAppBar
             },//topBar
             bottomBar = {
-                BottomNavBar(
-                    selectedItemIndex = 0,
-                    onClick = {},
-                    onAddEquipmentClick ={viewModel.onEvent(HomeScreenEvent.OnAddProductionLineClick)} )
+               BottomNavBar(
+                   activeScreen = ActiveScreen.HOME,
+                   userRank = viewModel.userDetails.value.rank,
+                   hasHomeBadge = false,
+                   onHomeClick = { /*TODO*/ },
+                   onActionBtnClick = {
+                       if (viewModel.userDetails.value.rank!=UserRank.USER.name)
+                       {
+                           viewModel.onEvent(HomeScreenEvent.OnAddProductionLineClick)
+                       }
+                       else{
+                           /*TODO*/                        }
+                   },
+                   onProfileScreenClick = { /*TODO*/ },
+                   onMembersClick = { viewModel.onEvent(HomeScreenEvent.OnMembersScreenClick)},
+                   onStatisticsClick = { /*TODO*/  })
+
+
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier.padding(4.dp),
-                    shape = CircleShape,
-                    containerColor = colorResource(id = R.color.btn_color),
-                    contentColor = colorResource(id = R.color.text_color),
-                    onClick = { /*TODO*/ }) {
-                    DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.ic_ai_lottie), size = 60.dp)
+                if (viewModel.userDetails.value.rank!=UserRank.USER.name)
+                {
+                    FloatingActionButton(
+                        modifier = Modifier.padding(4.dp),
+                        shape = CircleShape,
+                        containerColor = colorResource(id = R.color.btn_color),
+                        contentColor = colorResource(id = R.color.text_color),
+                        onClick = { /*TODO*/ }) {
+                        DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.ic_ai_lottie), size = 60.dp)
+                    }
                 }
+
             },
         ) {
             innerPadding->
@@ -210,6 +263,7 @@ fun HomeScreen(
                     items(viewModel.productionLineList.value.size)
                         {index->
                                 ProductionLineCard(
+                                    userRank = viewModel.userDetails.value.rank,
                                     productionLine = viewModel.productionLineList.value[index],
                                     onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
                                     isExpanded = viewModel.productionLineList.value[index].isExpanded,

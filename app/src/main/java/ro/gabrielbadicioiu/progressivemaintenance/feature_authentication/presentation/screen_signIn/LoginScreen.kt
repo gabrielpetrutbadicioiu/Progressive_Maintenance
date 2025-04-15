@@ -121,12 +121,7 @@ fun LogInScreen(
                             Text(text = stringResource(id = R.string.SignIn_title),
                                 color = colorResource(id = R.color.text_color),
                                 )
-                            
-//                            Image(
-//                                painter = painterResource(id = R.drawable.ic_icon),
-//                                contentDescription = stringResource(id = R.string.image_descr),
-//                                modifier = Modifier.size(86.dp)
-//                            )
+
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -146,21 +141,7 @@ fun LogInScreen(
             {
                 item {
 AuthenticationLottie()
-//                    Image(
-//                        painter = painterResource(id = R.drawable.auth_image),
-//                        contentDescription = stringResource(
-//                            id = R.string.image_description
-//                        ),
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(4.dp, 0.dp)
-//                            .size(128.dp)
-//                    )
-//                    Spacer(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(6.dp)
-//                    )
+
                 }
 
                 item {

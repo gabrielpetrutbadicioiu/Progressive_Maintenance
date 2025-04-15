@@ -97,10 +97,14 @@
     <string name="promote_owner">Promote to OWNER</string>
     <string name="demote">Demote to User</string>
     <string name="update_position">Edit user\'s position</string>
-    <string name="kick">Kick</string>
+    <string name="Ban">Ban</string>
     <string name="edit_position_placeholder">Update user\'s job title</string>
-    <string name="kick_alert1">Do you really want to remove</string>
-    <string name="kick_alert2">from the company?</string>
-    <string name="cannot_undone_action">This action cannot be undone!</string>
+    <string name="ban_alert">Do you really want to ban</string>
+    <string name="unban_alert">Do you really want to unban</string>
+    <string name="unban">Unban</string>
+    <string name="show_banned_users">Show banned users</string>
+    <string name="access_suspended">Access suspended</string>
+    <string name="disabled_acc">This account has been disabled by the company Owner. If you believe this is an error, please contact them directly.</string>
+
 
 </resources>

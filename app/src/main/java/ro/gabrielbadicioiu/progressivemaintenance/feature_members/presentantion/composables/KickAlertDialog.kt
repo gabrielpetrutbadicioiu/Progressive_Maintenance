@@ -12,11 +12,13 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MemberStatus
 
 @Composable
-fun KickUserAlertDialog(
+fun BanUserAlertDialog(
     tappedUser:MemberStatus,
     onDismissRequest:()->Unit,
-    onConfirm:()->Unit,
-    show:Boolean
+    onBanConfirm:()->Unit,
+    onUnbanConfirm:()->Unit,
+    show:Boolean,
+    isBanned:Boolean
 )
 {
     if (show)
@@ -24,13 +26,24 @@ fun KickUserAlertDialog(
         Box {
             AlertDialog(
                 title = {
-                    Text(
-                        text = "${stringResource(id = R.string.kick_alert1)} ${tappedUser.user.firstName} ${tappedUser.user.lastName} ${stringResource(
-                            id = R.string.kick_alert2 )} ${stringResource(id = R.string.cannot_undone_action)}")
+                    if (isBanned)
+                    {
+                        Text(
+                            text = "${stringResource(id = R.string.ban_alert)} ${tappedUser.user.firstName} ${tappedUser.user.lastName}?")
+                    }else{
+                        Text(text = "${stringResource(id = R.string.unban)} ${tappedUser.user.firstName} ${tappedUser.user.lastName}?")
+                    }
+
+
                 },
                 onDismissRequest = { onDismissRequest() },
                 confirmButton = {   Button(onClick = {
-                    onConfirm()
+                    if (isBanned)
+                    {
+                        onBanConfirm()
+                    }
+                    else {onUnbanConfirm()}
+
                 },
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
                     Text(text = stringResource(id = R.string.done_btn))

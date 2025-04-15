@@ -67,9 +67,12 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.FetchUsersInCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.MembersScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnBanConfirm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnChangeUserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnUpdateUserPosition
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.domain.use_cases.ProfileScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreenViewModel
 
 
 val appModule= module {
@@ -114,13 +117,26 @@ val appModule= module {
     viewModel {
         LoginViewModel(get())
     }
+    //Profile screen
+    single{
+        ProfileScreenUseCases(
+            getUserInCompany = GetUserInCompany(repository = get())
+        )
+    }
+    viewModel {
+        ProfileScreenViewModel(
+            useCases = get(),
+            companiesRepository = get()
+            )
+    }
 // Members screen
     single{
         MembersScreenUseCases(
             getUserInCompany = GetUserInCompany(repository = get()),
             getAllUsersInCompany = FetchUsersInCompany(repository = get()),
             onChangeUserRank = OnChangeUserRank(repository = get()),
-            onUpdateUserPosition = OnUpdateUserPosition(repository = get())
+            onUpdateUserPosition = OnUpdateUserPosition(repository = get()),
+            onBanConfirm = OnBanConfirm(repository = get())
         )
     }
     viewModel {

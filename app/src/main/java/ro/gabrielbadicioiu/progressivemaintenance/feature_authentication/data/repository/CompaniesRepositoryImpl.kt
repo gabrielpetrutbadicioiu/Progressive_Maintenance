@@ -6,6 +6,7 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
@@ -281,21 +282,67 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             .document(companyID)//selectam compania dupa ID
             .collection(FirebaseSubCollections.USERS)//accesam subcolectia users
             .whereEqualTo("userID", currentUserID)
-            .get()
-            .addOnSuccessListener {result->
-                if (result.isEmpty)
+            .addSnapshotListener { snapshot, error ->
+                if(error!=null)
                 {
-                    onUserNotFound()
+                    onFailure(error.message?:"Failed to load user")
+                    return@addSnapshotListener
                 }
-                else{
-                    val userDetails=result.documents.first().toObject(UserDetails::class.java)
-                    onSuccess(userDetails)
+                try {
+                    if (snapshot!=null && !snapshot.isEmpty)
+                    {
+                        val user= snapshot.documents.first().toObject(UserDetails::class.java)
+                        onSuccess(user)
+                    }
+                    else {
+                        onUserNotFound()
+                    }
+                }catch (e:FirebaseFirestoreException)
+                {
+                    onFailure(e.message?:"FireStore exception:Failed to fetch user")
                 }
-            }
-            .addOnFailureListener { e->
-                onFailure(e.message ?: "Unknown error")
+                catch (e:FirebaseException)
+                {
+                    onFailure(e.message?:"Firebase exception:Failed to fetch user")
+                }
+                catch (e:Exception)
+                {
+                    onFailure(e.message?:"Exception:Failed to fetch user")
+                }
+
             }
 
+
+    }
+
+    override suspend fun getCompanyById(
+        companyId: String,
+        onSuccess: (company:Company) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .addSnapshotListener { documentSnapshot, error ->
+                if (error != null) {
+                    onFailure(error.message ?: "Failed to fetch company!")
+                    return@addSnapshotListener
+                }
+                if (documentSnapshot != null && documentSnapshot.exists())
+                {
+                    val company=documentSnapshot.toObject(Company::class.java)
+                    if (company!=null)
+                    {
+                        onSuccess(company)
+                    }
+                    else{
+                        onFailure("Company data is null")
+                    }
+                }
+                else{
+                    onFailure("Company not found")
+                }
+            }
     }
 
     override suspend fun getProductionLineById(

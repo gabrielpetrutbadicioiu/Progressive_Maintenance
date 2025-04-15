@@ -91,6 +91,9 @@ fun HomeScreen(
                 is HomeViewModel.HomeScreenUiEvent.OnMembersScreenClick->{
                     navController.navigate(Screens.MembersScreenRoute(companyID = companyId, userId = userId))
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToProfile->{
+                    navController.navigate(Screens.ProfileScreenRoute(companyId = companyId, userId = userId))
+                }
             }
         }
     }
@@ -225,7 +228,7 @@ fun HomeScreen(
                        else{
                            /*TODO*/                        }
                    },
-                   onProfileScreenClick = { /*TODO*/ },
+                   onProfileScreenClick = { viewModel.onEvent(HomeScreenEvent.OnProfileClick) },
                    onMembersClick = { viewModel.onEvent(HomeScreenEvent.OnMembersScreenClick)},
                    onStatisticsClick = { /*TODO*/  })
 

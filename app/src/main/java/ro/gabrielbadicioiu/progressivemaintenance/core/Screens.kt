@@ -42,4 +42,8 @@ sealed class Screens {
     data class JoinCompanyCreateUserProfile(val companyID:String, val userID:String, val email:String):Screens()
     @Serializable
     data class MembersScreenRoute(val companyID: String, val userId:String):Screens()
+    @Serializable
+    data object BannedScreen:Screens()
+    @Serializable
+    data class ProfileScreenRoute(val companyId:String, val userId:String):Screens()
 }

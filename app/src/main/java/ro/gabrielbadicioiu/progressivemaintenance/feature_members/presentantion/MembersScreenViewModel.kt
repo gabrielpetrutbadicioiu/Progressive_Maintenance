@@ -4,6 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -45,9 +47,14 @@ class MembersScreenViewModel(
     private val _showEditPositionAlertDialog= mutableStateOf(false)
     val showEditPositionAlertDialog:State<Boolean> = _showEditPositionAlertDialog
 
-    private val _showKickAlertDialog= mutableStateOf(false)
-    val showKickAlertDialog:State<Boolean> = _showKickAlertDialog
+    private val _showBanAlertDialog= mutableStateOf(false)
+    val showBanAlertDialog:State<Boolean> = _showBanAlertDialog
 
+    private val _showBannedUsers= mutableStateOf(false)
+    val showBannedUsers:State<Boolean> = _showBannedUsers
+
+    private val _isBanned= mutableStateOf(false)
+    val isBanned:State<Boolean> = _isBanned
     //one time events
     private val _eventFlow= MutableSharedFlow<MembersScreenUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -55,7 +62,9 @@ class MembersScreenViewModel(
     sealed class MembersScreenUiEvent{
         data object OnAddProductionLineClick:MembersScreenUiEvent()
         data object OnHomeBtnClick:MembersScreenUiEvent()
+        data object OnProfileClick:MembersScreenUiEvent()
         data class ToastMessage(val message:String):MembersScreenUiEvent()
+
     }
 
     fun onEvent(event: MembersScreenEvent)
@@ -117,6 +126,7 @@ class MembersScreenViewModel(
                 }
             }
             is MembersScreenEvent.OnShowDropdownMenu->{
+                _tappedUser.value=event.user.copy()
                 _memberStatus.value=_memberStatus.value.mapIndexed { _, memberStatus ->
                     if (memberStatus.user.userID==event.user.user.userID)
                     {
@@ -190,18 +200,80 @@ class MembersScreenViewModel(
                     viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.ToastMessage(e.message?:"Couldn't update user's position")) }
                 }
             }
-            is MembersScreenEvent.OnKickClick->{
+            is MembersScreenEvent.OnBanClick->{
                 _tappedUser.value=event.tappedUser.copy()
-                _showKickAlertDialog.value=true
+                _showBanAlertDialog.value=true
+                _memberStatus.value=_memberStatus.value.map { member->
+                    member.copy(showDropDown = false)
+                }
+                _isBanned.value=true
                 _memberStatus.value=_memberStatus.value.map { member->
                     member.copy(showDropDown = false)
                 }
             }
-            is MembersScreenEvent.OnDismissKickDialog->{
+            is MembersScreenEvent.OnDismissBanDialog->{
                 _tappedUser.value=MemberStatus()
-                _showKickAlertDialog.value=false
+                _showBanAlertDialog.value=false
             }
-            //todo a ramas de implementat kick-ul trebuie sa stergi tot, cont, poze si datele din firestore
+            is MembersScreenEvent.OnBanConfirm->{
+
+                try {
+                    viewModelScope.launch {
+                        useCases.onBanConfirm.execute(
+                            companyId = _companyID.value,
+                            user = _tappedUser.value.copy(),
+                            isBanned = true,
+                            onFailure = {e->  viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.ToastMessage(e)) }},
+                            onSuccess = {
+                                _showBanAlertDialog.value=false
+                                viewModelScope.launch {
+                                    _eventFlow.emit(MembersScreenUiEvent.ToastMessage(
+                                        "${_tappedUser.value.user.firstName} ${_tappedUser.value.user.lastName} has been banned!"
+                                    ))
+                                }}
+                        )
+                    }
+                }catch (e:Exception)
+                {
+                    viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.ToastMessage(e.message?:"Failed to ban user")) }
+                }
+            }
+            is MembersScreenEvent.OnUnbanConfirm->{
+                _showBanAlertDialog.value=false
+                try {
+                    viewModelScope.launch {
+                        useCases.onBanConfirm.execute(
+                            companyId = _companyID.value,
+                            user = _tappedUser.value,
+                            isBanned = false,
+                            onFailure = {e->  viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.ToastMessage(e)) }},
+                            onSuccess = {
+                                viewModelScope.launch {
+                                    _eventFlow.emit(MembersScreenUiEvent.ToastMessage(
+                                        "${_tappedUser.value.user.firstName} ${_tappedUser.value.user.lastName} has been unbanned!"
+                                    ))
+                                }}
+                        )
+                    }
+                }catch (e:Exception)
+                {
+                    viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.ToastMessage(e.message?:"Failed to unban user")) }
+                }
+            }
+            is MembersScreenEvent.OnShowBannedUserToggle->{
+                _showBannedUsers.value=!_showBannedUsers.value
+            }
+            is MembersScreenEvent.OnUnbanClick->{
+                _showBanAlertDialog.value=true
+                _isBanned.value=false
+                _memberStatus.value=_memberStatus.value.map { member->
+                    member.copy(showDropDown = false)}
+            }
+            is MembersScreenEvent.OnNavigateToProfile->{
+                viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.OnProfileClick)}
+            }
+
+
         }
     }
 }

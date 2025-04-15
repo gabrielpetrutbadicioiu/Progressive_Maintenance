@@ -34,12 +34,15 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_bannedScreen.BannedScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreenViewModel
 
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -68,6 +71,7 @@ class MainActivity : ComponentActivity() {
                 val joinCompanyUserPasswordScreenViewModel=getViewModel<JoinCompanyUserPasswordScreenViewModel> ()
                 val createUserProfileViewModel=getViewModel<CreateUserProfileViewModel>()
                 val membersScreenViewModel=getViewModel<MembersScreenViewModel>()
+                val profileScreenViewModel=getViewModel<ProfileScreenViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -191,6 +195,17 @@ class MainActivity : ComponentActivity() {
                             userId =args.userId ,
                             viewModel = membersScreenViewModel,
                             navController = navController)
+                    }
+                    composable<Screens.BannedScreen> {
+                        BannedScreen()
+                    }
+                    composable<Screens.ProfileScreenRoute> {
+                        val args=it.toRoute<Screens.ProfileScreenRoute>()
+                        ProfileScreen(
+                            navController =navController ,
+                            companyId =args.companyId ,
+                            userId = args.userId,
+                            viewModel =profileScreenViewModel )
                     }
                 }//navHost
 

@@ -60,6 +60,12 @@ interface CompaniesRepository {
         onFailure: (String) -> Unit
     )
 
+    suspend fun getCompanyById(
+        companyId: String,
+        onSuccess: (company:Company) -> Unit,
+        onFailure: (String) -> Unit
+    )
+
     suspend fun productionLinesListener(
         companyID: String,
         onProductionLineAdded:(addedLineId:String)->Unit,

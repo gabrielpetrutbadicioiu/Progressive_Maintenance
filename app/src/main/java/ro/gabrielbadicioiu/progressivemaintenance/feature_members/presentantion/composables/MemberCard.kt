@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +49,8 @@ fun MemberCard(
     onDismissDropdownMenu:()->Unit,
     onChangeUserRank:(rank:UserRank)->Unit,
     onEditPositionClick:()->Unit,
-    onKickClick:()->Unit
+    onBanClick:()->Unit,
+    onUnbanClick:()->Unit
 )
 {
     Card(modifier = Modifier.wrapContentSize(),
@@ -70,12 +73,24 @@ fun MemberCard(
                             size =25.dp )
                     }
                 }) {
-                    AsyncImage(model =user.profilePicture,
-                        contentDescription = stringResource(id = R.string.image_description),
-                        modifier = Modifier
-                            .size(65.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop)
+                    if (user.profilePicture.isNotEmpty())
+                    {
+                        AsyncImage(model =user.profilePicture,
+                            contentDescription = stringResource(id = R.string.image_description),
+                            modifier = Modifier
+                                .size(65.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop)
+                    }
+                    else{
+                        Image(
+                            painter = painterResource(id = R.drawable.auth_image),
+                            contentDescription = stringResource(id = R.string.image_description),
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(shape = CircleShape))
+                    }
+
                 }
 
                 Text(
@@ -89,33 +104,42 @@ fun MemberCard(
                         Icon(imageVector = Icons.Default.MoreVert ,
                             contentDescription = stringResource(id = R.string.icon_descr),
                             tint = colorResource(id = R.color.btn_color))
+
                         DropdownMenu(
                             expanded = isDropdownMenuExpanded ,
                             onDismissRequest = { onDismissDropdownMenu() }) {
-                            if (user.rank==UserRank.USER.name)
-                            {
-                                DropdownMenuItem(
-                                    text = { Text(text = stringResource(id = R.string.promote_admin)) },
-                                    onClick = { onChangeUserRank(UserRank.ADMIN) })
-                            }
+                            if(!user.hasBeenBanned) {
+                                if (user.rank == UserRank.USER.name) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.promote_admin)) },
+                                        onClick = { onChangeUserRank(UserRank.ADMIN) })
+                                }
 
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(id = R.string.promote_owner)) },
                                     onClick = { onChangeUserRank(UserRank.OWNER) })
 
-                            if (user.rank==UserRank.ADMIN.name)
-                            {
-                                DropdownMenuItem(
-                                    text = { Text(text = stringResource(id = R.string.demote)) },
-                                    onClick = { onChangeUserRank(UserRank.USER) })
-                            }
+                                if (user.rank == UserRank.ADMIN.name) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.demote)) },
+                                        onClick = { onChangeUserRank(UserRank.USER) })
+                                }
 
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(id = R.string.update_position)) },
                                     onClick = { onEditPositionClick() })
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.kick)) },
-                                onClick = { onKickClick() })
+
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.Ban)) },
+                                    onClick = { onBanClick() })
+                            }
+                          else
+                            {
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.unban)) },
+                                    onClick = {onUnbanClick()})
+                            }
+
 
                         }
 

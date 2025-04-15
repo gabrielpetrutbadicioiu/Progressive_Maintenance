@@ -6,5 +6,6 @@ data class MembersScreenUseCases(
     val getUserInCompany: GetUserInCompany,
     val getAllUsersInCompany:FetchUsersInCompany,
     val onChangeUserRank: OnChangeUserRank,
-    val onUpdateUserPosition: OnUpdateUserPosition
+    val onUpdateUserPosition: OnUpdateUserPosition,
+    val onBanConfirm: OnBanConfirm
 )

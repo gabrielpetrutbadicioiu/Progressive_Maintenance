@@ -49,9 +49,11 @@ class HomeViewModel(
     {
         data object OnAddProductionLineClick: HomeScreenUiEvent()
         data object OnMembersScreenClick:HomeScreenUiEvent()
+        data object OnNavigateToProfile:HomeScreenUiEvent()
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
+
     }
 
     fun onEvent(event: HomeScreenEvent)
@@ -111,10 +113,17 @@ class HomeViewModel(
                             _getUserErr.value=false
                             _getUserErrMsg.value=""
                             _userDetails.value=user.copy()
+                            if (_userDetails.value.hasBeenBanned)
+                            {
+                                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateTo(Screens.BannedScreen)) }
+
+                            }
+
                         }
                     )
                 }
             }
+
             is HomeScreenEvent.OnProductionLineListener->{
                 viewModelScope.launch {
                     useCases.onProductionLineListener.execute(
@@ -131,6 +140,10 @@ class HomeViewModel(
             }
             is HomeScreenEvent.OnMembersScreenClick->{
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnMembersScreenClick) }
+            }
+
+            is HomeScreenEvent.OnProfileClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToProfile) }
             }
 
         }

@@ -9,7 +9,7 @@ sealed class HomeScreenEvent {
     data object OnGetUserById:HomeScreenEvent()
     data object OnProductionLineListener:HomeScreenEvent()
     data object OnMembersScreenClick:HomeScreenEvent()
-
+    data object OnProfileClick:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()

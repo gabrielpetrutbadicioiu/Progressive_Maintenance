@@ -60,13 +60,13 @@ fun BottomNavBar(
         //statistics
         //aici poti sa pui top 3 erori frecvente, timp de aparitie, etc acum il vad asa pe fiecare linie, dintr-un dropdown menu selectezi linia si iti da statistica
         NavigationBarItem(
-            selected = activeScreen==ActiveScreen.STATISTICS,
+            selected = false,
             onClick = { onStatisticsClick() },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.BarChart,
                     contentDescription = stringResource(id = R.string.icon_descr),
-                    tint = if (activeScreen==ActiveScreen.PROFILE) colorResource(id = R.color.btn_color) else Color.White,
+                    tint = if (activeScreen==ActiveScreen.STATISTICS) colorResource(id = R.color.btn_color) else Color.White,
                     modifier = Modifier.size(32.dp)
                 )
             })
@@ -89,7 +89,7 @@ fun BottomNavBar(
             })
         //profile
         NavigationBarItem(
-            selected = activeScreen==ActiveScreen.PROFILE,
+            selected = false,
             onClick = { onProfileScreenClick() },
             icon = {
                 Icon(

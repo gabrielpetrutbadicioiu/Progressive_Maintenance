@@ -1,6 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,11 +43,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
-import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.composables.KickUserAlertDialog
+import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.composables.BanUserAlertDialog
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.composables.MemberCard
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     fun MembersScreen(
         companyId:String,
@@ -68,6 +72,9 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                     is MembersScreenViewModel.MembersScreenUiEvent.ToastMessage->{
                         Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                     }
+                    is MembersScreenViewModel.MembersScreenUiEvent.OnProfileClick->{
+                        navController.navigate(Screens.ProfileScreenRoute(companyId = companyId, userId = userId))
+                    }
 
                 }
             }
@@ -81,6 +88,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                     .fillMaxSize(),
                 topBar = {
                     TopAppBar(
+
                         title = {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -111,7 +119,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                             else{
                                 /*TODO*/  }
                         },
-                        onProfileScreenClick = { /*TODO*/ },
+                        onProfileScreenClick = { viewModel.onEvent(MembersScreenEvent.OnNavigateToProfile) },
                         onMembersClick = {},
                         onStatisticsClick = { /*TODO*/ })
 
@@ -124,7 +132,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                         .fillMaxSize()
                         .padding(innerPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center)
+                    verticalArrangement = Arrangement.Top)
                 {
                     if (viewModel.isError.value)
                     {
@@ -143,23 +151,67 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                         }
                     }else
                     {
+                        if (viewModel.userDetails.value.rank==UserRank.OWNER.name)
+                        {
+                            stickyHeader {
+                                Column {
+                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()){
+                                        Text(text = stringResource(id = R.string.show_banned_users))
+                                        Switch(
+                                            colors = SwitchDefaults.colors(
+                                                checkedThumbColor = colorResource(id = R.color.white),
+                                                checkedTrackColor = colorResource(id = R.color.btn_color)),
+                                            checked = viewModel.showBannedUsers.value,
+                                            onCheckedChange ={viewModel.onEvent(MembersScreenEvent.OnShowBannedUserToggle)}
+                                        )
+                                    }
+                                    HorizontalDivider(color = Color.White, thickness = 2.dp, modifier = Modifier.padding(8.dp))
+                                }
+
+                            }
+                        }
                         items(viewModel.memberStatus.value)
                         {user->
-                            MemberCard(user = user.user,
-                                currentUser = viewModel.userDetails.value,
-                                isDropdownMenuExpanded = user.showDropDown,
-                                onShowDropdownMenu = {
-                                    viewModel.onEvent(MembersScreenEvent.OnShowDropdownMenu(user))
-                                },
-                                onDismissDropdownMenu = {viewModel.onEvent(MembersScreenEvent.OnDismissDropdownMenu)},
-                                onChangeUserRank = {rank->
-                                    viewModel.onEvent(MembersScreenEvent.OnChangeUserRank(user=user, rank = rank))
-                                },
-                                onEditPositionClick = {
-                                    viewModel.onEvent(MembersScreenEvent.OnEditPositionClick(user))
-                                },
-                                onKickClick ={viewModel.onEvent(MembersScreenEvent.OnKickClick(user)) } )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            if (!user.user.hasBeenBanned && !viewModel.showBannedUsers.value)
+                            {
+                                MemberCard(user = user.user,
+                                    currentUser = viewModel.userDetails.value,
+                                    isDropdownMenuExpanded = user.showDropDown,
+                                    onShowDropdownMenu = {
+                                        viewModel.onEvent(MembersScreenEvent.OnShowDropdownMenu(user))
+                                    },
+                                    onDismissDropdownMenu = {viewModel.onEvent(MembersScreenEvent.OnDismissDropdownMenu)},
+                                    onChangeUserRank = {rank->
+                                        viewModel.onEvent(MembersScreenEvent.OnChangeUserRank(user=user, rank = rank))
+                                    },
+                                    onEditPositionClick = {
+                                        viewModel.onEvent(MembersScreenEvent.OnEditPositionClick(user))
+                                    },
+                                    onBanClick ={viewModel.onEvent(MembersScreenEvent.OnBanClick(user)) },
+                                    onUnbanClick = {/*todo*/})
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                            if (viewModel.showBannedUsers.value && user.user.hasBeenBanned){
+                                MemberCard(user = user.user,
+                                    currentUser = viewModel.userDetails.value,
+                                    isDropdownMenuExpanded = user.showDropDown,
+                                    onShowDropdownMenu = {
+                                        viewModel.onEvent(MembersScreenEvent.OnShowDropdownMenu(user))
+                                    },
+                                    onDismissDropdownMenu = {viewModel.onEvent(MembersScreenEvent.OnDismissDropdownMenu)},
+                                    onChangeUserRank = {rank->
+                                        viewModel.onEvent(MembersScreenEvent.OnChangeUserRank(user=user, rank = rank))
+                                    },
+                                    onEditPositionClick = {
+                                        viewModel.onEvent(MembersScreenEvent.OnEditPositionClick(user))
+                                    },
+                                    onBanClick ={viewModel.onEvent(MembersScreenEvent.OnBanClick(user)) },
+                                    onUnbanClick = {viewModel.onEvent(MembersScreenEvent.OnUnbanClick)})
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+
 
                         }
                     }
@@ -173,11 +225,13 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                     } ,
                     value = viewModel.tappedUser.value.user.position
                 )
-                KickUserAlertDialog(
+                BanUserAlertDialog(
                     tappedUser = viewModel.tappedUser.value,
-                    onDismissRequest = { viewModel.onEvent(MembersScreenEvent.OnDismissKickDialog)},
-                    onConfirm = { /*TODO*/ },
-                    show = viewModel.showKickAlertDialog.value
+                    onDismissRequest = { viewModel.onEvent(MembersScreenEvent.OnDismissBanDialog)},
+                    onBanConfirm = { viewModel.onEvent(MembersScreenEvent.OnBanConfirm) },
+                    onUnbanConfirm = {viewModel.onEvent(MembersScreenEvent.OnUnbanConfirm)},
+                    isBanned = viewModel.isBanned.value,
+                    show = viewModel.showBanAlertDialog.value
                 )
             }
         }

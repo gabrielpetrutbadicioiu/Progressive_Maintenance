@@ -12,5 +12,12 @@ interface CloudStorageRepository
                         onSuccess:(String)->Unit,
                         onFailure:(String)->Unit)
 
+    suspend fun deleteFile(
+        imageName: String,
+        folderName:String,
+        onSuccess:()->Unit,
+        onFailure:(String)->Unit)
+
+
 
 }

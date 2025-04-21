@@ -143,6 +143,22 @@ class CompaniesRepositoryImpl:CompaniesRepository {
 
     }
 
+    override suspend fun updateCompany(
+        companyId: String,
+        updatedCompany: Company,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .set(updatedCompany)
+            .addOnSuccessListener { onSuccess()}
+            .addOnFailureListener { e->
+                onFailure(e.message?:"Repository:Failed to update production line")
+            }
+    }
+
     override suspend fun updateUser(
         companyId: String,
         user: UserDetails,

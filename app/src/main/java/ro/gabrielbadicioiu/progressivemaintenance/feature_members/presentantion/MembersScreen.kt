@@ -176,6 +176,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                         {user->
                             if (!user.user.hasBeenBanned && !viewModel.showBannedUsers.value)
                             {
+                                Spacer(modifier = Modifier.height(16.dp))
                                 MemberCard(user = user.user,
                                     currentUser = viewModel.userDetails.value,
                                     isDropdownMenuExpanded = user.showDropDown,
@@ -191,7 +192,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                                     },
                                     onBanClick ={viewModel.onEvent(MembersScreenEvent.OnBanClick(user)) },
                                     onUnbanClick = {/*todo*/})
-                                Spacer(modifier = Modifier.height(16.dp))
+
                             }
                             if (viewModel.showBannedUsers.value && user.user.hasBeenBanned){
                                 MemberCard(user = user.user,

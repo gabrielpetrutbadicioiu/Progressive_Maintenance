@@ -126,7 +126,9 @@ val appModule= module {
     viewModel {
         ProfileScreenViewModel(
             useCases = get(),
-            companiesRepository = get()
+            companiesRepository = get(),
+            cloudStorageRepository = get(),
+            accountService = get()
             )
     }
 // Members screen

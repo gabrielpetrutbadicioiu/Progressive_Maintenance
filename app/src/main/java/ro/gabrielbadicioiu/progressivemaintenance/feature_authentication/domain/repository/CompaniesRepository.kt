@@ -53,6 +53,7 @@ interface CompaniesRepository {
         onFailure: (String) -> Unit,
         onUserNotFound:()->Unit
     )
+
     suspend fun getProductionLineById(
         companyId: String,
         productionLineId:String,
@@ -84,6 +85,12 @@ interface CompaniesRepository {
         user: UserDetails,
         onFailure: (String) -> Unit,
         onSuccess: () -> Unit
+    )
+    suspend fun updateCompany(
+        companyId: String,
+        updatedCompany: Company,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
     )
     suspend fun deleteProductionLine(
         companyId: String,

@@ -105,6 +105,15 @@
     <string name="show_banned_users">Show banned users</string>
     <string name="access_suspended">Access suspended</string>
     <string name="disabled_acc">This account has been disabled by the company Owner. If you believe this is an error, please contact them directly.</string>
+    <string name="profile">Profile</string>
+    <string name="show_otp">Show OTP</string>
+    <string name="change_profile_pic">Change profile picture</string>
+    <string name="user">User</string>
+    <string name="company">Company</string>
+    <string name="user_info">User information</string>
+    <string name="company_info">Company information</string>
+    <string name="logout">Logout</string>
+    <string name="change_logo">Change company logo</string>
 
 
 </resources>

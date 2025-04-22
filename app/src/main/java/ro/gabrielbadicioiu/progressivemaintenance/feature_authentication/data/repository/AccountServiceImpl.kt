@@ -2,6 +2,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.r
 
 
 import com.google.firebase.FirebaseException
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -92,5 +93,43 @@ class AccountServiceImpl:AccountService {
 
      }
 
+    override suspend fun reAuthenticate(
+        userId: String,
+        oldPass: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        val currentUser=Firebase.auth.currentUser
+        if (currentUser?.uid==null)
+        {
+            onFailure("Current user is null")
+            return
+        }
+        if (currentUser.uid!=userId)
+        {
+            onFailure("ID doesn't match")
+            return
+        }
+        val credential= EmailAuthProvider.getCredential(currentUser.email.toString(), oldPass )
+        currentUser.reauthenticate(credential)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message?:"Repository: Failed to authenticate") }
+    }
 
+    override suspend fun updatePassword(
+        newPass: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.auth.currentUser
+            ?.updatePassword(newPass)
+            ?.addOnSuccessListener {onSuccess()  }
+            ?.addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to change password") }
+
+    }
+
+    override suspend fun logOut() {
+
+        Firebase.auth.signOut()
+    }
 }

@@ -114,6 +114,14 @@
     <string name="company_info">Company information</string>
     <string name="logout">Logout</string>
     <string name="change_logo">Change company logo</string>
+    <string name="acc_settings">Account settings</string>
+    <string name="change_pass">Change password</string>
+    <string name="old_pass">Enter your current password</string>
+    <string name="new_pass">Enter a new password</string>
+    <string name="conf_new_pass">Confirm your new password</string>
+    <string name="confirm">Confirm</string>
+    <string name="otp_hint2">Give this code to users to let them create an account*</string>
+    <string name="otp_hint3">New users will need this code to sign up"</string>
 
 
 </resources>

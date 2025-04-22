@@ -26,4 +26,18 @@ suspend fun sendVerificationEmail(
         onSuccess:(FirebaseUser?)->Unit,
         onError:(String?)->Unit)
 
+    suspend fun reAuthenticate(
+        userId:String,
+        oldPass:String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun updatePassword(
+        newPass:String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun logOut()
+
+
 }

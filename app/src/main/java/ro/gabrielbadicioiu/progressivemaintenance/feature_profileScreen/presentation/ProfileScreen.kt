@@ -21,24 +21,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.CorporateFare
 import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -51,6 +57,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -64,6 +71,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -75,6 +84,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.BottomNavBar
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.PasswordRequirements
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -87,6 +97,7 @@ fun ProfileScreen(
 {
     val context= LocalContext.current
     val pagerState= rememberPagerState {2}
+    val sheetState= rememberModalBottomSheetState()
     val profilePhotoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia())
     {uri->
         viewModel.onEvent(ProfileScreenEvent.OnProfileUriResult(uri))
@@ -103,6 +114,9 @@ fun ProfileScreen(
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
+                is ProfileScreenViewModel.ProfileScreenUiEvent.OnNavigateToLoginScreen->{
+                    navController.navigate(Screens.SignInScreen)
+                }
                 is ProfileScreenViewModel.ProfileScreenUiEvent.OnNavigateHome->{
                     navController.navigate(Screens.HomeScreen(companyID = companyId, userID = userId))
                 }
@@ -213,7 +227,8 @@ fun ProfileScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top) {
+                verticalArrangement = Arrangement.Top)
+            {
 
 
 
@@ -377,7 +392,7 @@ fun ProfileScreen(
 
                 item {
                     HorizontalPager(state = pagerState,
-                        modifier = Modifier.fillMaxSize()) {page-> //todo
+                        modifier = Modifier.fillMaxSize()) {page->
                         Column(horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.Top,
                             modifier = Modifier.fillMaxSize()) {
@@ -497,7 +512,7 @@ fun ProfileScreen(
                                         unfocusedContainerColor = Color.Transparent,
                                     ),
                                     value = viewModel.loggedUser.value.position,
-                                    onValueChange = {/*todo*/},
+                                    onValueChange = {},
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Outlined.WorkOutline,
@@ -518,7 +533,7 @@ fun ProfileScreen(
                                         unfocusedContainerColor = Color.Transparent,
                                     ),
                                     value = viewModel.loggedUser.value.rank,
-                                    onValueChange = {/*todo*/},
+                                    onValueChange = {},
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Outlined.Badge,
@@ -539,6 +554,41 @@ fun ProfileScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 HorizontalDivider(color = Color.DarkGray,
                                     thickness = 1.dp)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = stringResource(id = R.string.acc_settings),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    modifier = Modifier.padding(start = 16.dp))
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color.DarkGray,
+                                    thickness = 1.dp)
+                                //change pass btn
+                                TextButton(onClick = { viewModel.onEvent(ProfileScreenEvent.OnOpenSheet) })
+                                {
+                                    Row(modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Start) {
+                                        Text(text = stringResource(id = R.string.change_pass),
+                                            color = Color.LightGray)
+                                    }
+
+                                     }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color.DarkGray,
+                                    thickness = 1.dp)
+                                TextButton(onClick = { viewModel.onEvent(ProfileScreenEvent.OnLogoutClick) }) {
+                                    Row(modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Start,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Logout ,
+                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                            tint = Color.Red)
+                                        Spacer(modifier = Modifier.width(2.dp))
+                                        Text(text = stringResource(id = R.string.logout),
+                                            color = Color.Red)
+                                    }
+                                }
 
                             }//if
 
@@ -555,41 +605,270 @@ fun ProfileScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 HorizontalDivider(color = Color.DarkGray,
                                     thickness = 1.dp)
-                            }
+
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedIndicatorColor = if (viewModel.isOrganisationNameEditing.value) Color.LightGray else Color.Transparent,
+                                        focusedIndicatorColor = if (viewModel.isOrganisationNameEditing.value) colorResource(id = R.color.btn_color) else Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                    ),
+                                    value = if (viewModel.isOrganisationNameEditing.value) viewModel.editingOrganisationName.value else viewModel.loggedCompany.value.organisationName,
+                                    onValueChange = {organisationName-> viewModel.onEvent(ProfileScreenEvent.OnOrganisationNameChange(organisationName))},
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.CorporateFare,
+                                            contentDescription = stringResource(id = R.string.icon_descr) )
+                                    },
+                                    trailingIcon = {
+                                        if (viewModel.loggedUser.value.rank==UserRank.OWNER.name)
+                                        {
+                                            if (viewModel.isOrganisationNameEditing.value)
+                                            {
+                                                Row {
+                                                    IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnEditingOrganisationNameConfirm)}) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.DoneOutline,
+                                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                                            tint = colorResource(id = R.color.btn_color))
+                                                    }
+                                                    IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnEditOrganisationNameCancel)}) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.Cancel,
+                                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                                            tint = Color.Red)
+                                                    }
+                                                }
+                                            }
+                                            else{
+                                                IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnEditOrganisationNameClick) }) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Edit,
+                                                        contentDescription = stringResource(id = R.string.icon_descr) )
+                                                }
+                                            }
+                                        }
 
 
+                                    },
+                                    readOnly = !viewModel.isOrganisationNameEditing.value
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color.DarkGray,
+                                    thickness = 1.dp)
+                                //domain
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedIndicatorColor = if (viewModel.isOrganisationDomainEditing.value) Color.LightGray else Color.Transparent,
+                                        focusedIndicatorColor = if (viewModel.isOrganisationDomainEditing.value) colorResource(id = R.color.btn_color) else Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                    ),
+                                    value = if (viewModel.isOrganisationDomainEditing.value) viewModel.editingOrganisationDomain.value else viewModel.loggedCompany.value.industryType,
+                                    onValueChange = {domain-> viewModel.onEvent(ProfileScreenEvent.OnOrganisationDomainChange(domain))},
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Badge,
+                                            contentDescription = stringResource(id = R.string.icon_descr) )
+                                    },
+                                    trailingIcon = {
+                                        if (viewModel.loggedUser.value.rank==UserRank.OWNER.name)
+                                        {
+                                            if (viewModel.isOrganisationDomainEditing.value)
+                                            {
+                                                Row {
+                                                    IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnOrganisationDomainEditConfirm)}) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.DoneOutline,
+                                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                                            tint = colorResource(id = R.color.btn_color))
+                                                    }
+                                                    IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnEditOrganisationDomainCancel)}) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.Cancel,
+                                                            contentDescription = stringResource(id = R.string.icon_descr),
+                                                            tint = Color.Red)
+                                                    }
+                                                }
+                                            }
+                                            else{
+                                                IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnEditOrganisationDomain) }) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Edit,
+                                                        contentDescription = stringResource(id = R.string.icon_descr) )
+                                                }
+                                            }
+                                        }
 
 
+                                    },
+                                    readOnly = !viewModel.isOrganisationDomainEditing.value
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color.DarkGray,
+                                    thickness = 1.dp)
+
+                                TextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        focusedIndicatorColor =  Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                    ),
+                                    value = viewModel.loggedCompany.value.country,
+                                    onValueChange = {},
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.LocationOn,
+                                            contentDescription = stringResource(id = R.string.icon_descr) )
+                                    },
+
+                                    readOnly = true
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(color = Color.DarkGray,
+                                    thickness = 1.dp)
+                                if (viewModel.loggedUser.value.rank==UserRank.OWNER.name)
+                                {
+                                    TextField(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = TextFieldDefaults.colors(
+                                            unfocusedIndicatorColor = Color.Transparent,
+                                            focusedIndicatorColor =  Color.Transparent,
+                                            unfocusedContainerColor = Color.Transparent,
+                                        ),
+                                        value = if (viewModel.showOtp.value) viewModel.loggedCompany.value.otp else stringResource(
+                                            id = R.string.otp_hint3
+                                        ),
+                                        onValueChange = {},
+                                        leadingIcon = {
+                                            
+                                            Icon(
+                                                imageVector =Icons.Outlined.Lock,
+                                                contentDescription = stringResource(id = R.string.icon_descr) )
+                                        },
+                                        trailingIcon = {
+                                            IconButton(onClick = { viewModel.onEvent(ProfileScreenEvent.OnShowOtpClick) }) {
+                                                Icon(
+                                                    imageVector = if(viewModel.showOtp.value) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                                    contentDescription = stringResource(id = R.string.warning_icon_descr),
+                                                    tint = colorResource(id = R.color.text_color)
+                                                )
+                                            }
+                                        },
+                                        supportingText = { Text(text = stringResource(id = R.string.otp_hint2))},
+
+                                        readOnly = true
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    HorizontalDivider(color = Color.DarkGray,
+                                        thickness = 1.dp)
+                                }
+                                
 
 
-                        }
+                            }//page 1
+                        }//column
                     }
                 }
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Row(modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                            ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Logout ,
-                                contentDescription = stringResource(id = R.string.icon_descr),
-                                tint = Color.Red)
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(text = stringResource(id = R.string.logout),
-                                color = Color.Red)
-                        }
-                    }
-                }
-                
-
             }//lazy column
-
-
-
-
-
         }//scaffold
+        if (viewModel.isSheetOpen.value)
+        {
+
+            ModalBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { viewModel.onEvent(ProfileScreenEvent.OnCloseSheet) }) {
+
+                Spacer(modifier = Modifier.height(16.dp))
+                //old pass
+                TextField(value = viewModel.oldPassInput.value,
+                    onValueChange ={oldPass-> viewModel.onEvent(ProfileScreenEvent.OnOldPassChange(oldPass))},
+                    placeholder = { Text(text = stringResource(id = R.string.old_pass))},
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = colorResource(id = R.color.btn_color)
+                    ),
+                    visualTransformation = if (viewModel.showOldPass.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { viewModel.onEvent(ProfileScreenEvent.OnShowOldPass) }) {
+                            Icon(
+                                imageVector = if (viewModel.showOldPass.value) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                contentDescription = stringResource(id = R.string.icon_descr) )
+                        }
+                    },
+                    isError = viewModel.isPassChangeErr.value
+
+                    )
+                //new pass
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(value = viewModel.newPassInput.value,
+                    onValueChange ={newPass-> if (newPass.length<=20){viewModel.onEvent(ProfileScreenEvent.OnNewPassChange(newPass))}},
+                    placeholder = { Text(text = stringResource(id = R.string.new_pass))},
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = colorResource(id = R.color.btn_color)
+                    ),
+                    visualTransformation = if (viewModel.showNewPass.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = { IconButton(onClick = {viewModel.onEvent(ProfileScreenEvent.OnShowNewPass)}) {
+                        Icon(
+                            imageVector = if (viewModel.showNewPass.value) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                            contentDescription = stringResource(id = R.string.icon_descr) )
+                    }},
+                    isError = viewModel.isPassChangeErr.value
+                )
+                //conf new pass
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(value = viewModel.confNewPassInput.value,
+                    onValueChange ={confNewPass-> if (confNewPass.length<=20)
+                    {
+                        viewModel.onEvent(ProfileScreenEvent.OnConfNewPassChange(confNewPass))
+                    }
+                        },
+                    placeholder = { Text(text = stringResource(id = R.string.conf_new_pass))},
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = colorResource(id = R.color.btn_color)
+                    ),
+                    visualTransformation = if (viewModel.showConfNewPass.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = { IconButton(onClick = { viewModel.onEvent(ProfileScreenEvent.OnShowConfNewPass) }) {
+                        Icon(
+                            imageVector = if (viewModel.showConfNewPass.value) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                            contentDescription = stringResource(id = R.string.icon_descr) )
+                    }},
+                    isError = viewModel.isPassChangeErr.value
+                )
+                if (viewModel.isPassChangeErr.value)
+                {
+                    Text(text = viewModel.passChangeErrMsg.value ,
+                        color = Color.Red)
+
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                PasswordRequirements(password = viewModel.newPassInput.value, confPassword = viewModel.confNewPassInput.value)
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically)
+                {
+                    val enable=viewModel.newPassInput.value.length>8 && viewModel.newPassInput.value== viewModel.confNewPassInput.value && viewModel.newPassInput.value.isNotEmpty() &&viewModel.newPassInput.value.matches(Regex(".*[A-Z].*")) && viewModel.newPassInput.value.matches(Regex(".*\\d.*"))
+                    Button(onClick = { viewModel.onEvent(ProfileScreenEvent.OnConfirmPassChange) },
+                        enabled = enable,
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
+                        Text(text = stringResource(id = R.string.confirm), color = Color.White)
+                    }
+                    Button(onClick = { viewModel.onEvent(ProfileScreenEvent.OnCloseSheet) },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
+                        Text(text = stringResource(id = R.string.cancel_btn), color = Color.White)
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+            }
+        }
     }//surface
 }

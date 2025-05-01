@@ -94,6 +94,9 @@ fun HomeScreen(
                 is HomeViewModel.HomeScreenUiEvent.OnNavigateToProfile->{
                     navController.navigate(Screens.ProfileScreenRoute(companyId = companyId, userId = userId))
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToLogInterventionScreen->{
+                    navController.navigate(Screens.LogInterventionScreen(companyId = companyId, userId = userId))
+                }
             }
         }
     }
@@ -270,60 +273,18 @@ fun HomeScreen(
                                     productionLine = viewModel.productionLineList.value[index],
                                     onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
                                     isExpanded = viewModel.productionLineList.value[index].isExpanded,
-                                    onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))}
+                                    onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))},
+                                    onEquipmentClick = {equipment ->
+                                    viewModel.onEvent(HomeScreenEvent.OnEquipmentClick(
+                                        productionLineIndex = index,
+                                        equipment = equipment
+                                    ))},
+                                    onDropDownDismiss = {viewModel.onEvent(HomeScreenEvent.OnDropdownMenuDismiss)},
+                                    onLogInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnLogInterventionClick)}
                                 )
-                            }
+                        }
                 }
-//                item {   Text(text = companyId)
-//                    Text(text = userId) }
-//                if (viewModel.showProgressBar.value)
-//                {
-//                    item {
-//
-//                        CircularProgressIndicator(
-//                            modifier = Modifier.size(30.dp) ,
-//                            color = colorResource(id = R.color.bar_color),
-//
-//                        )
-//                    }
-//                }
-//                else{
-//                    if (viewModel.fetchProdLineErr.value)
-//                    {
-//                        item {
-//                            Text(text = viewModel.failedToFetchProdLinesErrMsg.value)
-//                        }
-//
-//                    }
-//                    else{
-//                        if(viewModel.productionLineList.value.isEmpty())
-//                        {
-//                            item {EmptyScreenCard()  }
-//                        }
-//                        else{
-//                            items(viewModel.productionLineList.value.size)
-//                            {index->
-//                                ProductionLineCard(
-//                                    productionLine = viewModel.productionLineList.value[index],
-//                                    onExpandClick = {viewModel.onEvent(HomeScreenEvent.OnExpandBtnClick(viewModel.productionLineList.value[index].id)) },
-//                                    isExpanded = viewModel.productionLineList.value[index].isExpanded,
-//                                    onEditClick = {viewModel.onEvent(HomeScreenEvent.OnEditBtnClick(viewModel.productionLineList.value[index].id))}
-//                                )
-//                            }
-//
-//                        }
-//                    }
-//
-//                }
-
-
-
             }//lazy column
-
-
-
-
-
         }//scaffold
     }//surface
 }

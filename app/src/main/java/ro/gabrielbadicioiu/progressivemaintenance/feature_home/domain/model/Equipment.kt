@@ -1,3 +1,10 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model
 
-data class Equipment(val name:String="")
+import com.google.firebase.firestore.Exclude
+
+data class Equipment(
+    val name:String="",
+    @get:Exclude
+    val isExpanded:Boolean=false
+
+)

@@ -42,6 +42,10 @@ class HomeViewModel(
     private val _fetchProdLineErr= mutableStateOf(false)
     val fetchProdLineErr:State<Boolean> = _fetchProdLineErr
 
+    private val _clickedEquipment= mutableStateOf(ProductionLine())
+    val clickedEquipment:State<ProductionLine> = _clickedEquipment
+    private var _clickedEquipmentIndex=0
+
 //one time events
     private val _eventFlow = MutableSharedFlow<HomeScreenUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -50,6 +54,8 @@ class HomeViewModel(
         data object OnAddProductionLineClick: HomeScreenUiEvent()
         data object OnMembersScreenClick:HomeScreenUiEvent()
         data object OnNavigateToProfile:HomeScreenUiEvent()
+        data object OnNavigateToLogInterventionScreen:HomeScreenUiEvent()
+
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
@@ -144,6 +150,25 @@ class HomeViewModel(
 
             is HomeScreenEvent.OnProfileClick->{
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToProfile) }
+            }
+            is HomeScreenEvent.OnEquipmentClick->{
+                    _clickedEquipmentIndex=event.productionLineIndex
+                _clickedEquipment.value=_productionLineList.value[event.productionLineIndex]
+               _productionLineList.value=useCases.onShowDropDownMenu.execute(
+                   productionLineList = _productionLineList.value,
+                   lineIndex = event.productionLineIndex,
+                   clickedEquipment = event.equipment
+               )
+            }
+            is HomeScreenEvent.OnDropdownMenuDismiss->{
+                _productionLineList.value=useCases.onHideDropDownMenu
+                    .execute(prodLineList = _productionLineList.value,
+                        clickedLine = clickedEquipment.value,
+                        clickedLineIndex = _clickedEquipmentIndex)
+            }
+            is HomeScreenEvent.OnLogInterventionClick->{
+                onEvent(HomeScreenEvent.OnDropdownMenuDismiss)
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToLogInterventionScreen) }
             }
 
         }

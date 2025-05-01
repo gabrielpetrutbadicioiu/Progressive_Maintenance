@@ -1,5 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home
 
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
+
 
 sealed class HomeScreenEvent {
 
@@ -10,10 +12,12 @@ sealed class HomeScreenEvent {
     data object OnProductionLineListener:HomeScreenEvent()
     data object OnMembersScreenClick:HomeScreenEvent()
     data object OnProfileClick:HomeScreenEvent()
+    data object OnDropdownMenuDismiss:HomeScreenEvent()
+    data object OnLogInterventionClick:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()
     data class OnFetchArgumentData(val companyID:String, val userID:String):HomeScreenEvent()
-
+    data class OnEquipmentClick(val productionLineIndex:Int, val equipment:Equipment):HomeScreenEvent()
 
 }

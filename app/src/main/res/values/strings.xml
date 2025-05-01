@@ -122,6 +122,17 @@
     <string name="confirm">Confirm</string>
     <string name="otp_hint2">Give this code to users to let them create an account*</string>
     <string name="otp_hint3">New users will need this code to sign up"</string>
+    <string name="log_intervention">Log intervention</string>
+    <string name="shift">Shift</string>
+    <string name="author">Author details</string>
+    <string name="shiftA"> Shift A</string>
+    <string name="shiftB"> Shift B</string>
+    <string name="shiftC"> Shift C</string>
+    <string name="shiftD"> Shift D</string>
+    <string name="no_shift">N/A</string>
+    <string name="add_other_participants">Add other participants</string>
+    <string name="other_participants">Other participants</string>
+
 
 
 </resources>

@@ -39,6 +39,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreen
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
                 val createUserProfileViewModel=getViewModel<CreateUserProfileViewModel>()
                 val membersScreenViewModel=getViewModel<MembersScreenViewModel>()
                 val profileScreenViewModel=getViewModel<ProfileScreenViewModel> ()
+                val logInterventionScreenViewModel= getViewModel<LogInterventionScreenViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -206,6 +209,14 @@ class MainActivity : ComponentActivity() {
                             companyId =args.companyId ,
                             userId = args.userId,
                             viewModel =profileScreenViewModel )
+                    }
+                    composable<Screens.LogInterventionScreen> {
+                        val args=it.toRoute<Screens.LogInterventionScreen>()
+                        LogInterventionScreen(
+                            companyId =args.companyId ,
+                            userId =args.userId,
+                            navController = navController,
+                            viewModel = logInterventionScreenViewModel )
                     }
                 }//navHost
 

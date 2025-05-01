@@ -46,4 +46,6 @@ sealed class Screens {
     data object BannedScreen:Screens()
     @Serializable
     data class ProfileScreenRoute(val companyId:String, val userId:String):Screens()
+    @Serializable
+    data class LogInterventionScreen(val companyId:String, val userId:String):Screens()
 }

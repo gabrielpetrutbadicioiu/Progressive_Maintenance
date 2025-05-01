@@ -4,5 +4,7 @@ data class HomeScreenUseCases(
     val fetchProductionLines: FetchProductionLines,
     val onExpandBtnClick: OnExpandBtnClick,
     val getUserById: GetUserInCompany,
-    val onProductionLineListener: OnProductionLineListener
+    val onProductionLineListener: OnProductionLineListener,
+    val onShowDropDownMenu: ShowDropDownMenu,
+    val onHideDropDownMenu: HideDropDownMenu
 )

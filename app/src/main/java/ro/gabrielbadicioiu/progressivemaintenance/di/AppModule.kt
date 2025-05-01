@@ -59,12 +59,17 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_editProdLine.OnEquipmentEdit
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.FetchProductionLines
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.GetUserInCompany
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HideDropDownMenu
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnExpandBtnClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.OnProductionLineListener
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.ShowDropDownMenu
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnSelectInterventionParticipant
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.FetchUsersInCompany
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.MembersScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.OnBanConfirm
@@ -150,7 +155,9 @@ single{
         fetchProductionLines = FetchProductionLines(get()),
         onExpandBtnClick = OnExpandBtnClick(),
         getUserById = GetUserInCompany(repository = get()),
-        onProductionLineListener = OnProductionLineListener(repository = get())
+        onProductionLineListener = OnProductionLineListener(repository = get()),
+        onShowDropDownMenu = ShowDropDownMenu(),
+        onHideDropDownMenu = HideDropDownMenu()
     )
 }
     viewModel {
@@ -268,6 +275,19 @@ single{
     }
     viewModel {
         CreateUserProfileViewModel(get())
+    }
+
+    //LogInterventionScreen
+    single{
+        LogInterventionScreenUseCases(
+            onSelectInterventionParticipant = OnSelectInterventionParticipant()
+        )
+    }
+    viewModel {
+        LogInterventionScreenViewModel(
+            companiesRepository = get(),
+            useCases = get()
+        )
     }
 }
 

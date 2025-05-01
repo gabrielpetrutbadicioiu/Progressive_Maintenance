@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 
@@ -37,6 +39,9 @@ fun ProductionLineCard(
     onExpandClick:()->Unit,
     onEditClick:()->Unit,
     isExpanded:Boolean,
+    onEquipmentClick:(equipment:Equipment)->Unit,
+    onDropDownDismiss:()->Unit,
+    onLogInterventionClick:()->Unit
 )
 {
     Card(
@@ -85,17 +90,31 @@ fun ProductionLineCard(
                 ) {
                     productionLine.equipments.forEach {
                         machine->
-                        Text(
-                            text = machine.name,
-                            color =colorResource(id = R.color.text_color),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp)
-                                .clickable {
-                                    //TODO
-                                },
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onEquipmentClick(machine)
+                            },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(
+                                text = machine.name,
+                                color =colorResource(id = R.color.text_color),
+                                modifier = Modifier
+                                    .padding(4.dp),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Icon(
+                                imageVector = Icons.Outlined.ChevronRight,
+                                contentDescription = stringResource(id = R.string.icon_descr))
+                            MachineDropDownMenu(
+                                isDropDownMenuExpanded =machine.isExpanded ,
+                                onDismissRequest = { onDropDownDismiss() },
+                                onLogInterventionClick = {onLogInterventionClick()})
+
+                        }
+                       
                         HorizontalDivider( color = Color.LightGray)
                     }
                 }

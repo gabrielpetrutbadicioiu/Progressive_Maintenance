@@ -1,0 +1,4 @@
+package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases
+
+data class LogInterventionScreenUseCases (
+    val onSelectInterventionParticipant: OnSelectInterventionParticipant)

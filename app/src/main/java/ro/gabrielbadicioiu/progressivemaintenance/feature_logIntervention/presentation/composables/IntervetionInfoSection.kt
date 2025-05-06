@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ArrowDropUp
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.WarningAmber
@@ -57,9 +58,12 @@ fun InterventionInfoSection(
     onOtherParticipantsMenuDismiss:()->Unit,
     onOtherParticipantsMenuDisplay:()->Unit,
     onParticipantClick:(participant:UserDetails)->Unit,
-    onRemoveParticipant:(participant:UserDetails)->Unit
+    onRemoveParticipant:(participant:UserDetails)->Unit,
 
-) {
+
+    ) {
+
+
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top) {
@@ -114,20 +118,20 @@ fun InterventionInfoSection(
                         }
                     }
                 },
-               modifier = Modifier.weight(0.4f)
+                modifier = Modifier.weight(0.4f)
             )
         }
 
 
-if (participantsList.isNotEmpty())
-{
-    HorizontalDivider(color = Color.DarkGray,
-    thickness = 2.dp)
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(text = stringResource(id = R.string.other_participants),
-        fontWeight = FontWeight.ExtraBold,
-        modifier = Modifier.padding(start = 16.dp))
-}
+        if (participantsList.isNotEmpty())
+        {
+            HorizontalDivider(color = Color.DarkGray,
+                thickness = 2.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = stringResource(id = R.string.other_participants),
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(start = 16.dp))
+        }
 
 
         participantsList.forEach { participant->
@@ -161,6 +165,60 @@ if (participantsList.isNotEmpty())
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalDivider(color = Color.DarkGray,
             thickness = 1.dp)
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = stringResource(id = R.string.downtime_duration),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    readOnly = true,
+                    placeholder = { Text(text = stringResource(id = R.string.start_date))},
+                    modifier = Modifier.weight(1f),
+                    supportingText = { Text(text = stringResource(id = R.string.select_start_date))},
+                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            /*todo*/
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.DateRange,
+                                contentDescription = stringResource(id = R.string.icon_descr)
+                            )
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    placeholder = { Text(text = stringResource(id = R.string.end_date))},
+                    readOnly = true,
+                    modifier = Modifier.weight(1f),
+                    supportingText = { Text(text = stringResource(id = R.string.select_end_date))},
+                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                    trailingIcon = {
+                        IconButton(onClick = {/*todo*/ }) {
+                            Icon(
+                                imageVector = Icons.Outlined.DateRange,
+                                contentDescription = stringResource(id = R.string.icon_descr)
+                            )
+                        }
+                    }
+                )
+            }
+        }
 
 
     }
@@ -203,4 +261,11 @@ if (participantsList.isNotEmpty())
 
     }
 
+
+
 }
+
+
+
+
+

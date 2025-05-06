@@ -132,7 +132,11 @@
     <string name="no_shift">N/A</string>
     <string name="add_other_participants">Add other participants</string>
     <string name="other_participants">Other participants</string>
-
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="select_start_date">Select start date*</string>
+    <string name="select_end_date">Select end date*</string>
+    <string name="downtime_duration">Downtime duration</string>
 
 
 </resources>

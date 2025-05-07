@@ -10,6 +10,7 @@ data class ProgressiveMaintenanceCard(
     val downtimeEndDate:String="",
     val downtimeStartTime:String="",
     val downtimeEndTime:String="",
+    val totalDowntimeDuration:String="",
     val problemDescription:String="",
     val problemDetailing:String="",
     val troubleshootingSteps:String="",

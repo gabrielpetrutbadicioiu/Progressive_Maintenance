@@ -1,5 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +11,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
 
@@ -17,9 +21,7 @@ class LogInterventionScreenViewModel(
     private val useCases: LogInterventionScreenUseCases
 ) :ViewModel()
 {
-    //vars
-    private var _companyId:String?=null
-    private var _userId:String?=null
+
     //states
     private val _author= mutableStateOf(UserDetails())
     val author: State<UserDetails> = _author
@@ -29,9 +31,6 @@ class LogInterventionScreenViewModel(
 
     private val _fetchAuthorErrMsg= mutableStateOf("")
     val fetchAuthorErrMsg:State<String> = _fetchAuthorErrMsg
-
-    private val _selectedShift= mutableStateOf("")
-    val selectedShift:State<String> = _selectedShift
 
     private val _isShiftDropDownExpanded = mutableStateOf(false)
     val isShiftDropDownMenuExpanded:State<Boolean> = _isShiftDropDownExpanded
@@ -57,12 +56,6 @@ class LogInterventionScreenViewModel(
     private val _showStartDateDialog= mutableStateOf(false)
     val showStartDateDialog:State<Boolean> = _showStartDateDialog
 
-    private val _downtimeStartDate= mutableStateOf("")
-    val downtimeStartDate:State<String> = _downtimeStartDate
-
-    private val _downtimeEndDate= mutableStateOf("")
-    val downtimeEndDate:State<String> = _downtimeEndDate
-
     private val _showEndDateDialog= mutableStateOf(false)
     val showEndDateDialog:State<Boolean> = _showEndDateDialog
 
@@ -72,28 +65,12 @@ class LogInterventionScreenViewModel(
     private val _showEndTimeDialog= mutableStateOf(false)
     val showEndTimeDialog:State<Boolean> = _showEndTimeDialog
 
-    private val _downtimeStartTime= mutableStateOf("")
-    val downtimeStartTime:State<String> = _downtimeStartTime
-
-    private val _downtimeEndTime= mutableStateOf("")
-    val downtimeEndTime:State<String> = _downtimeEndTime
-
-    private val _problemDescription= mutableStateOf("")
-    val problemDescription:State<String> = _problemDescription
-
-    private val _problemDetailing= mutableStateOf("")
-    val problemDetailing:State<String> = _problemDetailing
-
-    private val _rootCause= mutableStateOf("")
-    val rootCause:State<String> = _rootCause
-
-    private val _observations= mutableStateOf("")
-    val observations:State<String> = _observations
-
     private val _pmCard= mutableStateOf(ProgressiveMaintenanceCard())
     val pmCard:State<ProgressiveMaintenanceCard> = _pmCard
 
-    private var _totalDownTimeDuration=""
+    private val _pmCardErrorState = mutableStateOf(PmCardErrorState())
+    val pmCardErrorState:State<PmCardErrorState> = _pmCardErrorState
+
     //one time events
     sealed class LogInterventionUiEvent{
         data class ShowToast(val message:String):LogInterventionUiEvent()
@@ -105,23 +82,23 @@ class LogInterventionScreenViewModel(
 
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event:LogInterventionScreenEvent)
     {
         when(event)
         {
             is LogInterventionScreenEvent.GetArgumentData->{
-//                _companyId=event.companyId
-//                _userId=event.userId
                 _pmCard.value=_pmCard.value.copy(authorId = event.userId, companyId = event.companyId)
                 viewModelScope.launch {
 
                         try {
                             companiesRepository.getUserInCompany(
-                                currentUserID = _userId!!,
-                                companyID = _companyId!!,
+                                currentUserID = _pmCard.value.authorId,
+                                companyID = _pmCard.value.companyId,
                                 onSuccess = {user->
                                     if (user != null) {
                                         _author.value=user.copy()
+                                        _pmCard.value=_pmCard.value.copy(authorAvatar = user.profilePicture)
                                         _fetchAuthorError.value=false
                                         _fetchAuthorErrMsg.value=""
                                     }
@@ -149,7 +126,7 @@ class LogInterventionScreenViewModel(
                 viewModelScope.launch {
                     try {
                         companiesRepository.fetchAllUsersInCompany(
-                            companyID = _companyId!!,
+                            companyID = _pmCard.value.companyId,
                             onResult = {employeeList->
                                 _employeeList.value=employeeList
                                 _fetchEmployeesErr.value=false
@@ -168,8 +145,8 @@ class LogInterventionScreenViewModel(
             }//fetch data
 
             is LogInterventionScreenEvent.OnShiftClick->{
-                _selectedShift.value=event.shift
-                onEvent(LogInterventionScreenEvent.OnShiftDropdownDismiss)
+                _pmCard.value=_pmCard.value.copy(shift = event.shift)
+                 onEvent(LogInterventionScreenEvent.OnShiftDropdownDismiss)
             }
             is LogInterventionScreenEvent.OnExpandShiftDropDown->{
                 _isShiftDropDownExpanded.value=true
@@ -191,14 +168,22 @@ class LogInterventionScreenViewModel(
                     onFailure = {e->
                         viewModelScope.launch {_eventFlow.emit(LogInterventionUiEvent.ShowToast(e))}
                     },
-                    onSuccess = {participants->
+                    onSuccess = {participants, interventionParticipants->
                         _participantsList.value=participants
+                        _pmCard.value=_pmCard.value.copy(otherParticipants = interventionParticipants)
                         onEvent(LogInterventionScreenEvent.OnOtherParticipantsDropdownMenuDismiss)
                     }
                 )
             }
             is LogInterventionScreenEvent.OnRemoveParticipant-> {
                 _participantsList.value -= event.participant
+                val deletedInterventionParticipant=InterventionParticipants(
+                    firstName = event.participant.firstName,
+                    lastName = event.participant.lastName,
+                    avatar = event.participant.profilePicture,
+                    id = event.participant.userID
+                    )
+                _pmCard.value=_pmCard.value.copy(otherParticipants = _pmCard.value.otherParticipants-deletedInterventionParticipant)
             }
             is LogInterventionScreenEvent.OnNavigateToHome->{
                 viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
@@ -211,7 +196,7 @@ class LogInterventionScreenViewModel(
                 _showStartDateDialog.value=true
             }
             is LogInterventionScreenEvent.OnGetStartDate->{
-                _downtimeStartDate.value=event.startDate
+                _pmCard.value=_pmCard.value.copy(downtimeStartDate = event.startDate )
             }
             is LogInterventionScreenEvent.OnSelectEndDateClick->{
                 _showEndDateDialog.value=true
@@ -220,7 +205,7 @@ class LogInterventionScreenViewModel(
                 _showEndDateDialog.value=false
             }
             is LogInterventionScreenEvent.OnGetEndDate->{
-                _downtimeEndDate.value=event.endDate
+                _pmCard.value=_pmCard.value.copy(downtimeEndDate = event.endDate)
             }
             is LogInterventionScreenEvent.OnDownTimeStartDialogClick->{
                 _showStartTimeDialog.value=true
@@ -235,27 +220,42 @@ class LogInterventionScreenViewModel(
                 _showEndTimeDialog.value=false
             }
             is LogInterventionScreenEvent.OnGetDowntimeStartTime->{
-                _downtimeStartTime.value=event.startTime
+                _pmCard.value=_pmCard.value.copy(downtimeStartTime = event.startTime )
                 _showStartTimeDialog.value=false
             }
             is LogInterventionScreenEvent.OnGetDowntimeEndTime->{
-                _downtimeEndTime.value=event.endTime
+                _pmCard.value=_pmCard.value.copy(downtimeEndTime = event.endTime)
                 _showEndTimeDialog.value=false
             }
             is LogInterventionScreenEvent.OnGetTotalDowntimeDuration->{
-                _totalDownTimeDuration=event.totalDowntimeDuration
+                _pmCard.value=_pmCard.value.copy(totalDowntimeDuration = event.totalDowntimeDuration)
             }
             is LogInterventionScreenEvent.OnProblemDescriptionChange->{
-                _problemDescription.value=event.problemDescription.replaceFirstChar { char-> char.uppercase() }
+                _pmCard.value=pmCard.value.copy(problemDescription = event.problemDescription.replaceFirstChar { char-> char.uppercase() })
             }
             is LogInterventionScreenEvent.OnProblemDetailingChange->{
-                _problemDetailing.value=event.problemDetailing.replaceFirstChar { char-> char.uppercase() }
+                _pmCard.value=_pmCard.value.copy(problemDetailing = event.problemDetailing.replaceFirstChar { char-> char.uppercase() })
             }
             is LogInterventionScreenEvent.OnRootCauseChange->{
-                _rootCause.value=event.rootCause.replaceFirstChar { char-> char.uppercase() }
+                _pmCard.value=_pmCard.value.copy(rootCause = event.rootCause.replaceFirstChar { char-> char.uppercase() })
             }
             is LogInterventionScreenEvent.OnObservationsChange->{
-                _observations.value=event.obs.replaceFirstChar { char-> char.uppercase() }
+                _pmCard.value=_pmCard.value.copy(observations = event.obs.replaceFirstChar { char-> char.uppercase() })
+            }
+            is LogInterventionScreenEvent.OnTroubleshootStepsChange->{
+                _pmCard.value=_pmCard.value.copy(troubleshootingSteps = event.steps.replaceFirstChar { char-> char.uppercase() })
+            }
+            is LogInterventionScreenEvent.OnLogInterventionClick->{
+                try {
+                    _pmCardErrorState.value=useCases.onLogInterventionClick.execute(
+                        pmCard = _pmCard.value.copy()
+                    )
+                }catch (e:Exception)
+                {
+                    viewModelScope.launch {  _eventFlow.emit(LogInterventionUiEvent.ShowToast(e.message.toString()))}
+
+                }
+
             }
 
         }

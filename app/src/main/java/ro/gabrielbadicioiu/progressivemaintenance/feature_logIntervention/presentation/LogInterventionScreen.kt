@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
@@ -116,7 +117,7 @@ fun LogInterventionScreen(
                         icon = Icons.Outlined.WarningAmber,
                         color = Color.Red,
                         iconSize =48,
-                        textSize =32,
+                        textSize =24,
                         clickEn =false ) {}
                 }
 
@@ -125,20 +126,21 @@ fun LogInterventionScreen(
                     item {  InterventionInfoSection(
                         author = viewModel.author.value.copy(),
                         isOtherParticipantsMenuExpanded = viewModel.isOtherParticipantsDropdownMenuExpanded.value,
-                        selectedShift = viewModel.selectedShift.value,
+                        selectedShift = viewModel.pmCard.value.shift,
                         isShiftDropDownExpanded = viewModel.isShiftDropDownMenuExpanded.value,
                         participantsList = viewModel.participantsList.value,
                         employeeList = viewModel.employeeList.value,
                         fetchEmployeesErr = viewModel.fetchEmployeesErr.value,
                         fetchEmployeesErrMsg = viewModel.fetchEmployeesErrMsg.value,
                         showStartDateDialog = viewModel.showStartDateDialog.value,
-                        downtimeStartDate = viewModel.downtimeStartDate.value,
-                        downtimeEndDate = viewModel.downtimeEndDate.value,
+                        downtimeStartDate = viewModel.pmCard.value.downtimeStartDate,
+                        downtimeEndDate = viewModel.pmCard.value.downtimeEndDate,
                         showEndDateDialog = viewModel.showEndDateDialog.value,
-                        downTimeStartTime = viewModel.downtimeStartTime.value,
-                        downTimeEndTime = viewModel.downtimeEndTime.value,
+                        downTimeStartTime = viewModel.pmCard.value.downtimeStartTime,
+                        downTimeEndTime = viewModel.pmCard.value.downtimeEndTime,
                         showDownTimeStartDialog = viewModel.showStartTimeDialog.value,
                         showDownTimeEndDialog = viewModel.showEndTimeDialog.value,
+                        pmCardErrorState = viewModel.pmCardErrorState.value.copy(),
 
                         onSelectShiftClick = {viewModel.onEvent(LogInterventionScreenEvent.OnExpandShiftDropDown)},
                         onShiftDropDownDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnShiftDropdownDismiss)},
@@ -162,23 +164,37 @@ fun LogInterventionScreen(
                         onGetTotalDowntimeDuration = {totalDowntimeDuration-> viewModel.onEvent(LogInterventionScreenEvent.OnGetTotalDowntimeDuration(totalDowntimeDuration))}
                     )
                         InterventionSummarySection(
-                            problemDescription = viewModel.problemDescription.value,
-                            problemDetailing = viewModel.problemDetailing.value,
-                            rootCause = viewModel.rootCause.value,
-                            observations = viewModel.observations.value,
+                            problemDescription = viewModel.pmCard.value.problemDescription,
+                            problemDetailing = viewModel.pmCard.value.problemDetailing,
+                            rootCause = viewModel.pmCard.value.rootCause,
+                            observations = viewModel.pmCard.value.observations,
+                            troubleshootSteps = viewModel.pmCard.value.troubleshootingSteps,
+                            pmCardErrorState = viewModel.pmCardErrorState.value.copy(),
 
                             onProblemDescriptionChange = {problemDescr-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDescriptionChange(problemDescr))},
                             onProblemDetailingChange = {problemDetailing-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDetailingChange(problemDetailing))},
                             onRootCauseChange = {rootCause-> viewModel.onEvent(LogInterventionScreenEvent.OnRootCauseChange(rootCause))},
-                            onObservationsChange = {obs-> viewModel.onEvent(LogInterventionScreenEvent.OnObservationsChange(obs))}
+                            onObservationsChange = {obs-> viewModel.onEvent(LogInterventionScreenEvent.OnObservationsChange(obs))},
+                            onTroubleShootStepsChange = {steps-> viewModel.onEvent(LogInterventionScreenEvent.OnTroubleshootStepsChange(steps))}
                         )
                         Spacer(modifier = Modifier.height(16.dp))
+                        if (viewModel.pmCardErrorState.value.errMsg.isNotEmpty())
+                        {
+                            IconTextField(
+                                text = viewModel.pmCardErrorState.value.errMsg,
+                                icon = Icons.Default.WarningAmber,
+                                color = Color.Red,
+                                iconSize =24 ,
+                                textSize = 24,
+                                clickEn = false
+                            ) {}
+                        }
                         Button(
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(id = R.color.btn_color),
                                 contentColor = Color.White),
-                            onClick = { /*TODO*/ }) {
+                            onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnLogInterventionClick) }) {
                             Text(text = stringResource(id = R.string.log_intervention))
                         }
                         Spacer(modifier = Modifier.height(16.dp))

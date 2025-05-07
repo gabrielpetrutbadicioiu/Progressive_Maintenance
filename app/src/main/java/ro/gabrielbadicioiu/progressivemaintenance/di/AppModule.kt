@@ -68,6 +68,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnLogInterventionClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnSelectInterventionParticipant
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.FetchUsersInCompany
@@ -280,7 +281,8 @@ single{
     //LogInterventionScreen
     single{
         LogInterventionScreenUseCases(
-            onSelectInterventionParticipant = OnSelectInterventionParticipant()
+            onSelectInterventionParticipant = OnSelectInterventionParticipant(),
+            onLogInterventionClick = OnLogInterventionClick()
         )
     }
     viewModel {

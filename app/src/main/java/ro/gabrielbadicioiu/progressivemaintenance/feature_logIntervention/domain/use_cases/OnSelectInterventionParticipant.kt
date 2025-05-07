@@ -1,6 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases
 
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 
 class OnSelectInterventionParticipant {
 
@@ -8,7 +9,7 @@ class OnSelectInterventionParticipant {
         selectedEmployee:UserDetails,
         participantList:List<UserDetails>,
         onFailure:(String)->Unit,
-        onSuccess:(List<UserDetails>)->Unit
+        onSuccess:(List<UserDetails>, List<InterventionParticipants>)->Unit
         )
     {
         if (participantList.isNotEmpty())
@@ -23,6 +24,14 @@ class OnSelectInterventionParticipant {
         }
 
         val updatedParticipantList=participantList+selectedEmployee
-        onSuccess(updatedParticipantList)
+        val interventionParticipants=updatedParticipantList.map { participant->
+            InterventionParticipants(
+                firstName = participant.firstName,
+                lastName = participant.lastName,
+                avatar = participant.profilePicture,
+                id = participant.userID
+                )
+        }
+        onSuccess(updatedParticipantList, interventionParticipants)
     }
 }

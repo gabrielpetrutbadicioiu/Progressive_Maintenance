@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 
 @Composable
 fun InterventionSummarySection(
@@ -25,11 +26,14 @@ fun InterventionSummarySection(
     problemDetailing:String,
     rootCause:String,
     observations:String,
+    troubleshootSteps:String,
+    pmCardErrorState: PmCardErrorState,
 
     onProblemDescriptionChange:(String)->Unit,
     onProblemDetailingChange:(String)->Unit,
     onRootCauseChange:(String)->Unit,
-    onObservationsChange:(String)->Unit
+    onObservationsChange:(String)->Unit,
+    onTroubleShootStepsChange:(String)->Unit
 
 )
 {
@@ -46,6 +50,7 @@ fun InterventionSummarySection(
         //problem description
         TextField(
             modifier = Modifier.fillMaxWidth(),
+            isError = pmCardErrorState.isProblemDescrErr,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = colorResource(id = R.color.btn_color)),
             value = problemDescription,
@@ -58,6 +63,7 @@ fun InterventionSummarySection(
         //problem detailing
         TextField(
             modifier = Modifier.fillMaxWidth(),
+            isError = pmCardErrorState.isProblemDetailErr,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = colorResource(id = R.color.btn_color)),
             value = problemDetailing,
@@ -73,9 +79,9 @@ fun InterventionSummarySection(
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-            value = problemDetailing,
-            onValueChange ={problemDetails->
-                onProblemDetailingChange(problemDetails)},
+            value = troubleshootSteps,
+            onValueChange ={steps->
+                onTroubleShootStepsChange(steps)},
             shape = RoundedCornerShape(16.dp),
             placeholder = { Text(text = stringResource(id = R.string.troubleshooting_steps_ph  ))},
             supportingText = { Text(text = stringResource(id = R.string.troubleshooting_steps_st))})

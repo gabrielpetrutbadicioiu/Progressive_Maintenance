@@ -35,9 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
@@ -77,6 +76,8 @@ fun InterventionInfoSection(
     downTimeEndTime:String,
     showDownTimeStartDialog:Boolean,
     showDownTimeEndDialog:Boolean,
+    pmCardErrorState: PmCardErrorState,
+
 
     onSelectShiftClick: () -> Unit,
     onShiftDropDownDismiss:()->Unit,
@@ -122,6 +123,7 @@ fun InterventionInfoSection(
             OutlinedTextField(
                 value = selectedShift,
                 onValueChange = {},
+                isError = pmCardErrorState.isShiftErr,
                 readOnly = true,
                 placeholder = { Text(stringResource(id = R.string.shift)) },
                 colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
@@ -224,6 +226,7 @@ fun InterventionInfoSection(
                 OutlinedTextField(
                     value = downtimeStartDate,
                     onValueChange = {},
+                    isError = pmCardErrorState.isStartDateErr,
                     readOnly = true,
                     placeholder = { Text(text = stringResource(id = R.string.date_format))},
                     modifier = Modifier.weight(1f),
@@ -244,6 +247,7 @@ fun InterventionInfoSection(
                 OutlinedTextField(
                     value = downtimeEndDate,
                     onValueChange = {},
+                    isError = pmCardErrorState.isEndDateErr,
                     placeholder = { Text(text = stringResource(id = R.string.date_format))},
                     readOnly = true,
                     modifier = Modifier.weight(1f),
@@ -271,6 +275,7 @@ fun InterventionInfoSection(
                 OutlinedTextField(
                     value = downTimeStartTime,
                     onValueChange = {},
+                    isError = pmCardErrorState.isStartTimeErr,
                     readOnly = true,
                     placeholder = { Text(text = stringResource(id = R.string.time_format))},
                     modifier = Modifier.weight(1f),
@@ -291,6 +296,7 @@ fun InterventionInfoSection(
                 OutlinedTextField(
                     value = downTimeEndTime,
                     onValueChange = {},
+                    isError = pmCardErrorState.isEndTimeErr,
                     placeholder = { Text(text = stringResource(id = R.string.time_format))},
                     readOnly = true,
                     modifier = Modifier.weight(1f),

@@ -17,6 +17,7 @@ sealed class LogInterventionScreenEvent
     data object OnDownTimeEndDialogClick:LogInterventionScreenEvent()
     data object OnDownTimeStartDismiss:LogInterventionScreenEvent()
     data object OnDownTimeEndDismiss:LogInterventionScreenEvent()
+    data object OnLogInterventionClick:LogInterventionScreenEvent()
 
     data class GetArgumentData(val companyId:String, val userId:String):LogInterventionScreenEvent()
     data class OnShiftClick(val shift:String):LogInterventionScreenEvent()
@@ -31,4 +32,5 @@ sealed class LogInterventionScreenEvent
     data class OnProblemDetailingChange(val problemDetailing:String):LogInterventionScreenEvent()
     data class OnRootCauseChange(val rootCause:String):LogInterventionScreenEvent()
     data class OnObservationsChange(val obs:String):LogInterventionScreenEvent()
+    data class OnTroubleshootStepsChange(val steps:String):LogInterventionScreenEvent()
 }

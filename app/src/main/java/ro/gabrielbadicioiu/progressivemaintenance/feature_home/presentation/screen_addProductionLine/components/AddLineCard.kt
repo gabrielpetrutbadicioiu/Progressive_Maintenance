@@ -14,7 +14,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +34,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddLineCard(
     productionLine: ProductionLine,
@@ -70,10 +68,9 @@ fun AddLineCard(
                     singleLine = true,
                     isError = emptyNameError,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color),
-                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = colorResource(id = R.color.text_color)),
                     shape = RoundedCornerShape(16.dp),
                     placeholder = {
                         Text(text = stringResource(id = R.string.enter_line_name),
@@ -99,10 +96,13 @@ fun AddLineCard(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color),
-                    ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = colorResource(id = R.color.text_color)),
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
+//                        containerColor = Color.Transparent,
+//                        focusedBorderColor = colorResource(id = R.color.text_color),
+//                    ),
                     trailingIcon = { IconButton(onClick = {
                         onDeleteEquipment(index)
                     }) {

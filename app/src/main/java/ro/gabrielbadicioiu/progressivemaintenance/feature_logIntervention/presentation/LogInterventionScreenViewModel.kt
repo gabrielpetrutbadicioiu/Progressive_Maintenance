@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
 
 class LogInterventionScreenViewModel(
@@ -53,7 +54,46 @@ class LogInterventionScreenViewModel(
     private val _isOtherParticipantsDropdownExpanded= mutableStateOf(false)
     val isOtherParticipantsDropdownMenuExpanded:State<Boolean> = _isOtherParticipantsDropdownExpanded
 
+    private val _showStartDateDialog= mutableStateOf(false)
+    val showStartDateDialog:State<Boolean> = _showStartDateDialog
 
+    private val _downtimeStartDate= mutableStateOf("")
+    val downtimeStartDate:State<String> = _downtimeStartDate
+
+    private val _downtimeEndDate= mutableStateOf("")
+    val downtimeEndDate:State<String> = _downtimeEndDate
+
+    private val _showEndDateDialog= mutableStateOf(false)
+    val showEndDateDialog:State<Boolean> = _showEndDateDialog
+
+    private val _showStartTimeDialog= mutableStateOf(false)
+    val showStartTimeDialog:State<Boolean> = _showStartTimeDialog
+
+    private val _showEndTimeDialog= mutableStateOf(false)
+    val showEndTimeDialog:State<Boolean> = _showEndTimeDialog
+
+    private val _downtimeStartTime= mutableStateOf("")
+    val downtimeStartTime:State<String> = _downtimeStartTime
+
+    private val _downtimeEndTime= mutableStateOf("")
+    val downtimeEndTime:State<String> = _downtimeEndTime
+
+    private val _problemDescription= mutableStateOf("")
+    val problemDescription:State<String> = _problemDescription
+
+    private val _problemDetailing= mutableStateOf("")
+    val problemDetailing:State<String> = _problemDetailing
+
+    private val _rootCause= mutableStateOf("")
+    val rootCause:State<String> = _rootCause
+
+    private val _observations= mutableStateOf("")
+    val observations:State<String> = _observations
+
+    private val _pmCard= mutableStateOf(ProgressiveMaintenanceCard())
+    val pmCard:State<ProgressiveMaintenanceCard> = _pmCard
+
+    private var _totalDownTimeDuration=""
     //one time events
     sealed class LogInterventionUiEvent{
         data class ShowToast(val message:String):LogInterventionUiEvent()
@@ -70,8 +110,9 @@ class LogInterventionScreenViewModel(
         when(event)
         {
             is LogInterventionScreenEvent.GetArgumentData->{
-                _companyId=event.companyId
-                _userId=event.userId
+//                _companyId=event.companyId
+//                _userId=event.userId
+                _pmCard.value=_pmCard.value.copy(authorId = event.userId, companyId = event.companyId)
                 viewModelScope.launch {
 
                         try {
@@ -161,6 +202,60 @@ class LogInterventionScreenViewModel(
             }
             is LogInterventionScreenEvent.OnNavigateToHome->{
                 viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
+            }
+
+            is LogInterventionScreenEvent.OnSelectStartDateDismiss->{
+                _showStartDateDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnSelectStartDateClick->{
+                _showStartDateDialog.value=true
+            }
+            is LogInterventionScreenEvent.OnGetStartDate->{
+                _downtimeStartDate.value=event.startDate
+            }
+            is LogInterventionScreenEvent.OnSelectEndDateClick->{
+                _showEndDateDialog.value=true
+            }
+            is LogInterventionScreenEvent.OnEndDateDialogDismiss->{
+                _showEndDateDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnGetEndDate->{
+                _downtimeEndDate.value=event.endDate
+            }
+            is LogInterventionScreenEvent.OnDownTimeStartDialogClick->{
+                _showStartTimeDialog.value=true
+            }
+            is LogInterventionScreenEvent.OnDownTimeStartDismiss->{
+                _showStartTimeDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnDownTimeEndDialogClick->{
+                _showEndTimeDialog.value=true
+            }
+            is LogInterventionScreenEvent.OnDownTimeEndDismiss->{
+                _showEndTimeDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnGetDowntimeStartTime->{
+                _downtimeStartTime.value=event.startTime
+                _showStartTimeDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnGetDowntimeEndTime->{
+                _downtimeEndTime.value=event.endTime
+                _showEndTimeDialog.value=false
+            }
+            is LogInterventionScreenEvent.OnGetTotalDowntimeDuration->{
+                _totalDownTimeDuration=event.totalDowntimeDuration
+            }
+            is LogInterventionScreenEvent.OnProblemDescriptionChange->{
+                _problemDescription.value=event.problemDescription.replaceFirstChar { char-> char.uppercase() }
+            }
+            is LogInterventionScreenEvent.OnProblemDetailingChange->{
+                _problemDetailing.value=event.problemDetailing.replaceFirstChar { char-> char.uppercase() }
+            }
+            is LogInterventionScreenEvent.OnRootCauseChange->{
+                _rootCause.value=event.rootCause.replaceFirstChar { char-> char.uppercase() }
+            }
+            is LogInterventionScreenEvent.OnObservationsChange->{
+                _observations.value=event.obs.replaceFirstChar { char-> char.uppercase() }
             }
 
         }

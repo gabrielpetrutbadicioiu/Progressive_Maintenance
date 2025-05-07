@@ -132,11 +132,25 @@
     <string name="no_shift">N/A</string>
     <string name="add_other_participants">Add other participants</string>
     <string name="other_participants">Other participants</string>
-    <string name="start_date">Start date</string>
-    <string name="end_date">End date</string>
+    <string name="date_format">dd/mm/yyyy</string>
     <string name="select_start_date">Select start date*</string>
     <string name="select_end_date">Select end date*</string>
     <string name="downtime_duration">Downtime duration</string>
+    <string name="time_format">HH:MM</string>
+    <string name="downtime_start">Downtime start*</string>
+    <string name="downtime_end">Downtime end*</string>
+    <string name="total_downtime_duration">Total downtime duration:</string>
+    <string name="intervention_summary">Intervention summary</string>
+    <string name="problem_description">Briefly describe the issue (e.g. error message, equipment behavior)</string>
+    <string name="problem_description_supporting_text">Briefly describe the issue*</string>
+    <string name="problem_detailing_placeholder">Describe the issue in detail, including how it occurred and what was investigated during troubleshooting.</string>
+    <string name="problem_detailing_supporting_txt">Provide a detailed description of the issue, how it happened and how it was solved*</string>
+    <string name="troubleshooting_steps_ph">(Optional) Describe the recommended steps to fix the issue if it occurs again. (e.g. 1. Check the fuses, 2.Check the wiring)</string>
+    <string name="troubleshooting_steps_st">(Optional) Outline the steps to follow if the issue occurs again.</string>
+    <string name="root_cause_ph">(Optional) Describe the root cause of the issue (e.g. human error). This field can be updated after performing an in-depth analysis</string>
+    <string name="root_cause_st">Identify the main reason the issue occurred to help prevent future incidents. </string>
+    <string name="observations_ph">(Optional) Use this space for any extra information, clarifications, or comments.</string>
+    <string name="observations_st">(Optional) Additional notes or observations</string>
 
 
 </resources>

@@ -145,12 +145,18 @@
     <string name="problem_description_supporting_text">Briefly describe the issue*</string>
     <string name="problem_detailing_placeholder">Describe the issue in detail, including how it occurred and what was investigated during troubleshooting.</string>
     <string name="problem_detailing_supporting_txt">Provide a detailed description of the issue, how it happened and how it was solved*</string>
-    <string name="troubleshooting_steps_ph">(Optional) Describe the recommended steps to fix the issue if it occurs again. (e.g. 1. Check the fuses, 2.Check the wiring)</string>
-    <string name="troubleshooting_steps_st">(Optional) Outline the steps to follow if the issue occurs again.</string>
-    <string name="root_cause_ph">(Optional) Describe the root cause of the issue (e.g. human error). This field can be updated after performing an in-depth analysis</string>
+    <string name="troubleshooting_steps_ph">Describe the recommended steps to fix the issue if it occurs again. (e.g. 1. Check the fuses, 2.Check the wiring)</string>
+    <string name="troubleshooting_steps_st">Outline the steps to follow if the issue occurs again.</string>
+    <string name="root_cause_ph">Describe the root cause of the issue (e.g. human error). This field can be updated after performing an in-depth analysis</string>
     <string name="root_cause_st">Identify the main reason the issue occurred to help prevent future incidents. </string>
     <string name="observations_ph">(Optional) Use this space for any extra information, clarifications, or comments.</string>
     <string name="observations_st">(Optional) Additional notes or observations</string>
+    <string name="post_intervention">Post-Intervention Analysis</string>
+    <string name="measure_taken_ph">Describe the actions taken to prevent the issue from recurring (e.g. improved training, software update, maintenance checklist)</string>
+    <string name="measure_taken_st"> Explain what actions were implemented to avoid similar incidents in the future. This helps strengthen preventive maintenance and continuous improvement.</string>
+    <string name="ida_info">We recommend completing this section after holding a post-failure meeting with all participants involved in the intervention.The goal is to identify preventive actions or to define a fast and effective restart strategy for the equipment. After completing this step you can mark this process failure as resolved.</string>
+    <string name="add_3_photos">Add up to three photos</string>
+    <string name="up_to_3_err">Maximum 3 images allowed!</string>
 
 
 </resources>

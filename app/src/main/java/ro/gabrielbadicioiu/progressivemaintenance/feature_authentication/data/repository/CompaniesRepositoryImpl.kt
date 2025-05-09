@@ -6,7 +6,6 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseCollections
 import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
@@ -14,6 +13,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 
 class CompaniesRepositoryImpl:CompaniesRepository {
     override suspend fun registerCompany(
@@ -58,6 +58,29 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             }
             .addOnFailureListener {e->
                 onFailure("Error adding user to company: ${e.message}")
+            }
+    }
+
+    override suspend fun addIntervention(
+        companyID: String,
+        productionLineId: String,
+        pmCard: ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        val docRef=Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(productionLineId)
+            .collection(FirebaseCollections.INTERVENTIONS)
+            .document()
+
+        val pmc=pmCard.copy(interventionId = docRef.id)
+        docRef.set(pmc)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e->
+                onFailure(e.message?:"FireStore error")
             }
     }
 

@@ -1,9 +1,11 @@
 package ro.gabrielbadicioiu.progressivemaintenance
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -50,6 +52,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presenta
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -215,8 +218,13 @@ class MainActivity : ComponentActivity() {
                         LogInterventionScreen(
                             companyId =args.companyId ,
                             userId =args.userId,
+                            productionLineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            equipmentName = args.equipmentName,
+                            prodLineName = args.prodLineName,
                             navController = navController,
-                            viewModel = logInterventionScreenViewModel )
+                            viewModel = logInterventionScreenViewModel
+                            )
                     }
                 }//navHost
 

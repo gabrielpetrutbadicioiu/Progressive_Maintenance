@@ -53,7 +53,7 @@ class AddProductionLineViewModel(
             is AddProductionLineEvent.OnEquipmentNameChange->{
                 val equipmentList= mutableListOf<Equipment>()
                 _productionLine.value.equipments.forEachIndexed { index, equipment ->
-                    if (index==event.index) equipmentList.add(Equipment(name = event.name.replaceFirstChar { char-> char.uppercase() })) else equipmentList.add(equipment)
+                    if (index==event.index) equipmentList.add(Equipment(name = event.name.replaceFirstChar { char-> char.uppercase() }, id = equipment.id)) else equipmentList.add(equipment)
                 }
                 _productionLine.value=_productionLine.value.copy(equipments = equipmentList)
             }

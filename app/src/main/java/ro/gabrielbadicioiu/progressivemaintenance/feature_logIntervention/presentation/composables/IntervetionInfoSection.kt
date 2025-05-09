@@ -77,6 +77,8 @@ fun InterventionInfoSection(
     showDownTimeStartDialog:Boolean,
     showDownTimeEndDialog:Boolean,
     pmCardErrorState: PmCardErrorState,
+    lineName:String,
+    equipmentName:String,
 
 
     onSelectShiftClick: () -> Unit,
@@ -108,6 +110,12 @@ fun InterventionInfoSection(
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(text = lineName)
+            Text(text = equipmentName)
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = stringResource(id = R.string.author),
             fontWeight = FontWeight.ExtraBold,
@@ -322,10 +330,13 @@ fun InterventionInfoSection(
                 val start = LocalDateTime.parse("$downtimeStartDate $downTimeStartTime", formatter)
                 val end = LocalDateTime.parse("$downtimeEndDate $downTimeEndTime", formatter)
 
-                if (!end.isBefore(start)) {
+                if (!end.isBefore(start))
+                {
                     val duration = Duration.between(start, end)
                     val totalMinutes = duration.toMinutes()
+
                     val display = "${totalMinutes / 60}h ${totalMinutes % 60}m"
+
                         TextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = "${stringResource(id = R.string.total_downtime_duration)} $display ",
@@ -431,7 +442,7 @@ fun InterventionInfoSection(
             },
             dismissButton = {
                 TextButton(onClick = { onEndDateDismiss() }) {
-                    Text(text = stringResource(id = R.string.done_btn))}
+                    Text(text = stringResource(id = R.string.cancel_btn))}
             }) {
             DatePicker(state = endDatePickerState)
         }

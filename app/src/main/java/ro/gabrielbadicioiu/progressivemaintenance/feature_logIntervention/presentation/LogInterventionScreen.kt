@@ -52,13 +52,25 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presen
 fun LogInterventionScreen(
     companyId:String,
     userId:String,
+    productionLineId:String,
+    equipmentId:String,
+    equipmentName:String,
+    prodLineName:String,
+
     viewModel: LogInterventionScreenViewModel,
     navController: NavController
 )
 {
     val context= LocalContext.current
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(LogInterventionScreenEvent.GetArgumentData(companyId = companyId, userId=userId))
+        viewModel.onEvent(LogInterventionScreenEvent.GetArgumentData(
+            companyId = companyId,
+            userId=userId,
+            equipmentName = equipmentName,
+            equipmentId = equipmentId,
+            prodLineName = prodLineName,
+            productionLineId = productionLineId
+            ))
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
@@ -142,6 +154,7 @@ fun LogInterventionScreen(
                         showDownTimeEndDialog = viewModel.showEndTimeDialog.value,
                         pmCardErrorState = viewModel.pmCardErrorState.value.copy(),
 
+
                         onSelectShiftClick = {viewModel.onEvent(LogInterventionScreenEvent.OnExpandShiftDropDown)},
                         onShiftDropDownDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnShiftDropdownDismiss)},
                         onShiftClick = {shift-> viewModel.onEvent(LogInterventionScreenEvent.OnShiftClick(shift))},
@@ -161,7 +174,9 @@ fun LogInterventionScreen(
                         onGetDowntimeEndTime = {endTime-> viewModel.onEvent(LogInterventionScreenEvent.OnGetDowntimeEndTime(endTime))},
                         onStartTimeDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnDownTimeStartDismiss)},
                         onEndTimeDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnDownTimeEndDismiss)},
-                        onGetTotalDowntimeDuration = {totalDowntimeDuration-> viewModel.onEvent(LogInterventionScreenEvent.OnGetTotalDowntimeDuration(totalDowntimeDuration))}
+                        onGetTotalDowntimeDuration = {totalDowntimeDuration-> viewModel.onEvent(LogInterventionScreenEvent.OnGetTotalDowntimeDuration(totalDowntimeDuration))},
+                        lineName = viewModel.prodLineName.value,
+                        equipmentName = viewModel.equipmentName.value
                     )
                         InterventionSummarySection(
                             problemDescription = viewModel.pmCard.value.problemDescription,
@@ -170,12 +185,23 @@ fun LogInterventionScreen(
                             observations = viewModel.pmCard.value.observations,
                             troubleshootSteps = viewModel.pmCard.value.troubleshootingSteps,
                             pmCardErrorState = viewModel.pmCardErrorState.value.copy(),
+                            measuresTaken = viewModel.pmCard.value.measureTaken,
+                            isInfoExpanded = viewModel.showInfo.value,
+                            pmCard = viewModel.pmCard.value,
 
                             onProblemDescriptionChange = {problemDescr-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDescriptionChange(problemDescr))},
                             onProblemDetailingChange = {problemDetailing-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDetailingChange(problemDetailing))},
                             onRootCauseChange = {rootCause-> viewModel.onEvent(LogInterventionScreenEvent.OnRootCauseChange(rootCause))},
                             onObservationsChange = {obs-> viewModel.onEvent(LogInterventionScreenEvent.OnObservationsChange(obs))},
-                            onTroubleShootStepsChange = {steps-> viewModel.onEvent(LogInterventionScreenEvent.OnTroubleshootStepsChange(steps))}
+                            onTroubleShootStepsChange = {steps-> viewModel.onEvent(LogInterventionScreenEvent.OnTroubleshootStepsChange(steps))},
+                            onMeasureTakenChange = {measuresTaken-> viewModel.onEvent(LogInterventionScreenEvent.OnMeasuresTakenChange(measuresTaken))},
+                            onShowInfo = {viewModel.onEvent(LogInterventionScreenEvent.OnShowInfo)},
+                            onDismissInfo = {viewModel.onEvent(LogInterventionScreenEvent.OnDismissInfo)},
+                            onUriResult = {uri-> viewModel.onEvent(LogInterventionScreenEvent.OnUriResult(uri))},
+                            onPhoto1Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto1Delete)},
+                            onPhoto2Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto2Delete)},
+                            onPhoto3Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto3Delete)}
+
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         if (viewModel.pmCardErrorState.value.errMsg.isNotEmpty())

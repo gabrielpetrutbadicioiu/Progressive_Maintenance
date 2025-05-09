@@ -4,6 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 
 interface CompaniesRepository {
     suspend fun registerCompany(
@@ -99,4 +100,11 @@ interface CompaniesRepository {
         onSuccess: () -> Unit
     )
 
+    suspend fun addIntervention(
+        companyID: String,
+        productionLineId: String,
+        pmCard: ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    )
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_home.HomeScreenUseCases
 
@@ -42,8 +43,12 @@ class HomeViewModel(
     private val _fetchProdLineErr= mutableStateOf(false)
     val fetchProdLineErr:State<Boolean> = _fetchProdLineErr
 
-    private val _clickedEquipment= mutableStateOf(ProductionLine())
-    val clickedEquipment:State<ProductionLine> = _clickedEquipment
+    private val _clickedProdLine= mutableStateOf(ProductionLine())
+    val clickedProdLine:State<ProductionLine> = _clickedProdLine
+
+    private val _clickedEq =  mutableStateOf(Equipment())
+    val clickedEq:State<Equipment> = _clickedEq
+
     private var _clickedEquipmentIndex=0
 
 //one time events
@@ -153,7 +158,8 @@ class HomeViewModel(
             }
             is HomeScreenEvent.OnEquipmentClick->{
                     _clickedEquipmentIndex=event.productionLineIndex
-                _clickedEquipment.value=_productionLineList.value[event.productionLineIndex]
+                _clickedProdLine.value=_productionLineList.value[event.productionLineIndex]
+                _clickedEq.value=event.equipment.copy()
                _productionLineList.value=useCases.onShowDropDownMenu.execute(
                    productionLineList = _productionLineList.value,
                    lineIndex = event.productionLineIndex,
@@ -163,7 +169,7 @@ class HomeViewModel(
             is HomeScreenEvent.OnDropdownMenuDismiss->{
                 _productionLineList.value=useCases.onHideDropDownMenu
                     .execute(prodLineList = _productionLineList.value,
-                        clickedLine = clickedEquipment.value,
+                        clickedLine = clickedProdLine.value,
                         clickedLineIndex = _clickedEquipmentIndex)
             }
             is HomeScreenEvent.OnLogInterventionClick->{

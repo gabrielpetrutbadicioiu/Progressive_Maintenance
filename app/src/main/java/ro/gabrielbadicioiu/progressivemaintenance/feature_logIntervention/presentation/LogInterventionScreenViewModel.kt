@@ -4,23 +4,34 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ro.gabrielbadicioiu.progressivemaintenance.core.CloudStorageFolders
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.CloudStorageRepositoryImpl
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CloudStorageRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
+import java.util.UUID
 
 class LogInterventionScreenViewModel(
     private val companiesRepository: CompaniesRepository,
+    private val cloudStorageRepository: CloudStorageRepository,
     private val useCases: LogInterventionScreenUseCases
 ) :ViewModel()
 {
+    private val imageRef=Firebase.storage.reference
 
     //states
     private val _author= mutableStateOf(UserDetails())
@@ -65,11 +76,23 @@ class LogInterventionScreenViewModel(
     private val _showEndTimeDialog= mutableStateOf(false)
     val showEndTimeDialog:State<Boolean> = _showEndTimeDialog
 
+    private val _showInfo= mutableStateOf(false)
+    val showInfo:State<Boolean> = _showInfo
+
     private val _pmCard= mutableStateOf(ProgressiveMaintenanceCard())
     val pmCard:State<ProgressiveMaintenanceCard> = _pmCard
 
     private val _pmCardErrorState = mutableStateOf(PmCardErrorState())
     val pmCardErrorState:State<PmCardErrorState> = _pmCardErrorState
+
+    private val _equipmentName= mutableStateOf("")
+    val equipmentName:State<String> = _equipmentName
+
+    private val _prodLineName = mutableStateOf("")
+    val prodLineName:State<String> = _prodLineName
+
+    private val _company = mutableStateOf(Company())
+    val company:State<Company> = _company
 
     //one time events
     sealed class LogInterventionUiEvent{
@@ -88,7 +111,14 @@ class LogInterventionScreenViewModel(
         when(event)
         {
             is LogInterventionScreenEvent.GetArgumentData->{
-                _pmCard.value=_pmCard.value.copy(authorId = event.userId, companyId = event.companyId)
+                _pmCard.value=_pmCard.value.copy(
+                    authorId = event.userId,
+                    companyId = event.companyId,
+                    productionLineId = event.productionLineId,
+                    equipmentId = event.equipmentId)
+                _prodLineName.value=event.prodLineName
+                _equipmentName.value=event.equipmentName
+
                 viewModelScope.launch {
 
                         try {
@@ -141,6 +171,19 @@ class LogInterventionScreenViewModel(
                         _fetchEmployeesErr.value=true
                         _fetchEmployeesErrMsg.value=e.message?:"Viewmodel: Failed to fetch employees"
                     }
+                }
+
+                //get company
+                viewModelScope.launch {
+                    companiesRepository.getCompanyById(
+                        companyId = _pmCard.value.companyId,
+                        onSuccess = {company->
+                            _company.value=company.copy()
+                        },
+                        onFailure = {e->
+                            viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }
+                        }
+                    )
                 }
             }//fetch data
 
@@ -245,15 +288,92 @@ class LogInterventionScreenViewModel(
             is LogInterventionScreenEvent.OnTroubleshootStepsChange->{
                 _pmCard.value=_pmCard.value.copy(troubleshootingSteps = event.steps.replaceFirstChar { char-> char.uppercase() })
             }
+
+            is LogInterventionScreenEvent.OnMeasuresTakenChange->{
+                _pmCard.value=_pmCard.value.copy(measureTaken = event.measuresTaken)
+            }
+            is LogInterventionScreenEvent.OnShowInfo->{
+                _showInfo.value=true
+            }
+            is LogInterventionScreenEvent.OnDismissInfo->{
+                _showInfo.value=false
+            }
+
+
+
             is LogInterventionScreenEvent.OnLogInterventionClick->{
                 try {
                     _pmCardErrorState.value=useCases.onLogInterventionClick.execute(
                         pmCard = _pmCard.value.copy()
                     )
+                    if (_pmCardErrorState.value.errMsg.isEmpty())
+                    {
+                            viewModelScope.launch {
+                                companiesRepository.addIntervention(
+                                    companyID = _pmCard.value.companyId,
+                                    pmCard = _pmCard.value,
+                                    productionLineId = _pmCard.value.productionLineId,
+                                    onSuccess = {
+                                        _pmCardErrorState.value=PmCardErrorState()
+                                        _pmCard.value=ProgressiveMaintenanceCard()
+                                        viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
+                                    },
+                                    onFailure = {e->
+                                        _pmCardErrorState.value=_pmCardErrorState.value.copy(errMsg = e)}
+                                ) }
+                    }
+
                 }catch (e:Exception)
                 {
                     viewModelScope.launch {  _eventFlow.emit(LogInterventionUiEvent.ShowToast(e.message.toString()))}
 
+                }
+
+            }
+            is LogInterventionScreenEvent.OnUriResult->{
+                viewModelScope.launch {
+                    _pmCard.value=useCases.onInterventionUriResult.execute(
+                        pmCard = _pmCard.value.copy(),
+                        photoName = "${UUID.randomUUID()}",
+                        uri = event.localUri,
+                        imageRef = imageRef,
+                        companyName = _company.value.organisationName,
+                        onFailure = {e-> viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }})//todo
+                }
+            }
+            is LogInterventionScreenEvent.OnPhoto1Delete->{
+                viewModelScope.launch {
+                    cloudStorageRepository.deleteFile(
+                        imageName = _pmCard.value.photo1Name,
+                        onSuccess = { _pmCard.value=_pmCard.value.copy(photo1 = "")},
+                        onFailure = {e->
+                            viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }
+                        },
+                        folderName ="${_company.value.organisationName} interventions" )
+                }
+
+            }
+            is LogInterventionScreenEvent.OnPhoto2Delete->{
+                viewModelScope.launch {
+                    cloudStorageRepository.deleteFile(
+                        imageName = _pmCard.value.photo2Name,
+                        onSuccess = { _pmCard.value=_pmCard.value.copy(photo2 = "")},
+                        onFailure = {e->
+                            viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }
+                        },
+                        folderName ="${_company.value.organisationName} interventions" )
+                }
+
+            }
+            is LogInterventionScreenEvent.OnPhoto3Delete->{
+                viewModelScope.launch {
+                    cloudStorageRepository.deleteFile(
+                        imageName = _pmCard.value.photo3Name,
+                        onSuccess = { _pmCard.value=_pmCard.value.copy(photo3 = "")},
+                        onFailure = {e->
+                            viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }
+                        },
+                        folderName ="${_company.value.organisationName} interventions" )
                 }
 
             }

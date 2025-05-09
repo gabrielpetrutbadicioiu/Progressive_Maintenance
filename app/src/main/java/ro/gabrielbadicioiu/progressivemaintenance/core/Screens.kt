@@ -47,5 +47,11 @@ sealed class Screens {
     @Serializable
     data class ProfileScreenRoute(val companyId:String, val userId:String):Screens()
     @Serializable
-    data class LogInterventionScreen(val companyId:String, val userId:String):Screens()
+    data class LogInterventionScreen(
+        val companyId:String,
+        val userId:String,
+        val productionLineId: String,
+        val equipmentId:String,
+        val equipmentName:String,
+        val prodLineName:String):Screens()
 }

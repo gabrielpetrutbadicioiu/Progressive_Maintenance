@@ -2,4 +2,5 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domai
 
 data class LogInterventionScreenUseCases (
     val onSelectInterventionParticipant: OnSelectInterventionParticipant,
-    val onLogInterventionClick: OnLogInterventionClick)
+    val onLogInterventionClick: OnLogInterventionClick,
+    val onInterventionUriResult: OnInterventionUriResult)

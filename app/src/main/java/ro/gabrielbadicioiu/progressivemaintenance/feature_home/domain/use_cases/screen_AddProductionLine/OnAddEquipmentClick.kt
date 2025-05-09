@@ -6,6 +6,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Prod
 class OnAddEquipmentClick {
     fun execute(productionLine:ProductionLine):ProductionLine
     {
-        return productionLine.copy(equipments = productionLine.equipments+Equipment())
+        val id= (1..15).map{('0'..'9').random()}.joinToString("")
+        return productionLine.copy(equipments = productionLine.equipments+Equipment(id = id))
     }
 }

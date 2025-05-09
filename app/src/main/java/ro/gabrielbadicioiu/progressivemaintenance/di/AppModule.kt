@@ -68,6 +68,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.EditProdLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home.HomeViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnInterventionUriResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnLogInterventionClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnSelectInterventionParticipant
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreenViewModel
@@ -282,12 +283,14 @@ single{
     single{
         LogInterventionScreenUseCases(
             onSelectInterventionParticipant = OnSelectInterventionParticipant(),
-            onLogInterventionClick = OnLogInterventionClick()
+            onLogInterventionClick = OnLogInterventionClick(),
+            onInterventionUriResult = OnInterventionUriResult(cloudStorageRepository = get())
         )
     }
     viewModel {
         LogInterventionScreenViewModel(
             companiesRepository = get(),
+            cloudStorageRepository = get(),
             useCases = get()
         )
     }

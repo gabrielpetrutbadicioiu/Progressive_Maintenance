@@ -54,7 +54,7 @@ class OnLogInterventionClick {
         }
         if (pmCard.problemDetailing.isEmpty())
         {
-            return PmCardErrorState(isProblemDetailErr = false, errMsg = "Please provide detailed information about the issue and how it was resolved. This field is required.")
+            return PmCardErrorState(isProblemDetailErr = true, errMsg = "Please provide detailed information about the issue and how it was resolved. This field is required.")
         }
 
         return PmCardErrorState()

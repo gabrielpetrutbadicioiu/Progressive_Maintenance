@@ -95,7 +95,13 @@ fun HomeScreen(
                     navController.navigate(Screens.ProfileScreenRoute(companyId = companyId, userId = userId))
                 }
                 is HomeViewModel.HomeScreenUiEvent.OnNavigateToLogInterventionScreen->{
-                    navController.navigate(Screens.LogInterventionScreen(companyId = companyId, userId = userId))
+                    navController.navigate(Screens.LogInterventionScreen(
+                        companyId = companyId,
+                        userId = userId,
+                        productionLineId = viewModel.clickedProdLine.value.id,
+                        equipmentId = viewModel.clickedEq.value.id,
+                        equipmentName = viewModel.clickedEq.value.name,
+                        prodLineName = viewModel.clickedProdLine.value.lineName))
                 }
             }
         }

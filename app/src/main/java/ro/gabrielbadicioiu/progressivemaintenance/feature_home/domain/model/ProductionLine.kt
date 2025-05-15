@@ -7,6 +7,8 @@ data class ProductionLine(
     val id:String="",
     @get:Exclude
     val isExpanded:Boolean=false,
+    @get:Exclude
+    val showDropDown:Boolean=false,
     var equipments:List<Equipment> = listOf(Equipment(id = (1..15).map{('0'..'9').random()}.joinToString(""))),
     val addedModifiedByUserId:String=""){
     fun toFirebaseDocument() :HashMap<String, Any>{

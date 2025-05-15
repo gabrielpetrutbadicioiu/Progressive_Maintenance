@@ -24,7 +24,7 @@ sealed class LogInterventionScreenEvent
     data object OnPhoto1Delete:LogInterventionScreenEvent()
     data object OnPhoto2Delete:LogInterventionScreenEvent()
     data object OnPhoto3Delete:LogInterventionScreenEvent()
-
+    data object OnLoadInterventionGlobally:LogInterventionScreenEvent()
 
     data class GetArgumentData(
         val companyId:String,

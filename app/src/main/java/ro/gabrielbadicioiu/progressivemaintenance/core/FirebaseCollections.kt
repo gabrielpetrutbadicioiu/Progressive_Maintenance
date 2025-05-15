@@ -4,4 +4,5 @@ object FirebaseCollections {
     const val PRODUCTION_LINES="Production lines"
     const val COMPANIES="Companies"
     const val INTERVENTIONS="Interventions"
+    const val GLOBAL_INTERVENTIONS="Global interventions"
 }

@@ -31,6 +31,7 @@ class HomeViewModel(
 
     private val _getUserErrMsg= mutableStateOf("")
     val getUserErrMsg:State<String> = _getUserErrMsg
+
    private val  _productionLineList= mutableStateOf<List<ProductionLine>>(emptyList())
     val productionLineList:State<List<ProductionLine>> = _productionLineList
 
@@ -49,6 +50,7 @@ class HomeViewModel(
     private val _clickedEq =  mutableStateOf(Equipment())
     val clickedEq:State<Equipment> = _clickedEq
 
+
     private var _clickedEquipmentIndex=0
 
 //one time events
@@ -60,10 +62,12 @@ class HomeViewModel(
         data object OnMembersScreenClick:HomeScreenUiEvent()
         data object OnNavigateToProfile:HomeScreenUiEvent()
         data object OnNavigateToLogInterventionScreen:HomeScreenUiEvent()
+        data object OnNavigateToDisplayGlobalInterventionsScreen:HomeScreenUiEvent()
 
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
+        data class OnNavigateToLineInterventionsScreen(val productionLine: ProductionLine):HomeScreenUiEvent()
 
     }
 
@@ -175,6 +179,22 @@ class HomeViewModel(
             is HomeScreenEvent.OnLogInterventionClick->{
                 onEvent(HomeScreenEvent.OnDropdownMenuDismiss)
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToLogInterventionScreen) }
+            }
+            is HomeScreenEvent.OnSearchInterventionsClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToDisplayGlobalInterventionsScreen) }
+            }
+            is HomeScreenEvent.OnDismissLineDropDown->{
+                val updatedList=_productionLineList.value.toMutableList()
+                updatedList[event.index] = _productionLineList.value[event.index].copy(showDropDown = false)
+                _productionLineList.value=updatedList
+            }
+            is HomeScreenEvent.OnShowLineDropDown->{
+                val updatedList=_productionLineList.value.toMutableList()
+                updatedList[event.index] = _productionLineList.value[event.index].copy(showDropDown = true)
+                _productionLineList.value=updatedList
+            }
+            is HomeScreenEvent.OnShowLineInterventionsClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToLineInterventionsScreen(_productionLineList.value[event.index])) }
             }
 
         }

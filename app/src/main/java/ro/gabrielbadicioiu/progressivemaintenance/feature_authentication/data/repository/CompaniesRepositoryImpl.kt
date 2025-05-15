@@ -65,7 +65,7 @@ class CompaniesRepositoryImpl:CompaniesRepository {
         companyID: String,
         productionLineId: String,
         pmCard: ProgressiveMaintenanceCard,
-        onSuccess: () -> Unit,
+        onSuccess: (interventionId:String) -> Unit,
         onFailure: (String) -> Unit,
     ) {
         val docRef=Firebase.firestore
@@ -78,7 +78,7 @@ class CompaniesRepositoryImpl:CompaniesRepository {
 
         val pmc=pmCard.copy(interventionId = docRef.id)
         docRef.set(pmc)
-            .addOnSuccessListener { onSuccess() }
+            .addOnSuccessListener { onSuccess(docRef.id) }
             .addOnFailureListener { e->
                 onFailure(e.message?:"FireStore error")
             }
@@ -416,4 +416,48 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             }
     }
 
+    override suspend fun addInterventionGlobally(
+        companyID: String,
+        interventionId:String,
+        pmCard: ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+
+        Firebase.firestore.collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseCollections.GLOBAL_INTERVENTIONS)
+            .document(interventionId)
+            .set(pmCard)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message?:"Firebase Err: Failed to upload intervention globally") }
+    }
+
+    override suspend fun getGlobalInterventions(
+        companyID: String,
+        onSuccess: ( List<ProgressiveMaintenanceCard>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyID)
+            .collection(FirebaseCollections.GLOBAL_INTERVENTIONS)
+            .addSnapshotListener { interventionsSnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository:Failed to fetch global interventions")
+                    return@addSnapshotListener
+                }
+                if (interventionsSnapshot!=null && !interventionsSnapshot.isEmpty)
+                {
+                    val interventionList=interventionsSnapshot.mapNotNull { queryDocumentSnapshot ->
+                        queryDocumentSnapshot.toObject(ProgressiveMaintenanceCard::class.java)
+                    }
+                    onSuccess(interventionList)
+                }
+                else{
+                    onFailure("")
+                }
+            }
+    }
 }

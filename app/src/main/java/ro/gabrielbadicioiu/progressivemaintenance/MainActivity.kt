@@ -34,6 +34,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LogInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPMCardsScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPmCardsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_bannedScreen.BannedScreen
@@ -78,6 +80,7 @@ class MainActivity : ComponentActivity() {
                 val membersScreenViewModel=getViewModel<MembersScreenViewModel>()
                 val profileScreenViewModel=getViewModel<ProfileScreenViewModel> ()
                 val logInterventionScreenViewModel= getViewModel<LogInterventionScreenViewModel> ()
+                val displayAllPmCardsViewModel= getViewModel<DisplayAllPmCardsViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -225,6 +228,20 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             viewModel = logInterventionScreenViewModel
                             )
+                    }
+                    composable<Screens.DisplayInterventionsScreen> {
+                        val args=it.toRoute<Screens.DisplayInterventionsScreen>()
+                        DisplayAllPMCardsScreen(
+                            viewModel = displayAllPmCardsViewModel,
+                            navController = navController,
+                            displayAllInterventions = args.displayAllInterventions,
+                            displayLineInterventions = args.displayLineInterventions,
+                            displayEquipmentInterventions = args.displayEquipmentInterventions,
+                            companyId = args.companyId,
+                            userId = args.userId,
+                            lineId = args.lineId,
+                            equipmentId =args.equipmentId
+                        )
                     }
                 }//navHost
 

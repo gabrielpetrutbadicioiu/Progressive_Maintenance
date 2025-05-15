@@ -103,6 +103,28 @@ fun HomeScreen(
                         equipmentName = viewModel.clickedEq.value.name,
                         prodLineName = viewModel.clickedProdLine.value.lineName))
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToDisplayGlobalInterventionsScreen->{
+                    navController.navigate(Screens.DisplayInterventionsScreen(
+                        displayAllInterventions=true,
+                        displayLineInterventions=false,
+                        displayEquipmentInterventions=false,
+                        companyId=companyId,
+                        userId=userId,
+                        lineId="",
+                        equipmentId="",
+                    ))
+                }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToLineInterventionsScreen->{
+                    navController.navigate(Screens.DisplayInterventionsScreen(
+                        displayAllInterventions = false,
+                        displayLineInterventions = true,
+                        displayEquipmentInterventions = false,
+                        companyId = companyId,
+                        userId = userId,
+                        lineId = event.productionLine.id,
+                        equipmentId = ""
+                    ))
+                }
             }
         }
     }
@@ -199,7 +221,7 @@ fun HomeScreen(
                     },
                     //search interventions
                     actions = {
-                       IconButton(onClick = { /*TODO implementare ecran search ca pe tiktok cu recents cu d-alea*/ }) {
+                       IconButton(onClick = {viewModel.onEvent(HomeScreenEvent.OnSearchInterventionsClick) }) {
                            Icon(
                                imageVector = Icons.Default.Search,
                                contentDescription = stringResource(id = R.string.icon_descr),
@@ -286,7 +308,11 @@ fun HomeScreen(
                                         equipment = equipment
                                     ))},
                                     onDropDownDismiss = {viewModel.onEvent(HomeScreenEvent.OnDropdownMenuDismiss)},
-                                    onLogInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnLogInterventionClick)}
+                                    onLogInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnLogInterventionClick)},
+                                    isProductionLineDropDownExpanded = viewModel.productionLineList.value[index].showDropDown,
+                                    onDismissLineDropDown = {viewModel.onEvent(HomeScreenEvent.OnDismissLineDropDown(index))},
+                                    onProductionLineClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineDropDown(index))},
+                                    onViewProductionLineInterventionsClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineInterventionsClick(index))}
                                 )
                         }
                 }

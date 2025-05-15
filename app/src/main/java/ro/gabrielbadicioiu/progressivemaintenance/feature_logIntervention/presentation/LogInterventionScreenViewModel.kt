@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.ktx.Firebase
@@ -12,13 +11,10 @@ import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import ro.gabrielbadicioiu.progressivemaintenance.core.CloudStorageFolders
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.data.repository.CloudStorageRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CloudStorageRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
-import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
@@ -85,14 +81,10 @@ class LogInterventionScreenViewModel(
     private val _pmCardErrorState = mutableStateOf(PmCardErrorState())
     val pmCardErrorState:State<PmCardErrorState> = _pmCardErrorState
 
-    private val _equipmentName= mutableStateOf("")
-    val equipmentName:State<String> = _equipmentName
-
-    private val _prodLineName = mutableStateOf("")
-    val prodLineName:State<String> = _prodLineName
 
     private val _company = mutableStateOf(Company())
     val company:State<Company> = _company
+
 
     //one time events
     sealed class LogInterventionUiEvent{
@@ -112,12 +104,13 @@ class LogInterventionScreenViewModel(
         {
             is LogInterventionScreenEvent.GetArgumentData->{
                 _pmCard.value=_pmCard.value.copy(
+                    equipmentName = event.equipmentName,
+                    productionLineName = event.prodLineName,
                     authorId = event.userId,
                     companyId = event.companyId,
                     productionLineId = event.productionLineId,
                     equipmentId = event.equipmentId)
-                _prodLineName.value=event.prodLineName
-                _equipmentName.value=event.equipmentName
+
 
                 viewModelScope.launch {
 
@@ -128,7 +121,7 @@ class LogInterventionScreenViewModel(
                                 onSuccess = {user->
                                     if (user != null) {
                                         _author.value=user.copy()
-                                        _pmCard.value=_pmCard.value.copy(authorAvatar = user.profilePicture)
+                                        _pmCard.value=_pmCard.value.copy(authorAvatar = user.profilePicture, authorRank = user.rank, authorName = "${user.firstName} ${user.lastName}")
                                         _fetchAuthorError.value=false
                                         _fetchAuthorErrMsg.value=""
                                     }
@@ -313,10 +306,11 @@ class LogInterventionScreenViewModel(
                                     companyID = _pmCard.value.companyId,
                                     pmCard = _pmCard.value,
                                     productionLineId = _pmCard.value.productionLineId,
-                                    onSuccess = {
+                                    onSuccess = {interventionID->
                                         _pmCardErrorState.value=PmCardErrorState()
-                                        _pmCard.value=ProgressiveMaintenanceCard()
-                                        viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
+                                        _pmCard.value=_pmCard.value.copy(interventionId = interventionID)
+                                        onEvent(LogInterventionScreenEvent.OnLoadInterventionGlobally)
+
                                     },
                                     onFailure = {e->
                                         _pmCardErrorState.value=_pmCardErrorState.value.copy(errMsg = e)}
@@ -328,6 +322,27 @@ class LogInterventionScreenViewModel(
                     viewModelScope.launch {  _eventFlow.emit(LogInterventionUiEvent.ShowToast(e.message.toString()))}
 
                 }
+
+            }
+            is LogInterventionScreenEvent.OnLoadInterventionGlobally->{
+
+                    viewModelScope.launch {
+                        try {
+                            companiesRepository.addInterventionGlobally(
+                                companyID = _pmCard.value.companyId,
+                                interventionId = _pmCard.value.interventionId,
+                                pmCard = _pmCard.value.copy(),
+                                onSuccess = {
+                                    _pmCard.value=ProgressiveMaintenanceCard()
+                                    viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }},
+                                onFailure = {e-> _pmCardErrorState.value=_pmCardErrorState.value.copy(errMsg = e) }
+                            )
+                        } catch (e:Exception)
+                        {
+                            _pmCardErrorState.value=_pmCardErrorState.value.copy(errMsg = e.message?:"ViewModel:Failed to load intervention globally")
+                        }
+
+                    }
 
             }
             is LogInterventionScreenEvent.OnUriResult->{

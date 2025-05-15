@@ -104,7 +104,20 @@ interface CompaniesRepository {
         companyID: String,
         productionLineId: String,
         pmCard: ProgressiveMaintenanceCard,
+        onSuccess: (interventionId:String) -> Unit,
+        onFailure: (String) -> Unit,
+    )
+
+    suspend fun addInterventionGlobally(
+        companyID: String,
+        interventionId:String,
+        pmCard: ProgressiveMaintenanceCard,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit,
+    )
+    suspend fun getGlobalInterventions(
+        companyID: String,
+        onSuccess: ( List<ProgressiveMaintenanceCard>) -> Unit,
+        onFailure: (String) -> Unit
     )
 }

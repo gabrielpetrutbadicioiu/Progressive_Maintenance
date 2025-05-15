@@ -175,8 +175,8 @@ fun LogInterventionScreen(
                         onStartTimeDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnDownTimeStartDismiss)},
                         onEndTimeDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnDownTimeEndDismiss)},
                         onGetTotalDowntimeDuration = {totalDowntimeDuration-> viewModel.onEvent(LogInterventionScreenEvent.OnGetTotalDowntimeDuration(totalDowntimeDuration))},
-                        lineName = viewModel.prodLineName.value,
-                        equipmentName = viewModel.equipmentName.value
+                        lineName = viewModel.pmCard.value.productionLineName,
+                        equipmentName = viewModel.pmCard.value.equipmentName
                     )
                         InterventionSummarySection(
                             problemDescription = viewModel.pmCard.value.problemDescription,

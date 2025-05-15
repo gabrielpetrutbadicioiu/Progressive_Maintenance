@@ -157,6 +157,18 @@
     <string name="ida_info">We recommend completing this section after holding a post-failure meeting with all participants involved in the intervention.The goal is to identify preventive actions or to define a fast and effective restart strategy for the equipment. After completing this step you can mark this process failure as resolved.</string>
     <string name="add_3_photos">Add up to three photos</string>
     <string name="up_to_3_err">Maximum 3 images allowed!</string>
+    <string name="search_intervention">Search intervention</string>
+    <string name="created_by">Created by</string>
+    <string name="intervention_start">Downtime start:</string>
+    <string name="intervention_end">Downtime end:</string>
+    <string name="resolved_pf">Process failure status - Resolved</string>
+    <string name="unresolved_pf">Process failure status - Not Resolved</string>
+    <string name="no_intervention_found">No interventions found</string>
+    <string name="sort_by_date">Sort by date</string>
+    <string name="sort_by_duration">Sort by duration</string>
+    <string name="only_resolved">Resolved first</string>
+    <string name="only_unresolved">Unresolved first</string>
+    <string name="view_interventions">View interventions</string>
 
 
 </resources>

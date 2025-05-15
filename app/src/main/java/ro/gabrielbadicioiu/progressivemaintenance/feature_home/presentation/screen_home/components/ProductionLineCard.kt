@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,9 +41,14 @@ fun ProductionLineCard(
     onExpandClick:()->Unit,
     onEditClick:()->Unit,
     isExpanded:Boolean,
+    isProductionLineDropDownExpanded:Boolean,
     onEquipmentClick:(equipment:Equipment)->Unit,
     onDropDownDismiss:()->Unit,
-    onLogInterventionClick:()->Unit
+    onLogInterventionClick:()->Unit,
+    onProductionLineClick:()->Unit,
+    onViewProductionLineInterventionsClick:()->Unit,
+    onDismissLineDropDown:()->Unit
+
 )
 {
     Card(
@@ -59,6 +66,20 @@ fun ProductionLineCard(
                     Text(text = productionLine.lineName,
                         style = MaterialTheme.typography.titleMedium,
                         color = colorResource(id = R.color.text_color))
+                    IconButton(onClick = { onProductionLineClick()}) {
+                        Icon(
+                            imageVector = Icons.Outlined.ChevronRight,
+                            contentDescription = stringResource(id = R.string.icon_descr),
+                            tint = colorResource(id = R.color.text_color)
+                            )
+                        DropdownMenu(
+                            expanded = isProductionLineDropDownExpanded,
+                            onDismissRequest = { onDismissLineDropDown() }) {
+                            DropdownMenuItem(text = {
+                                Text(text = stringResource(id = R.string.view_interventions))
+                            }, onClick = { onViewProductionLineInterventionsClick() })
+                        }
+                    }
                     Row(modifier = Modifier.wrapContentSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {

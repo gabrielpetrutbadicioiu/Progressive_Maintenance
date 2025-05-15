@@ -45,6 +45,14 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.DisplayInterventionsUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.FetchInterventions
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.OnSearchIntervention
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.SortInterventionsByDate
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.SortInterventionsByDuration
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.SortResolvedFirst
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.SortUnresolvedFirst
+import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPmCardsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.data.repository.ProductionLineRepositoryImpl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.repository.ProductionLineRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.use_cases.screen_AddProductionLine.AddProductionLineScreenUseCases
@@ -293,6 +301,24 @@ single{
             cloudStorageRepository = get(),
             useCases = get()
         )
+    }
+
+    //displayAllPmCardsScreen
+    single{
+        DisplayInterventionsUseCases(
+            fetchInterventions = FetchInterventions(repository = get()),
+            sortInterventionsByDate = SortInterventionsByDate(),
+            sortInterventionsByDuration = SortInterventionsByDuration(),
+            sortUnresolvedFirst = SortUnresolvedFirst(),
+            sortResolvedFirst = SortResolvedFirst(),
+            onSearchIntervention = OnSearchIntervention()
+        )
+    }
+    viewModel {
+        DisplayAllPmCardsViewModel(
+            companiesRepository = get(),
+            useCases = get()
+            )
     }
 }
 

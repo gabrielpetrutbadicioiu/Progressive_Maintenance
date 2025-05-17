@@ -1,5 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards
 
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
+
 sealed class DisplayAllPmCardsScreenEvent {
 
     data object OnNavigateHome:DisplayAllPmCardsScreenEvent()
@@ -20,5 +22,6 @@ sealed class DisplayAllPmCardsScreenEvent {
         val lineId:String,
         val equipmentId:String,
     ):DisplayAllPmCardsScreenEvent()
+    data class OnViewInterventionDetailsClick(val pmc:ProgressiveMaintenanceCard):DisplayAllPmCardsScreenEvent()
 
 }

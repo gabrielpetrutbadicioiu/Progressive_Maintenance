@@ -84,6 +84,19 @@ fun DisplayAllPMCardsScreen(
                 is DisplayAllPmCardsViewModel.DisplayAllPmCardsUiEvent.OnShowToast->{
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
+                is DisplayAllPmCardsViewModel.DisplayAllPmCardsUiEvent.OnNavigateToViewIntervention->{
+                    navController.navigate(Screens.LogInterventionScreen(
+                        companyId = companyId,
+                        userId = userId,
+
+                        productionLineId = event.productionLineId,
+                        equipmentId = event.equipmentId,
+                        interventionId = event.interventionId,
+                        readOnly = true,
+                        prodLineName = "",//will be taken from cloud
+                        equipmentName = ""
+                    ))
+                }
             }
         }
     }
@@ -172,7 +185,8 @@ if (viewModel.pmCardList.value.isEmpty())
                     InterventionCard(
                         pmCard = pmCard,
                         isExpanded = viewModel.pmCardList.value[index].isExpanded,
-                        onExpandClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnExpandInterventionClick(index))})
+                        onExpandClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnExpandInterventionClick(index))},
+                        onViewDetailsClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnViewInterventionDetailsClick(pmCard))})
                 }
 
             }

@@ -50,13 +50,14 @@ class HomeViewModel(
     private val _clickedEq =  mutableStateOf(Equipment())
     val clickedEq:State<Equipment> = _clickedEq
 
+    private var equipmentLine= Equipment()
 
     private var _clickedEquipmentIndex=0
 
 //one time events
     private val _eventFlow = MutableSharedFlow<HomeScreenUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
-    sealed class HomeScreenUiEvent()
+    sealed class HomeScreenUiEvent
     {
         data object OnAddProductionLineClick: HomeScreenUiEvent()
         data object OnMembersScreenClick:HomeScreenUiEvent()
@@ -68,7 +69,7 @@ class HomeViewModel(
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
         data class OnNavigateToLineInterventionsScreen(val productionLine: ProductionLine):HomeScreenUiEvent()
-
+        data class OnNavigateToEquipmentInterventionsScreen(val equipment: Equipment, val line:ProductionLine):HomeScreenUiEvent()
     }
 
     fun onEvent(event: HomeScreenEvent)
@@ -170,15 +171,15 @@ class HomeViewModel(
                    clickedEquipment = event.equipment
                )
             }
-            is HomeScreenEvent.OnDropdownMenuDismiss->{
+            is HomeScreenEvent.OnEquipmentDropdownMenuDismiss->{
                 _productionLineList.value=useCases.onHideDropDownMenu
                     .execute(prodLineList = _productionLineList.value,
                         clickedLine = clickedProdLine.value,
                         clickedLineIndex = _clickedEquipmentIndex)
             }
             is HomeScreenEvent.OnLogInterventionClick->{
-                onEvent(HomeScreenEvent.OnDropdownMenuDismiss)
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToLogInterventionScreen) }
+                onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
             }
             is HomeScreenEvent.OnSearchInterventionsClick->{
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToDisplayGlobalInterventionsScreen) }
@@ -195,6 +196,12 @@ class HomeViewModel(
             }
             is HomeScreenEvent.OnShowLineInterventionsClick->{
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToLineInterventionsScreen(_productionLineList.value[event.index])) }
+                onEvent(HomeScreenEvent.OnDismissLineDropDown(event.index))
+            }
+            is HomeScreenEvent.OnViewEquipmentInterventionsClick->{
+
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToEquipmentInterventionsScreen(equipment = _clickedEq.value.copy(), line = _clickedProdLine.value.copy())) }
+                onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
             }
 
         }

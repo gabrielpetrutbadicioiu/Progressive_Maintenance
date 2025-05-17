@@ -12,9 +12,10 @@ sealed class HomeScreenEvent {
     data object OnProductionLineListener:HomeScreenEvent()
     data object OnMembersScreenClick:HomeScreenEvent()
     data object OnProfileClick:HomeScreenEvent()
-    data object OnDropdownMenuDismiss:HomeScreenEvent()
+    data object OnEquipmentDropdownMenuDismiss:HomeScreenEvent()
     data object OnLogInterventionClick:HomeScreenEvent()
     data object OnSearchInterventionsClick:HomeScreenEvent()
+    data object OnViewEquipmentInterventionsClick:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()
@@ -23,4 +24,5 @@ sealed class HomeScreenEvent {
     data class OnDismissLineDropDown(val index:Int):HomeScreenEvent()
     data class OnShowLineDropDown(val index:Int):HomeScreenEvent()
     data class OnShowLineInterventionsClick(val index: Int):HomeScreenEvent()
+
 }

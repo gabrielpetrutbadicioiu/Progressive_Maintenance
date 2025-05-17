@@ -81,10 +81,11 @@ class LogInterventionScreenViewModel(
     private val _pmCardErrorState = mutableStateOf(PmCardErrorState())
     val pmCardErrorState:State<PmCardErrorState> = _pmCardErrorState
 
-
     private val _company = mutableStateOf(Company())
     val company:State<Company> = _company
 
+    private val _readOnly= mutableStateOf(false)
+    val readOnly:State<Boolean> = _readOnly
 
     //one time events
     sealed class LogInterventionUiEvent{
@@ -109,8 +110,9 @@ class LogInterventionScreenViewModel(
                     authorId = event.userId,
                     companyId = event.companyId,
                     productionLineId = event.productionLineId,
-                    equipmentId = event.equipmentId)
-
+                    equipmentId = event.equipmentId,
+                    interventionId = event.interventionId)
+                    _readOnly.value=event.readOnly
 
                 viewModelScope.launch {
 

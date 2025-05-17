@@ -9,6 +9,8 @@ class FetchInterventions(private val repository: CompaniesRepository)
                         displayLineInterventions:Boolean,
                         displayEquipmentInterventions:Boolean,
                         companyId:String,
+                        lineId:String,
+                        equipmentId:String,
                         onResult:( List<ProgressiveMaintenanceCard>)->Unit,
                         onFailure:(String)->Unit)
     {
@@ -24,6 +26,27 @@ class FetchInterventions(private val repository: CompaniesRepository)
             {
                 onFailure(e.message?:"Use case err: failed to fetch global interventions")
             }
+        }
+        if (displayLineInterventions)
+        {
+            repository.fetchLineInterventions(
+                companyId = companyId,
+                lineId = lineId,
+                onSuccess = {pmcList-> onResult(pmcList)},
+                onFailure = {e-> onFailure(e)}
+            )
+        }
+        if (displayEquipmentInterventions)
+        {
+            repository.fetchLineInterventions(
+                companyId = companyId,
+                lineId = lineId,
+                onSuccess = {pmcList->
+                    val equipmentPmcList= pmcList.filter { pmc-> pmc.equipmentId==equipmentId }
+                                onResult(equipmentPmcList)
+                            },
+                onFailure = {e-> onFailure(e)}
+            )
         }
     }
 }

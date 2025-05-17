@@ -49,6 +49,12 @@ class DisplayAllPmCardsViewModel(
     sealed class DisplayAllPmCardsUiEvent{
         data object OnNavigateHome:DisplayAllPmCardsUiEvent()
         data class OnShowToast(val message:String):DisplayAllPmCardsUiEvent()
+        data class OnNavigateToViewIntervention(
+            val productionLineId: String,
+            val equipmentId:String,
+            val readOnly:Boolean,
+            val interventionId:String,
+        ):DisplayAllPmCardsUiEvent()
     }
 
 
@@ -89,6 +95,8 @@ class DisplayAllPmCardsViewModel(
                                 displayLineInterventions = _displayInterventionArgumentData.value.displayLineInterventions,
                                 displayEquipmentInterventions = _displayInterventionArgumentData.value.displayEquipmentInterventions,
                                 companyId = _displayInterventionArgumentData.value.companyId,
+                                lineId = _displayInterventionArgumentData.value.lineId,
+                                equipmentId = _displayInterventionArgumentData.value.equipmentId,
                                 onResult = {interventions->
                                     _pmCardList.value=interventions
                                     _originalList.value=interventions
@@ -142,6 +150,16 @@ class DisplayAllPmCardsViewModel(
             is DisplayAllPmCardsScreenEvent.OnSortResolvedFirst->{
                 _sortOption.value=_sortOption.value.copy(sortByDate = false, sortByDuration = false, resolvedOnly = true, unresolvedOnly = false)
                 _pmCardList.value=useCases.sortResolvedFirst.execute(_pmCardList.value.toList()).toList()
+            }
+            is DisplayAllPmCardsScreenEvent.OnViewInterventionDetailsClick->{
+
+                viewModelScope.launch {
+                    _eventFlow.emit(DisplayAllPmCardsUiEvent.OnNavigateToViewIntervention(
+                        equipmentId = event.pmc.equipmentId,
+                        interventionId = event.pmc.interventionId,
+                        productionLineId = event.pmc.productionLineId,
+                        readOnly = true
+                    )) }
             }
         }
     }

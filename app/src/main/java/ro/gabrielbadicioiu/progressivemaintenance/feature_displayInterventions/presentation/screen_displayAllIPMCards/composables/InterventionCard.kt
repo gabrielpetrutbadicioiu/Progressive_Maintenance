@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,7 +41,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain
 fun InterventionCard(
     pmCard: ProgressiveMaintenanceCard,
     isExpanded:Boolean,
-    onExpandClick:()->Unit
+    onExpandClick:()->Unit,
+    onViewDetailsClick:()->Unit
 )
 {
     Card(
@@ -51,6 +54,19 @@ fun InterventionCard(
     ) {
         Column(horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top) {
+            Row(modifier = Modifier
+                .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center)
+            {
+                Button(
+                    onClick = { onViewDetailsClick() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.btn_color),
+                        contentColor = Color.White)) {
+                    Text(text = stringResource(id = R.string.view_details))
+                }
+            }
             Row(modifier = Modifier
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -67,7 +83,6 @@ fun InterventionCard(
                     style = MaterialTheme.typography.titleMedium,
                     color = colorResource(id = R.color.text_color)
                 )
-                //todo de pus animatie cand nu sunt interventii
 
             }
             Row(modifier = Modifier

@@ -460,4 +460,38 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 }
             }
     }
+
+    override suspend fun fetchLineInterventions(
+        companyId: String,
+        lineId: String,
+        onSuccess: (List<ProgressiveMaintenanceCard>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.INTERVENTIONS)
+            .addSnapshotListener { pmcQuerySnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository: failed to fetch line interventions")
+                    return@addSnapshotListener
+                }
+                if (pmcQuerySnapshot!=null && !pmcQuerySnapshot.isEmpty)
+                {
+                    val interventionList=pmcQuerySnapshot.mapNotNull { pmc->
+                        pmc.toObject(ProgressiveMaintenanceCard::class.java)
+                    }
+                    onSuccess(interventionList)
+                }
+                else{
+                    onFailure("")
+                }
+
+
+            }
+
+    }
 }

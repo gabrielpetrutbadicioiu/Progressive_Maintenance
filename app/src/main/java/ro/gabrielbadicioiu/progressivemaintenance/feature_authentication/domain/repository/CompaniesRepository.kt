@@ -120,4 +120,10 @@ interface CompaniesRepository {
         onSuccess: ( List<ProgressiveMaintenanceCard>) -> Unit,
         onFailure: (String) -> Unit
     )
+    suspend fun fetchLineInterventions(
+        companyId: String,
+        lineId:String,
+        onSuccess: (List<ProgressiveMaintenanceCard>) -> Unit,
+        onFailure: (String) -> Unit
+    )
 }

@@ -226,7 +226,9 @@ class MainActivity : ComponentActivity() {
                             equipmentName = args.equipmentName,
                             prodLineName = args.prodLineName,
                             navController = navController,
-                            viewModel = logInterventionScreenViewModel
+                            viewModel = logInterventionScreenViewModel,
+                            readOnly = args.readOnly,
+                            interventionId = args.interventionId
                             )
                     }
                     composable<Screens.DisplayInterventionsScreen> {

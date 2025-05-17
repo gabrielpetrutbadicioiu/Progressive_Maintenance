@@ -32,7 +32,9 @@ sealed class LogInterventionScreenEvent
         val productionLineId: String,
         val equipmentId:String,
         val equipmentName:String,
-        val prodLineName:String):LogInterventionScreenEvent()
+        val prodLineName:String,
+        val readOnly:Boolean,
+        val interventionId:String):LogInterventionScreenEvent()
     data class OnShiftClick(val shift:String):LogInterventionScreenEvent()
     data class OnParticipantClick(val participant:UserDetails):LogInterventionScreenEvent()
     data class OnRemoveParticipant(val participant: UserDetails):LogInterventionScreenEvent()

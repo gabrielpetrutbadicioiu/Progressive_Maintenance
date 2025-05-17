@@ -169,6 +169,7 @@
     <string name="only_resolved">Resolved first</string>
     <string name="only_unresolved">Unresolved first</string>
     <string name="view_interventions">View interventions</string>
+    <string name="view_details">View details</string>
 
 
 </resources>

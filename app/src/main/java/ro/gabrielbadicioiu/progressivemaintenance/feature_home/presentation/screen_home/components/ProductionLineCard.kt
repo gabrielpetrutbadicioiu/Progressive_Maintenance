@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.Card
@@ -28,7 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
@@ -47,7 +47,8 @@ fun ProductionLineCard(
     onLogInterventionClick:()->Unit,
     onProductionLineClick:()->Unit,
     onViewProductionLineInterventionsClick:()->Unit,
-    onDismissLineDropDown:()->Unit
+    onDismissLineDropDown:()->Unit,
+    onViewEquipmentInterventionClick:()->Unit
 
 )
 {
@@ -63,23 +64,27 @@ fun ProductionLineCard(
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = productionLine.lineName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = colorResource(id = R.color.text_color))
-                    IconButton(onClick = { onProductionLineClick()}) {
-                        Icon(
-                            imageVector = Icons.Outlined.ChevronRight,
-                            contentDescription = stringResource(id = R.string.icon_descr),
-                            tint = colorResource(id = R.color.text_color)
+                    Row(verticalAlignment = Alignment.CenterVertically)
+                    {
+                        Text(text = productionLine.lineName,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = colorResource(id = R.color.text_color))
+                        IconButton(onClick = { onProductionLineClick()}) {
+                            Icon(
+                                imageVector = Icons.Outlined.ChevronRight,
+                                contentDescription = stringResource(id = R.string.icon_descr),
+                                tint = colorResource(id = R.color.text_color)
                             )
-                        DropdownMenu(
-                            expanded = isProductionLineDropDownExpanded,
-                            onDismissRequest = { onDismissLineDropDown() }) {
-                            DropdownMenuItem(text = {
-                                Text(text = stringResource(id = R.string.view_interventions))
-                            }, onClick = { onViewProductionLineInterventionsClick() })
+                            DropdownMenu(
+                                expanded = isProductionLineDropDownExpanded,
+                                onDismissRequest = { onDismissLineDropDown() }) {
+                                DropdownMenuItem(text = {
+                                    Text(text = stringResource(id = R.string.view_interventions))
+                                }, onClick = { onViewProductionLineInterventionsClick() })
+                            }
                         }
                     }
+
                     Row(modifier = Modifier.wrapContentSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {
@@ -93,14 +98,6 @@ fun ProductionLineCard(
                                     tint = colorResource(id = R.color.text_color))
                             }
                         }
-
-                        IconButton(onClick = { onExpandClick() }) {
-                            val icon= if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown
-                            Icon(imageVector =icon,
-                                contentDescription = stringResource(id = R.string.icon_btn_descr),
-                                tint = colorResource(id = R.color.text_color))
-                        }
-
                     }
 
 
@@ -132,14 +129,25 @@ fun ProductionLineCard(
                             MachineDropDownMenu(
                                 isDropDownMenuExpanded =machine.isExpanded ,
                                 onDismissRequest = { onDropDownDismiss() },
-                                onLogInterventionClick = {onLogInterventionClick()})
-
+                                onLogInterventionClick = {onLogInterventionClick()},
+                                onViewInterventionClick = {onViewEquipmentInterventionClick()})
                         }
-                       
                         HorizontalDivider( color = Color.LightGray)
                     }
                 }
             }
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { onExpandClick() }) {
+                    if (isExpanded)
+                    {DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.triple_arrow_up_lottie), size = 48.dp)}
+                    else{
+                        DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.triple_arrow_down_lottie), size =48.dp )}
+
+                }
+            }
+
         }
 
     }

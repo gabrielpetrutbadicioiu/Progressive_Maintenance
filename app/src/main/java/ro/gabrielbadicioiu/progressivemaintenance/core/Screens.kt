@@ -53,6 +53,8 @@ sealed class Screens {
         val productionLineId: String,
         val equipmentId:String,
         val equipmentName:String,
+        val readOnly:Boolean,
+        val interventionId:String,
         val prodLineName:String):Screens()
     @Serializable
     data class DisplayInterventionsScreen(

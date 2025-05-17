@@ -56,6 +56,8 @@ fun LogInterventionScreen(
     equipmentId:String,
     equipmentName:String,
     prodLineName:String,
+    readOnly:Boolean,
+    interventionId:String,
 
     viewModel: LogInterventionScreenViewModel,
     navController: NavController
@@ -69,7 +71,9 @@ fun LogInterventionScreen(
             equipmentName = equipmentName,
             equipmentId = equipmentId,
             prodLineName = prodLineName,
-            productionLineId = productionLineId
+            productionLineId = productionLineId,
+            interventionId = interventionId,
+            readOnly = readOnly
             ))
         viewModel.eventFlow.collectLatest { event->
             when(event)
@@ -130,7 +134,7 @@ fun LogInterventionScreen(
                         color = Color.Red,
                         iconSize =48,
                         textSize =24,
-                        clickEn =false ) {}
+                        clickEn =false) {}
                 }
 
           }

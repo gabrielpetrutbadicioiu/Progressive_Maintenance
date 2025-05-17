@@ -47,4 +47,6 @@ class CloudStorageRepositoryImpl:CloudStorageRepository {
                 onFailure(e.message?:"Repository:Couldn't delete photo")
             }
     }
+
+
 }

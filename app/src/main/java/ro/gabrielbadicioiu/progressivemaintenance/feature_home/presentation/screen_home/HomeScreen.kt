@@ -101,7 +101,11 @@ fun HomeScreen(
                         productionLineId = viewModel.clickedProdLine.value.id,
                         equipmentId = viewModel.clickedEq.value.id,
                         equipmentName = viewModel.clickedEq.value.name,
-                        prodLineName = viewModel.clickedProdLine.value.lineName))
+                        prodLineName = viewModel.clickedProdLine.value.lineName,
+                        interventionId = "",//not necessary
+                        readOnly = false
+                        )
+                        )
                 }
                 is HomeViewModel.HomeScreenUiEvent.OnNavigateToDisplayGlobalInterventionsScreen->{
                     navController.navigate(Screens.DisplayInterventionsScreen(
@@ -123,6 +127,17 @@ fun HomeScreen(
                         userId = userId,
                         lineId = event.productionLine.id,
                         equipmentId = ""
+                    ))
+                }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToEquipmentInterventionsScreen->{
+                    navController.navigate(Screens.DisplayInterventionsScreen(
+                        displayLineInterventions = false,
+                        displayAllInterventions = false,
+                        displayEquipmentInterventions = true,
+                        lineId = event.line.id,
+                        equipmentId = event.equipment.id,
+                        companyId = companyId,
+                        userId = userId
                     ))
                 }
             }
@@ -307,12 +322,13 @@ fun HomeScreen(
                                         productionLineIndex = index,
                                         equipment = equipment
                                     ))},
-                                    onDropDownDismiss = {viewModel.onEvent(HomeScreenEvent.OnDropdownMenuDismiss)},
+                                    onDropDownDismiss = {viewModel.onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)},
                                     onLogInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnLogInterventionClick)},
                                     isProductionLineDropDownExpanded = viewModel.productionLineList.value[index].showDropDown,
                                     onDismissLineDropDown = {viewModel.onEvent(HomeScreenEvent.OnDismissLineDropDown(index))},
                                     onProductionLineClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineDropDown(index))},
-                                    onViewProductionLineInterventionsClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineInterventionsClick(index))}
+                                    onViewProductionLineInterventionsClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineInterventionsClick(index))},
+                                    onViewEquipmentInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnViewEquipmentInterventionsClick)}
                                 )
                         }
                 }

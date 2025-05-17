@@ -13,6 +13,7 @@ import androidx.navigation.toRoute
 
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayImageScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.SelectCountryScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_createOwnerEmail.CreateOwnerEmailScreen
@@ -227,8 +228,9 @@ class MainActivity : ComponentActivity() {
                             prodLineName = args.prodLineName,
                             navController = navController,
                             viewModel = logInterventionScreenViewModel,
-                            readOnly = args.readOnly,
-                            interventionId = args.interventionId
+                            isNewIntervention = args.isNewIntervention,
+                            interventionId = args.interventionId,
+
                             )
                     }
                     composable<Screens.DisplayInterventionsScreen> {
@@ -244,6 +246,10 @@ class MainActivity : ComponentActivity() {
                             lineId = args.lineId,
                             equipmentId =args.equipmentId
                         )
+                    }
+                    composable<Screens.DisplayImageScreen> {
+                        val args=it.toRoute<Screens.DisplayImageScreen>()
+                        DisplayImageScreen(imageUri = args.imageUri)
                     }
                 }//navHost
 

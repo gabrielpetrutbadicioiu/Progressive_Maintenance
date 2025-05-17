@@ -52,7 +52,7 @@ class DisplayAllPmCardsViewModel(
         data class OnNavigateToViewIntervention(
             val productionLineId: String,
             val equipmentId:String,
-            val readOnly:Boolean,
+            val isNewIntervention:Boolean,
             val interventionId:String,
         ):DisplayAllPmCardsUiEvent()
     }
@@ -158,7 +158,7 @@ class DisplayAllPmCardsViewModel(
                         equipmentId = event.pmc.equipmentId,
                         interventionId = event.pmc.interventionId,
                         productionLineId = event.pmc.productionLineId,
-                        readOnly = true
+                        isNewIntervention = false
                     )) }
             }
         }

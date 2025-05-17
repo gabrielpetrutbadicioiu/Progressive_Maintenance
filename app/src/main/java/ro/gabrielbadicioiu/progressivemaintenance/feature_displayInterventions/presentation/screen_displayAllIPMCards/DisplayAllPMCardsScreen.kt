@@ -75,7 +75,7 @@ fun DisplayAllPMCardsScreen(
             equipmentId=equipmentId,
         ))
         viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnGetAllPmCards)
-        viewModel.eventFlow.collectLatest { event->
+        viewModel.eventFlow.collectLatest{ event->
             when(event)
             {
                 is DisplayAllPmCardsViewModel.DisplayAllPmCardsUiEvent.OnNavigateHome->{
@@ -92,7 +92,7 @@ fun DisplayAllPMCardsScreen(
                         productionLineId = event.productionLineId,
                         equipmentId = event.equipmentId,
                         interventionId = event.interventionId,
-                        readOnly = true,
+                        isNewIntervention = event.isNewIntervention,
                         prodLineName = "",//will be taken from cloud
                         equipmentName = ""
                     ))

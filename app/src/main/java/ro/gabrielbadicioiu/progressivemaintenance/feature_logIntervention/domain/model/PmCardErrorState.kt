@@ -9,5 +9,8 @@ data class PmCardErrorState(
     val isEndTimeBeforeStart:Boolean=false,
     val isProblemDescrErr:Boolean=false,
     val isProblemDetailErr:Boolean=false,
+    val isRootCauseErr:Boolean=false,
+    val isCorrectiveMeasureErr:Boolean=false,
+    val isRepairStepsErr:Boolean=false,
     val errMsg:String=""
 )

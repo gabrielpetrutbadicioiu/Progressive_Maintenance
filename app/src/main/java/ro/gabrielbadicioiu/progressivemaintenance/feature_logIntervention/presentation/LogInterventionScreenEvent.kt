@@ -2,6 +2,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.prese
 
 import android.net.Uri
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 
 sealed class LogInterventionScreenEvent
 {
@@ -25,6 +26,11 @@ sealed class LogInterventionScreenEvent
     data object OnPhoto2Delete:LogInterventionScreenEvent()
     data object OnPhoto3Delete:LogInterventionScreenEvent()
     data object OnLoadInterventionGlobally:LogInterventionScreenEvent()
+    data object OnGetPmCard:LogInterventionScreenEvent()
+    data object OnEditInterventionClick:LogInterventionScreenEvent()
+    data object OnSaveChangesClick:LogInterventionScreenEvent()
+    data object OnCancelChangesClick:LogInterventionScreenEvent()
+    data object OnCheckResolved:LogInterventionScreenEvent()
 
     data class GetArgumentData(
         val companyId:String,
@@ -33,11 +39,11 @@ sealed class LogInterventionScreenEvent
         val equipmentId:String,
         val equipmentName:String,
         val prodLineName:String,
-        val readOnly:Boolean,
+        val isNewIntervention:Boolean,
         val interventionId:String):LogInterventionScreenEvent()
     data class OnShiftClick(val shift:String):LogInterventionScreenEvent()
     data class OnParticipantClick(val participant:UserDetails):LogInterventionScreenEvent()
-    data class OnRemoveParticipant(val participant: UserDetails):LogInterventionScreenEvent()
+    data class OnRemoveParticipant(val participant: InterventionParticipants):LogInterventionScreenEvent()
     data class OnGetStartDate(val startDate:String):LogInterventionScreenEvent()
     data class OnGetEndDate(val endDate:String):LogInterventionScreenEvent()
     data class OnGetDowntimeStartTime(val startTime:String):LogInterventionScreenEvent()
@@ -50,4 +56,6 @@ sealed class LogInterventionScreenEvent
     data class OnTroubleshootStepsChange(val steps:String):LogInterventionScreenEvent()
     data class OnMeasuresTakenChange(val measuresTaken:String):LogInterventionScreenEvent()
     data class OnUriResult(val localUri: Uri):LogInterventionScreenEvent()
+    data class OnImageClick(val imageUri:String):LogInterventionScreenEvent()
+
 }

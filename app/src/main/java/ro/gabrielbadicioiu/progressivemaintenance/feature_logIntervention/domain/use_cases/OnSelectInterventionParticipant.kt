@@ -7,31 +7,30 @@ class OnSelectInterventionParticipant {
 
     fun execute(
         selectedEmployee:UserDetails,
-        participantList:List<UserDetails>,
+        participantList:List<InterventionParticipants>,
         onFailure:(String)->Unit,
-        onSuccess:(List<UserDetails>, List<InterventionParticipants>)->Unit
+        onSuccess:( List<InterventionParticipants>)->Unit
         )
     {
         if (participantList.isNotEmpty())
         {
             participantList.forEach { employee->
-                if (employee==selectedEmployee)
+                if (employee.id==selectedEmployee.userID)
                 {
                     onFailure("This colleague is already on the list.")
                     return
                 }
             }
         }
+        val newParticipant=InterventionParticipants(
+            firstName = selectedEmployee.firstName,
+            lastName = selectedEmployee.lastName,
+            avatar = selectedEmployee.profilePicture,
+            id = selectedEmployee.userID,
+            rank = selectedEmployee.rank
+        )
+        val updatedParticipantList=participantList+newParticipant
 
-        val updatedParticipantList=participantList+selectedEmployee
-        val interventionParticipants=updatedParticipantList.map { participant->
-            InterventionParticipants(
-                firstName = participant.firstName,
-                lastName = participant.lastName,
-                avatar = participant.profilePicture,
-                id = participant.userID
-                )
-        }
-        onSuccess(updatedParticipantList, interventionParticipants)
+        onSuccess(updatedParticipantList)
     }
 }

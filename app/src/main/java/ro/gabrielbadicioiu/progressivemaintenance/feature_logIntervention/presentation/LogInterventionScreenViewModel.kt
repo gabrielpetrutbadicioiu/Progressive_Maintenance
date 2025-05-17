@@ -15,7 +15,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CloudStorageRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
-import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
@@ -45,8 +44,8 @@ class LogInterventionScreenViewModel(
     private val _employeeList= mutableStateOf<List<UserDetails>>(emptyList())
     val employeeList:State<List<UserDetails>> = _employeeList
 
-    private val _participantsList= mutableStateOf<List<UserDetails>>(emptyList())
-    val participantsList:State<List<UserDetails>> = _participantsList
+   // private val _participantsList= mutableStateOf<List<UserDetails>>(emptyList())
+   // val participantsList:State<List<UserDetails>> = _participantsList
 
     private val _selectedParticipant= mutableStateOf(UserDetails())
    // val selectedParticipant:State<UserDetails> = _selectedParticipant
@@ -81,16 +80,16 @@ class LogInterventionScreenViewModel(
     private val _pmCardErrorState = mutableStateOf(PmCardErrorState())
     val pmCardErrorState:State<PmCardErrorState> = _pmCardErrorState
 
+    private val _originalPmc= mutableStateOf(ProgressiveMaintenanceCard())
+
     private val _company = mutableStateOf(Company())
     val company:State<Company> = _company
-
-    private val _readOnly= mutableStateOf(false)
-    val readOnly:State<Boolean> = _readOnly
 
     //one time events
     sealed class LogInterventionUiEvent{
         data class ShowToast(val message:String):LogInterventionUiEvent()
         data object OnNavigateToHome:LogInterventionUiEvent()
+        data class OnNavigateToDisplayImageScreen(val imageUri:String):LogInterventionUiEvent()
     }
     private val _eventFlow= MutableSharedFlow<LogInterventionUiEvent>()
     val eventFlow= _eventFlow.asSharedFlow()
@@ -111,8 +110,10 @@ class LogInterventionScreenViewModel(
                     companyId = event.companyId,
                     productionLineId = event.productionLineId,
                     equipmentId = event.equipmentId,
-                    interventionId = event.interventionId)
-                    _readOnly.value=event.readOnly
+                    interventionId = event.interventionId,
+                    isNewIntervention = event.isNewIntervention,
+                    isEditing = event.isNewIntervention)
+
 
                 viewModelScope.launch {
 
@@ -202,26 +203,21 @@ class LogInterventionScreenViewModel(
                 _selectedParticipant.value=event.participant
                 useCases.onSelectInterventionParticipant.execute(
                     selectedEmployee = _selectedParticipant.value,
-                    participantList = _participantsList.value,
+                    participantList = _pmCard.value.otherParticipants,
                     onFailure = {e->
                         viewModelScope.launch {_eventFlow.emit(LogInterventionUiEvent.ShowToast(e))}
                     },
-                    onSuccess = {participants, interventionParticipants->
-                        _participantsList.value=participants
+                    onSuccess = { interventionParticipants->
+                        //_participantsList.value=participants
                         _pmCard.value=_pmCard.value.copy(otherParticipants = interventionParticipants)
                         onEvent(LogInterventionScreenEvent.OnOtherParticipantsDropdownMenuDismiss)
                     }
                 )
             }
             is LogInterventionScreenEvent.OnRemoveParticipant-> {
-                _participantsList.value -= event.participant
-                val deletedInterventionParticipant=InterventionParticipants(
-                    firstName = event.participant.firstName,
-                    lastName = event.participant.lastName,
-                    avatar = event.participant.profilePicture,
-                    id = event.participant.userID
-                    )
-                _pmCard.value=_pmCard.value.copy(otherParticipants = _pmCard.value.otherParticipants-deletedInterventionParticipant)
+
+                val updatedList=_pmCard.value.otherParticipants-event.participant
+                _pmCard.value=_pmCard.value.copy(otherParticipants =updatedList )
             }
             is LogInterventionScreenEvent.OnNavigateToHome->{
                 viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
@@ -394,7 +390,67 @@ class LogInterventionScreenViewModel(
                 }
 
             }
+            is LogInterventionScreenEvent.OnGetPmCard->{
 
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.fetchPmCardById(
+                            companyId = _pmCard.value.companyId,
+                            interventionId = _pmCard.value.interventionId,
+                            productionLineId = _pmCard.value.productionLineId,
+                            onSuccess = {pmc->
+                                _pmCard.value=pmc.copy()
+                                _pmCard.value=_pmCard.value.copy(isNewIntervention = false)
+                            },
+                            onFailure = {e->
+                                _pmCardErrorState.value=_pmCardErrorState.value.copy(isShiftErr = true, errMsg = e)
+                            }
+                        )
+                    } catch (e:Exception)
+                    {
+                        _pmCardErrorState.value=_pmCardErrorState.value.copy(isShiftErr = true, errMsg = e.message?:"ViewModel: Failed to fetch PMC")
+
+                    }
+                }
+            }
+
+            is LogInterventionScreenEvent.OnEditInterventionClick->{
+                _pmCard.value=_pmCard.value.copy(isEditing = true)
+                _originalPmc.value=_pmCard.value.copy()
+            }
+            is LogInterventionScreenEvent.OnSaveChangesClick->{
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.updatePmCard(
+                            pmc = _pmCard.value.copy(),
+                            onSuccess = {
+                                _pmCard.value=_pmCard.value.copy(isEditing = false)
+                                _originalPmc.value=_pmCard.value.copy()
+                                viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast("Intervention updated successfully!")) }
+                            },
+                            onFailure = {e->
+                                viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e)) }
+                            }
+                        )
+                    }catch (e:Exception)
+                    {
+                        viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.ShowToast(e.message?:"ViewModel: Failed to update intervention!")) }
+                    }
+                }
+            }
+            is LogInterventionScreenEvent.OnCancelChangesClick->{
+                _pmCard.value=_originalPmc.value.copy()
+                _pmCard.value=_pmCard.value.copy(isEditing = false)
+            }
+            is LogInterventionScreenEvent.OnCheckResolved->{
+               _pmCardErrorState.value= useCases.onResolvedInterventionCheck.execute(
+                    pmc = _pmCard.value.copy(),
+                    onSuccess = {_pmCard.value=_pmCard.value.copy(resolved = true)}
+                )
+            }
+            is LogInterventionScreenEvent.OnImageClick->{
+                viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToDisplayImageScreen(event.imageUri)) }
+            }
         }
     }
 

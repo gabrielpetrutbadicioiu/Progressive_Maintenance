@@ -56,7 +56,7 @@ fun LogInterventionScreen(
     equipmentId:String,
     equipmentName:String,
     prodLineName:String,
-    readOnly:Boolean,
+    isNewIntervention:Boolean,
     interventionId:String,
 
     viewModel: LogInterventionScreenViewModel,
@@ -65,6 +65,7 @@ fun LogInterventionScreen(
 {
     val context= LocalContext.current
     LaunchedEffect(key1 = true) {
+
         viewModel.onEvent(LogInterventionScreenEvent.GetArgumentData(
             companyId = companyId,
             userId=userId,
@@ -73,8 +74,12 @@ fun LogInterventionScreen(
             prodLineName = prodLineName,
             productionLineId = productionLineId,
             interventionId = interventionId,
-            readOnly = readOnly
+            isNewIntervention = isNewIntervention
             ))
+        if (!isNewIntervention)
+        {
+            viewModel.onEvent(LogInterventionScreenEvent.OnGetPmCard)
+        }
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
@@ -83,6 +88,9 @@ fun LogInterventionScreen(
                 }
                 is LogInterventionScreenViewModel.LogInterventionUiEvent.OnNavigateToHome->{
                     navController.navigate(Screens.HomeScreen(companyID = companyId, userID = userId))
+                }
+                is LogInterventionScreenViewModel.LogInterventionUiEvent.OnNavigateToDisplayImageScreen->{
+                    navController.navigate(Screens.DisplayImageScreen(event.imageUri))
                 }
             }
         }
@@ -105,10 +113,12 @@ fun LogInterventionScreen(
                         Row(modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = stringResource(id = R.string.log_intervention))
+                            if (viewModel.pmCard.value.isNewIntervention) {Text(text = stringResource(id = R.string.log_intervention))}
+                            if (viewModel.pmCard.value.isEditing&& !viewModel.pmCard.value.isNewIntervention) {Text(text = stringResource(id = R.string.editing_intervention))}
+                            if (!viewModel.pmCard.value.isNewIntervention && !viewModel.pmCard.value.isEditing){Text(text = stringResource(id = R.string.intervention_details))}
+
                             Spacer(modifier = Modifier.width(4.dp))
                             DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.fix_animation), size = 64.dp)
-
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -139,12 +149,13 @@ fun LogInterventionScreen(
 
           }
                 else{
+
                     item {  InterventionInfoSection(
                         author = viewModel.author.value.copy(),
                         isOtherParticipantsMenuExpanded = viewModel.isOtherParticipantsDropdownMenuExpanded.value,
                         selectedShift = viewModel.pmCard.value.shift,
                         isShiftDropDownExpanded = viewModel.isShiftDropDownMenuExpanded.value,
-                        participantsList = viewModel.participantsList.value,
+                        participantsList = viewModel.pmCard.value.otherParticipants,
                         employeeList = viewModel.employeeList.value,
                         fetchEmployeesErr = viewModel.fetchEmployeesErr.value,
                         fetchEmployeesErrMsg = viewModel.fetchEmployeesErrMsg.value,
@@ -180,7 +191,9 @@ fun LogInterventionScreen(
                         onEndTimeDismiss = {viewModel.onEvent(LogInterventionScreenEvent.OnDownTimeEndDismiss)},
                         onGetTotalDowntimeDuration = {totalDowntimeDuration-> viewModel.onEvent(LogInterventionScreenEvent.OnGetTotalDowntimeDuration(totalDowntimeDuration))},
                         lineName = viewModel.pmCard.value.productionLineName,
-                        equipmentName = viewModel.pmCard.value.equipmentName
+                        equipmentName = viewModel.pmCard.value.equipmentName,
+                        isEditing = viewModel.pmCard.value.isEditing,
+                        isNewIntervention = isNewIntervention
                     )
                         InterventionSummarySection(
                             problemDescription = viewModel.pmCard.value.problemDescription,
@@ -192,6 +205,7 @@ fun LogInterventionScreen(
                             measuresTaken = viewModel.pmCard.value.measureTaken,
                             isInfoExpanded = viewModel.showInfo.value,
                             pmCard = viewModel.pmCard.value,
+                            onCheckedChange = {viewModel.onEvent(LogInterventionScreenEvent.OnCheckResolved)},
 
                             onProblemDescriptionChange = {problemDescr-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDescriptionChange(problemDescr))},
                             onProblemDetailingChange = {problemDetailing-> viewModel.onEvent(LogInterventionScreenEvent.OnProblemDetailingChange(problemDetailing))},
@@ -204,7 +218,11 @@ fun LogInterventionScreen(
                             onUriResult = {uri-> viewModel.onEvent(LogInterventionScreenEvent.OnUriResult(uri))},
                             onPhoto1Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto1Delete)},
                             onPhoto2Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto2Delete)},
-                            onPhoto3Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto3Delete)}
+                            onPhoto3Remove = {viewModel.onEvent(LogInterventionScreenEvent.OnPhoto3Delete)},
+                            isNewIntervention = isNewIntervention,
+                            isEditing = viewModel.pmCard.value.isEditing,
+                            onImageClick = {imageUri-> viewModel.onEvent(LogInterventionScreenEvent.OnImageClick(imageUri))}
+
 
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -219,14 +237,51 @@ fun LogInterventionScreen(
                                 clickEn = false
                             ) {}
                         }
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.btn_color),
-                                contentColor = Color.White),
-                            onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnLogInterventionClick) }) {
-                            Text(text = stringResource(id = R.string.log_intervention))
+                        if (viewModel.pmCard.value.isNewIntervention)
+                        {
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.btn_color),
+                                    contentColor = Color.White),
+                                onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnLogInterventionClick) }) {
+                                Text(text = stringResource(id = R.string.log_intervention))
+                            }
                         }
+                        if (!viewModel.pmCard.value.isNewIntervention && !viewModel.pmCard.value.isEditing)
+                        {
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.btn_color),
+                                    contentColor = Color.White),
+                                onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnEditInterventionClick) }) {
+                                Text(text = stringResource(id = R.string.edit_intervention))
+                            }
+                        }
+                        if (!viewModel.pmCard.value.isNewIntervention && viewModel.pmCard.value.isEditing)
+                        {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically) {
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.btn_color),
+                                        contentColor = Color.White),
+                                    onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnSaveChangesClick) }) {
+                                    Text(text = stringResource(id = R.string.save_changes))
+                                }
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.btn_color),
+                                        contentColor = Color.White),
+                                    onClick = {viewModel.onEvent(LogInterventionScreenEvent.OnCancelChangesClick)}) {
+                                    Text(text = stringResource(id = R.string.cancel_btn))
+                                }
+                            }
+                        }
+
                         Spacer(modifier = Modifier.height(16.dp))
 
                     }

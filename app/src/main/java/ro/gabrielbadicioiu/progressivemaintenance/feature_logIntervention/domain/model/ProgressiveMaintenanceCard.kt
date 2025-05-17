@@ -34,5 +34,9 @@ data class ProgressiveMaintenanceCard(
     val photo3Name:String="",
     val resolved:Boolean=false,
     @get:Exclude
-    val isExpanded:Boolean=false
+    val isExpanded:Boolean=false,
+    @get:Exclude
+    val isNewIntervention:Boolean=false,
+    @get:Exclude
+    val isEditing:Boolean=false
 )

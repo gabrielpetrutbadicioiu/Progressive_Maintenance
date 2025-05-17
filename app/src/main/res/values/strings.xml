@@ -145,7 +145,7 @@
     <string name="problem_description_supporting_text">Briefly describe the issue*</string>
     <string name="problem_detailing_placeholder">Describe the issue in detail, including how it occurred and what was investigated during troubleshooting.</string>
     <string name="problem_detailing_supporting_txt">Provide a detailed description of the issue, how it happened and how it was solved*</string>
-    <string name="troubleshooting_steps_ph">Describe the recommended steps to fix the issue if it occurs again. (e.g. 1. Check the fuses, 2.Check the wiring)</string>
+    <string name="troubleshooting_steps_ph">Describe the recommended repair steps to fix the issue as soon as possible if it occurs again. (e.g. 1. Check the fuses, 2.Check the wiring)</string>
     <string name="troubleshooting_steps_st">Outline the steps to follow if the issue occurs again.</string>
     <string name="root_cause_ph">Describe the root cause of the issue (e.g. human error). This field can be updated after performing an in-depth analysis</string>
     <string name="root_cause_st">Identify the main reason the issue occurred to help prevent future incidents. </string>
@@ -170,6 +170,20 @@
     <string name="only_unresolved">Unresolved first</string>
     <string name="view_interventions">View interventions</string>
     <string name="view_details">View details</string>
-
+    <string name="intervention_details">Intervention details</string>
+    <string name="editing_intervention">Editing intervention</string>
+    <string name="edit_intervention">Edit intervention</string>
+    <string name="save_changes">Save changes</string>
+    <string name="downtime_start_date">Downtime start date</string>
+    <string name="downtime_end_date">Downtime end date</string>
+    <string name="downtime_start_time">Downtime start</string>
+    <string name="downtime_end_time">Downtime end</string>
+    <string name="problem_descr">Problem description</string>
+    <string name="troubleshooting_steps">Troubleshooting steps</string>
+    <string name="root_cause">Root cause</string>
+    <string name="measures_taken">Corrective measure implemented to prevent similar incidents in the future. </string>
+    <string name="recommended_steps">Recommended repair steps to fix the issue as soon as possible.</string>
+    <string name="not_completed">Not completed!</string>
+    <string name="mark_resolved">Process failure resolved!</string>
 
 </resources>

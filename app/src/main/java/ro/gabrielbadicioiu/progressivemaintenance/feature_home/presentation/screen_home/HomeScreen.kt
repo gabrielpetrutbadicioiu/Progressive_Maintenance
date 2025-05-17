@@ -103,7 +103,7 @@ fun HomeScreen(
                         equipmentName = viewModel.clickedEq.value.name,
                         prodLineName = viewModel.clickedProdLine.value.lineName,
                         interventionId = "",//not necessary
-                        readOnly = false
+                        isNewIntervention = true
                         )
                         )
                 }

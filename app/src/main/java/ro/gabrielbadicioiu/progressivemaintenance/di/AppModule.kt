@@ -78,6 +78,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.scre
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.LogInterventionScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnInterventionUriResult
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnLogInterventionClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnResolvedInterventionCheck
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.use_cases.OnSelectInterventionParticipant
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.LogInterventionScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cases.FetchUsersInCompany
@@ -292,7 +293,8 @@ single{
         LogInterventionScreenUseCases(
             onSelectInterventionParticipant = OnSelectInterventionParticipant(),
             onLogInterventionClick = OnLogInterventionClick(),
-            onInterventionUriResult = OnInterventionUriResult(cloudStorageRepository = get())
+            onInterventionUriResult = OnInterventionUriResult(cloudStorageRepository = get()),
+            onResolvedInterventionCheck = OnResolvedInterventionCheck()
         )
     }
     viewModel {

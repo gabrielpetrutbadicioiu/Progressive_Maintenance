@@ -46,8 +46,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.Divider
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.PmCardErrorState
 import java.time.Duration
 import java.time.Instant
@@ -65,7 +67,7 @@ fun InterventionInfoSection(
     isOtherParticipantsMenuExpanded:Boolean,
     isShiftDropDownExpanded:Boolean,
     employeeList: List<UserDetails>,
-    participantsList: List<UserDetails>,
+    participantsList: List<InterventionParticipants>,
     fetchEmployeesErr:Boolean,
     fetchEmployeesErrMsg:String,
     showStartDateDialog:Boolean,
@@ -79,7 +81,8 @@ fun InterventionInfoSection(
     pmCardErrorState: PmCardErrorState,
     lineName:String,
     equipmentName:String,
-
+    isNewIntervention:Boolean,
+    isEditing:Boolean,
 
     onSelectShiftClick: () -> Unit,
     onShiftDropDownDismiss:()->Unit,
@@ -87,7 +90,7 @@ fun InterventionInfoSection(
     onOtherParticipantsMenuDismiss:()->Unit,
     onOtherParticipantsMenuDisplay:()->Unit,
     onParticipantClick:(participant:UserDetails)->Unit,
-    onRemoveParticipant:(participant:UserDetails)->Unit,
+    onRemoveParticipant:(participant:InterventionParticipants)->Unit,
     onStartDateDismiss:()->Unit,
     onSelectStartDateClick:()->Unit,
     onGetStartDate:(String)->Unit,
@@ -125,59 +128,65 @@ fun InterventionInfoSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            DisplayUserWithAvatar(user = author,
+            DisplayUserWithAvatar(participant = author,
                 modifier = Modifier.weight(0.6f))
-
-            OutlinedTextField(
-                value = selectedShift,
-                onValueChange = {},
-                isError = pmCardErrorState.isShiftErr,
-                readOnly = true,
-                placeholder = { Text(stringResource(id = R.string.shift)) },
-                colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-                trailingIcon = {
-                    IconButton(onClick = onSelectShiftClick) {
-                        Icon(
-                            imageVector = if (isShiftDropDownExpanded) Icons.Outlined.ArrowDropUp else Icons.Outlined.ArrowDropDown,
-                            contentDescription = stringResource(id = R.string.icon_descr)
-                        )
-                        DropdownMenu(
-                            expanded = isShiftDropDownExpanded,
-                            onDismissRequest = onShiftDropDownDismiss
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.shiftA)) },
-                                onClick = { onShiftClick("Shift A") }
+            if (!isEditing && !isNewIntervention)
+            {
+                Text(text = selectedShift,
+                    modifier = Modifier.padding(end = 16.dp))
+            }
+            else{
+                OutlinedTextField(
+                    value = selectedShift,
+                    onValueChange = {},
+                    isError = pmCardErrorState.isShiftErr,
+                    readOnly = true,
+                    placeholder = { Text(stringResource(id = R.string.shift)) },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                    trailingIcon = {
+                        IconButton(onClick = onSelectShiftClick) {
+                            Icon(
+                                imageVector = if (isShiftDropDownExpanded) Icons.Outlined.ArrowDropUp else Icons.Outlined.ArrowDropDown,
+                                contentDescription = stringResource(id = R.string.icon_descr)
                             )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.shiftB)) },
-                                onClick = { onShiftClick("Shift B") }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.shiftC)) },
-                                onClick = { onShiftClick("Shift C") }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.shiftD)) },
-                                onClick = { onShiftClick("Shift D") }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(id = R.string.no_shift)) },
-                                onClick = { onShiftClick("N/A") }
-                            )
+                            DropdownMenu(
+                                expanded = isShiftDropDownExpanded,
+                                onDismissRequest = onShiftDropDownDismiss
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.shiftA)) },
+                                    onClick = { onShiftClick("Shift A") }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.shiftB)) },
+                                    onClick = { onShiftClick("Shift B") }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.shiftC)) },
+                                    onClick = { onShiftClick("Shift C") }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.shiftD)) },
+                                    onClick = { onShiftClick("Shift D") }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.no_shift)) },
+                                    onClick = { onShiftClick("N/A") }
+                                )
+                            }
                         }
-                    }
-                },
-                modifier = Modifier.weight(0.4f)
-            )
+                    },
+                    modifier = Modifier.weight(0.4f)
+                )
+            }
+
         }
 
 
         if (participantsList.isNotEmpty())
         {
-            HorizontalDivider(color = Color.DarkGray,
-                thickness = 2.dp)
-            Spacer(modifier = Modifier.height(8.dp))
+            Divider(space = 8.dp, thickness = 2.dp, color = Color.DarkGray)
             Text(text = stringResource(id = R.string.other_participants),
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(start = 16.dp))
@@ -185,37 +194,42 @@ fun InterventionInfoSection(
 
 
         participantsList.forEach { participant->
-            HorizontalDivider(color = Color.DarkGray,
-                thickness = 1.dp)
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Divider(space = 8.dp, thickness = 1.dp, color = Color.DarkGray)
             Row {
-                DisplayUserWithAvatar(user = participant, modifier = Modifier.weight(1f))
-                IconButton(onClick = { onRemoveParticipant(participant) }) {
-                    Icon(imageVector = Icons.Outlined.Delete, contentDescription = stringResource(id = R.string.icon_descr) )
+                DisplayParticipantWithAvatar(participant = participant, modifier = Modifier.weight(1f))
+                if (isEditing || isNewIntervention)
+                {
+                    IconButton(onClick = { onRemoveParticipant(participant) }) {
+                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = stringResource(id = R.string.icon_descr) )
+                    }
                 }
+
             }
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider(color = Color.DarkGray,
                 thickness = 1.dp)
         }
         //add participants btn
-        TextButton(onClick = { onOtherParticipantsMenuDisplay() }) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(id = R.string.add_other_participants),
-                    color = Color.White)
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Outlined.PersonAdd,
-                    contentDescription = stringResource(id = R.string.icon_descr),
-                    tint = Color.White)
+        if (isEditing || isNewIntervention)
+        {
+            TextButton(onClick = { onOtherParticipantsMenuDisplay() }) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(id = R.string.add_other_participants),
+                        color = Color.White)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.PersonAdd,
+                        contentDescription = stringResource(id = R.string.icon_descr),
+                        tint = Color.White)
+                }
             }
+
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(color = Color.DarkGray,
-            thickness = 2.dp)
-        Spacer(modifier = Modifier.height(16.dp))
+        Divider(space = 16.dp, thickness = 2.dp, color = Color.DarkGray)
+
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(id = R.string.downtime_duration),
@@ -231,47 +245,94 @@ fun InterventionInfoSection(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = downtimeStartDate,
-                    onValueChange = {},
-                    isError = pmCardErrorState.isStartDateErr,
-                    readOnly = true,
-                    placeholder = { Text(text = stringResource(id = R.string.date_format))},
-                    modifier = Modifier.weight(1f),
-                    supportingText = { Text(text = stringResource(id = R.string.select_start_date))},
-                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-                    trailingIcon = {
-                        IconButton(onClick = {
+                if (isEditing||isNewIntervention)
+                {
+                    OutlinedTextField(
+                        value = downtimeStartDate,
+                        onValueChange = {},
+                        isError = pmCardErrorState.isStartDateErr,
+                        readOnly = true,
+                        placeholder = { Text(text = stringResource(id = R.string.date_format))},
+                        modifier = Modifier.weight(1f),
+                        supportingText = { Text(text = stringResource(id = R.string.select_start_date))},
+                        colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                        trailingIcon = {
+                            IconButton(onClick = {
                                 onSelectStartDateClick()
-                         }) {
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.DateRange,
+                                    contentDescription = stringResource(id = R.string.icon_descr)
+                                )
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedTextField(
+                        value = downtimeEndDate,
+                        onValueChange = {},
+                        isError = pmCardErrorState.isEndDateErr,
+                        placeholder = { Text(text = stringResource(id = R.string.date_format))},
+                        readOnly = true,
+                        modifier = Modifier.weight(1f),
+                        supportingText = { Text(text = stringResource(id = R.string.select_end_date))},
+                        colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                        trailingIcon = {
+                            IconButton(onClick = {onSelectEndDateClick()}) {
+                                Icon(
+                                    imageVector = Icons.Outlined.DateRange,
+                                    contentDescription = stringResource(id = R.string.icon_descr)
+                                )
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                else{
+                    TextField(
+                        value = downtimeStartDate,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier.weight(1f),
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_start_date))},
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent),
+                        leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.DateRange,
                                 contentDescription = stringResource(id = R.string.icon_descr)
                             )
                         }
-                    }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                OutlinedTextField(
-                    value = downtimeEndDate,
-                    onValueChange = {},
-                    isError = pmCardErrorState.isEndDateErr,
-                    placeholder = { Text(text = stringResource(id = R.string.date_format))},
-                    readOnly = true,
-                    modifier = Modifier.weight(1f),
-                    supportingText = { Text(text = stringResource(id = R.string.select_end_date))},
-                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-                    trailingIcon = {
-                        IconButton(onClick = {onSelectEndDateClick()}) {
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextField(
+                        value = downtimeEndDate,
+                        onValueChange = {},
+                        readOnly = true,
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_end_date))},
+                        modifier = Modifier.weight(1f),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent),
+                        leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.DateRange,
                                 contentDescription = stringResource(id = R.string.icon_descr)
                             )
                         }
-                    }
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                }
+
+
+
             //hour
             Row(
                 modifier = Modifier
@@ -280,45 +341,90 @@ fun InterventionInfoSection(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = downTimeStartTime,
-                    onValueChange = {},
-                    isError = pmCardErrorState.isStartTimeErr,
-                    readOnly = true,
-                    placeholder = { Text(text = stringResource(id = R.string.time_format))},
-                    modifier = Modifier.weight(1f),
-                    supportingText = { Text(text = stringResource(id = R.string.downtime_start))},
-                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            onShowDownTimeStartDialog()
-                        }) {
+                if (isEditing || isNewIntervention)
+                {
+                    OutlinedTextField(
+                        value = downTimeStartTime,
+                        onValueChange = {},
+                        isError = pmCardErrorState.isStartTimeErr,
+                        readOnly = true,
+                        placeholder = { Text(text = stringResource(id = R.string.time_format))},
+                        modifier = Modifier.weight(1f),
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_start))},
+                        colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                onShowDownTimeStartDialog()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.AccessTime,
+                                    contentDescription = stringResource(id = R.string.icon_descr)
+                                )
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedTextField(
+                        value = downTimeEndTime,
+                        onValueChange = {},
+                        isError = pmCardErrorState.isEndTimeErr,
+                        placeholder = { Text(text = stringResource(id = R.string.time_format))},
+                        readOnly = true,
+                        modifier = Modifier.weight(1f),
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_end))},
+                        colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
+                        trailingIcon = {
+                            IconButton(onClick = {onShowDownTimeEndDialog()}) {
+                                Icon(
+                                    imageVector = Icons.Outlined.AccessTime,
+                                    contentDescription = stringResource(id = R.string.icon_descr)
+                                )
+                            }
+                        }
+                    )
+                }
+                else{
+                    TextField(
+                        value = downTimeStartTime,
+                        onValueChange = {},
+                        readOnly = true,
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_start_time))},
+                        modifier = Modifier.weight(1f),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        ),
+                        leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.AccessTime,
                                 contentDescription = stringResource(id = R.string.icon_descr)
                             )
                         }
-                    }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                OutlinedTextField(
-                    value = downTimeEndTime,
-                    onValueChange = {},
-                    isError = pmCardErrorState.isEndTimeErr,
-                    placeholder = { Text(text = stringResource(id = R.string.time_format))},
-                    readOnly = true,
-                    modifier = Modifier.weight(1f),
-                    supportingText = { Text(text = stringResource(id = R.string.downtime_end))},
-                    colors = TextFieldDefaults.colors(focusedIndicatorColor = colorResource(id = R.color.btn_color)),
-                    trailingIcon = {
-                        IconButton(onClick = {onShowDownTimeEndDialog()}) {
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedTextField(
+                        value = downTimeEndTime,
+                        onValueChange = {},
+                        readOnly = true,
+                        supportingText = { Text(text = stringResource(id = R.string.downtime_end_time))},
+                        modifier = Modifier.weight(1f),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        ),
+                        leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.AccessTime,
                                 contentDescription = stringResource(id = R.string.icon_descr)
                             )
                         }
-                    }
-                )
+                    )
+                }
+
             }
             if (
                 downtimeStartDate.isNotEmpty() &&
@@ -384,7 +490,7 @@ fun InterventionInfoSection(
                             thickness = 1.dp)
                         Spacer(modifier = Modifier.height(8.dp))
                         DisplayUserWithAvatar(
-                            user =employeeList[index],
+                            participant =employeeList[index],
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {

@@ -53,7 +53,7 @@ sealed class Screens {
         val productionLineId: String,
         val equipmentId:String,
         val equipmentName:String,
-        val readOnly:Boolean,
+        val isNewIntervention:Boolean,
         val interventionId:String,
         val prodLineName:String):Screens()
     @Serializable
@@ -66,4 +66,6 @@ sealed class Screens {
         val lineId:String,
         val equipmentId:String,
         ):Screens()
+    @Serializable
+    data class DisplayImageScreen(val imageUri:String):Screens()
 }

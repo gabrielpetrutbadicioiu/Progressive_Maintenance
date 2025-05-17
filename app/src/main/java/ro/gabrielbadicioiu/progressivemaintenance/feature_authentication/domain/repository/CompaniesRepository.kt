@@ -126,4 +126,16 @@ interface CompaniesRepository {
         onSuccess: (List<ProgressiveMaintenanceCard>) -> Unit,
         onFailure: (String) -> Unit
     )
+    suspend fun fetchPmCardById(
+        companyId: String,
+        productionLineId: String,
+        interventionId: String,
+        onSuccess: (pmc:ProgressiveMaintenanceCard) -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun updatePmCard(
+        pmc:ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
 }

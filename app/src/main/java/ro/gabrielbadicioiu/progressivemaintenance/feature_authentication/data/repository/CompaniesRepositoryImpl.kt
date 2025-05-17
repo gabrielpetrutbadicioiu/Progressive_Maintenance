@@ -489,9 +489,53 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 else{
                     onFailure("")
                 }
-
-
             }
+    }
 
+    override suspend fun fetchPmCardById(
+        companyId: String,
+        productionLineId: String,
+        interventionId: String,
+        onSuccess: (pmc: ProgressiveMaintenanceCard) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(productionLineId)
+            .collection(FirebaseCollections.INTERVENTIONS)
+            .document(interventionId)
+            .get()
+            .addOnSuccessListener {pmcDocument->
+                if (pmcDocument!=null && pmcDocument.exists())
+                {
+                    val pmc=pmcDocument.toObject(ProgressiveMaintenanceCard::class.java)
+                    pmc?.let { onSuccess(it) }
+                }
+                else{onFailure("Repository: PMC not found")}
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message?:"Repository: Failed to fetch PMC")
+            }
+    }
+
+    override suspend fun updatePmCard(
+        pmc:ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(pmc.companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(pmc.productionLineId)
+            .collection(FirebaseCollections.INTERVENTIONS)
+            .document(pmc.interventionId)
+            .set(pmc)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e-> onFailure(e.message?:"Repository: Failed to update PMC") }
     }
 }

@@ -20,17 +20,18 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
-import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.InterventionParticipants
+
 
 @Composable
-fun DisplayUserWithAvatar(
-    participant: UserDetails,
+fun DisplayParticipantWithAvatar(
+    participant: InterventionParticipants,
     modifier: Modifier
 ) {
     Row(horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-        )
+    )
     {
         // Profile and badge
         BadgedBox(badge = {
@@ -46,9 +47,9 @@ fun DisplayUserWithAvatar(
                 )
             }
         }) {
-            if (participant.profilePicture.isNotEmpty()) {
+            if (participant.avatar.isNotEmpty()) {
                 AsyncImage(
-                    model = participant.profilePicture,
+                    model = participant.avatar,
                     contentDescription = stringResource(id = R.string.image_description),
                     modifier = Modifier
                         .size(48.dp)

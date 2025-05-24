@@ -35,6 +35,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_registerCompanyEmail.RegisterCompanyEmailScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LogInScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateCenterLineScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPMCardsScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPmCardsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
@@ -82,6 +84,7 @@ class MainActivity : ComponentActivity() {
                 val profileScreenViewModel=getViewModel<ProfileScreenViewModel> ()
                 val logInterventionScreenViewModel= getViewModel<LogInterventionScreenViewModel> ()
                 val displayAllPmCardsViewModel= getViewModel<DisplayAllPmCardsViewModel> ()
+                val createClViewModel=getViewModel<CreateClViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -250,6 +253,18 @@ class MainActivity : ComponentActivity() {
                     composable<Screens.DisplayImageScreen> {
                         val args=it.toRoute<Screens.DisplayImageScreen>()
                         DisplayImageScreen(imageUri = args.imageUri)
+                    }
+                    composable<Screens.CreateCenterLineScreen> { 
+                        val args=it.toRoute<Screens.CreateCenterLineScreen>()
+                        CreateCenterLineScreen(
+                            companyId = args.companyId,
+                            userId = args.userId,
+                            productionLineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            isCreatingNewCl = args.isCreatingNewCl,
+                            viewModel = createClViewModel,
+                            navController=navController
+                        )
                     }
                 }//navHost
 

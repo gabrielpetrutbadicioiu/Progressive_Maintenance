@@ -32,37 +32,6 @@ fun DisplayUserWithAvatar(
         modifier = modifier
         )
     {
-        // Profile and badge
-        BadgedBox(badge = {
-            when (participant.rank) {
-                UserRank.OWNER.name -> DisplayLottie(
-                    spec = LottieCompositionSpec.RawRes(R.raw.premium_badge),
-                    size = 20.dp
-                )
-
-                UserRank.ADMIN.name -> DisplayLottie(
-                    spec = LottieCompositionSpec.RawRes(R.raw.elite_badge),
-                    size = 20.dp
-                )
-            }
-        }) {
-            if (participant.profilePicture.isNotEmpty()) {
-                AsyncImage(
-                    model = participant.profilePicture,
-                    contentDescription = stringResource(id = R.string.image_description),
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                DisplayLottie(
-                    spec = LottieCompositionSpec.RawRes(R.raw.auth_lottie),
-                    size = 48.dp
-                )
-            }
-        }
-
         // Author name
         TextField(
             value = "${participant.firstName} ${participant.lastName}",
@@ -73,8 +42,43 @@ fun DisplayUserWithAvatar(
                 unfocusedIndicatorColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent
-            )
+            ),
+            trailingIcon = {
+                // Profile and badge
+                BadgedBox(badge = {
+                    when (participant.rank) {
+                        UserRank.OWNER.name -> DisplayLottie(
+                            spec = LottieCompositionSpec.RawRes(R.raw.premium_badge),
+                            size = 20.dp
+                        )
+
+                        UserRank.ADMIN.name -> DisplayLottie(
+                            spec = LottieCompositionSpec.RawRes(R.raw.elite_badge),
+                            size = 20.dp
+                        )
+                    }
+                }) {
+                    if (participant.profilePicture.isNotEmpty()) {
+                        AsyncImage(
+                            model = participant.profilePicture,
+                            contentDescription = stringResource(id = R.string.image_description),
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        DisplayLottie(
+                            spec = LottieCompositionSpec.RawRes(R.raw.auth_lottie),
+                            size = 48.dp
+                        )
+                    }
+                }
+
+            }
         )
+
+
     }
 
 }

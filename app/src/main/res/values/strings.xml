@@ -185,5 +185,22 @@
     <string name="recommended_steps">Recommended repair steps to fix the issue as soon as possible.</string>
     <string name="not_completed">Not completed!</string>
     <string name="mark_resolved">Process failure resolved!</string>
+    <string name="edit">Edit</string>
+    <string name="create_cl">Create centerline</string>
+    <string name="general_info">General information</string>
+    <string name="line_name">Production line:</string>
+    <string name="equipment">Equipment:</string>
+    <string name="created_on">Created on: </string>
+    <string name="centerlie_parameters">Centerline parameters</string>
+    <string name="parameter">Parameter*</string>
+    <string name="parameter_name_st">Parameter name*</string>
+    <string name="parameter_value">Parameter value*</string>
+    <string name="parameter_name">Enter parameter name</string>
+    <string name="parameter_value_ph">Enter parameter value</string>
+    <string name="cl_name_st">Give this centerline a clear and descriptive name*</string>
+    <string name="cl_name_ph">Centerline name (e.g. Startup check)</string>
+    <string name="add_parameter">Add parameter</string>
+    <string name="delete_cl_parameter">Delete parameter</string>
+    <string name="save">Save</string>
 
 </resources>

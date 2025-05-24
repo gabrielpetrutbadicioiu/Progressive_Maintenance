@@ -445,7 +445,7 @@ class LogInterventionScreenViewModel(
             is LogInterventionScreenEvent.OnCheckResolved->{
                _pmCardErrorState.value= useCases.onResolvedInterventionCheck.execute(
                     pmc = _pmCard.value.copy(),
-                    onSuccess = {_pmCard.value=_pmCard.value.copy(resolved = true)}
+                    onSuccess = {_pmCard.value=_pmCard.value.copy(resolved = !_pmCard.value.resolved)}
                 )
             }
             is LogInterventionScreenEvent.OnImageClick->{

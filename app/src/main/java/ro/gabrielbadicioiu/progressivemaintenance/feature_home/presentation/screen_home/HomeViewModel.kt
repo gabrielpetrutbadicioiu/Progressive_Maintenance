@@ -70,6 +70,7 @@ class HomeViewModel(
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
         data class OnNavigateToLineInterventionsScreen(val productionLine: ProductionLine):HomeScreenUiEvent()
         data class OnNavigateToEquipmentInterventionsScreen(val equipment: Equipment, val line:ProductionLine):HomeScreenUiEvent()
+        data class OnNavigateToCreateClScreen(val equipment: Equipment, val line: ProductionLine):HomeScreenUiEvent()
     }
 
     fun onEvent(event: HomeScreenEvent)
@@ -201,6 +202,12 @@ class HomeViewModel(
             is HomeScreenEvent.OnViewEquipmentInterventionsClick->{
 
                 viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToEquipmentInterventionsScreen(equipment = _clickedEq.value.copy(), line = _clickedProdLine.value.copy())) }
+                onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
+            }
+            is HomeScreenEvent.OnCreateClClick->{
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnNavigateToCreateClScreen(
+                    equipment = event.equipment, line = event.prodLine
+                )) }
                 onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
             }
 

@@ -45,6 +45,13 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_companySelection.CompanySelectionViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_join_company_selectCompany.JoinSelectCompanyViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.AddClParameter
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.ClParameterNameChange
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.ClParameterValueChange
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.CreateClUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.DeleteClParameter
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.OnSaveClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.DisplayInterventionsUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.FetchInterventions
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.OnSearchIntervention
@@ -321,6 +328,21 @@ single{
             companiesRepository = get(),
             useCases = get()
             )
+    }
+    //create Cl screen
+    single{
+        CreateClUseCases(
+            addClParameter = AddClParameter(),
+            clParameterNameChange = ClParameterNameChange(),
+            clParameterValueChange = ClParameterValueChange(),
+            deleteClParameter = DeleteClParameter(),
+            onSaveClick = OnSaveClick(companiesRepository = get())
+        )
+    }
+    viewModel {
+        CreateClViewModel(
+            companiesRepository = get(),
+            useCases =get() )
     }
 }
 

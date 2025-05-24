@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,20 +54,9 @@ fun InterventionCard(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top) {
-            Row(modifier = Modifier
-                .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center)
-            {
-                Button(
-                    onClick = { onViewDetailsClick() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.btn_color),
-                        contentColor = Color.White)) {
-                    Text(text = stringResource(id = R.string.view_details))
-                }
-            }
+            verticalArrangement = Arrangement.Top)
+        {
+
             Row(modifier = Modifier
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -148,6 +138,17 @@ fun InterventionCard(
                         Text(text = stringResource(id = R.string.unresolved_pf))
                         Spacer(modifier = Modifier.width(4.dp))
                         DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.sad_x), size = 40.dp)
+                    }
+                }
+                Row(modifier = Modifier
+                    .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start)
+                {
+                    TextButton(
+                        onClick = { onViewDetailsClick() },
+                        ) {
+                        Text(text = stringResource(id = R.string.view_details))
                     }
                 }
             }//isExpanded

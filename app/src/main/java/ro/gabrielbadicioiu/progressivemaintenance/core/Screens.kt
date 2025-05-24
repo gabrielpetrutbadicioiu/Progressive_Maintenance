@@ -68,4 +68,12 @@ sealed class Screens {
         ):Screens()
     @Serializable
     data class DisplayImageScreen(val imageUri:String):Screens()
+    @Serializable
+    data class CreateCenterLineScreen(
+        val companyId:String,
+        val userId:String,
+        val productionLineId: String,
+        val equipmentId: String,
+        val isCreatingNewCl:Boolean,
+    )
 }

@@ -12,6 +12,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.core.FirebaseSubCollections
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineForm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 
@@ -537,5 +538,30 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 onSuccess()
             }
             .addOnFailureListener { e-> onFailure(e.message?:"Repository: Failed to update PMC") }
+    }
+
+    override suspend fun saveCenterLineForm(
+        companyId: String,
+        lineId: String,
+        equipmentId: String,
+        clForm: CenterLineForm,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+       val docRef= Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.CENTERLINES)
+            .document()
+        val updatedForm=clForm.copy(clFormId = docRef.id, equipmentId = equipmentId)
+        docRef.set(updatedForm)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message?:"Repository:Failed to upload cl")
+            }
     }
 }

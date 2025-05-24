@@ -289,17 +289,17 @@ fun InterventionInfoSection(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 else{
-                    TextField(
+                    OutlinedTextField(
                         value = downtimeStartDate,
                         onValueChange = {},
                         readOnly = true,
                         modifier = Modifier.weight(1f),
                         supportingText = { Text(text = stringResource(id = R.string.downtime_start_date))},
                         colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent),
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = colorResource(id = R.color.btn_color)
+                            ),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.DateRange,
@@ -308,17 +308,16 @@ fun InterventionInfoSection(
                         }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    TextField(
+                    OutlinedTextField(
                         value = downtimeEndDate,
                         onValueChange = {},
                         readOnly = true,
                         supportingText = { Text(text = stringResource(id = R.string.downtime_end_date))},
                         modifier = Modifier.weight(1f),
                         colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent),
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = colorResource(id = R.color.btn_color)),
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.DateRange,
@@ -384,17 +383,16 @@ fun InterventionInfoSection(
                     )
                 }
                 else{
-                    TextField(
+                    OutlinedTextField(
                         value = downTimeStartTime,
                         onValueChange = {},
                         readOnly = true,
                         supportingText = { Text(text = stringResource(id = R.string.downtime_start_time))},
                         modifier = Modifier.weight(1f),
                         colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = colorResource(id = R.color.btn_color)
                         ),
                         leadingIcon = {
                             Icon(
@@ -411,10 +409,9 @@ fun InterventionInfoSection(
                         supportingText = { Text(text = stringResource(id = R.string.downtime_end_time))},
                         modifier = Modifier.weight(1f),
                         colors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = colorResource(id = R.color.btn_color)
                         ),
                         leadingIcon = {
                             Icon(

@@ -140,6 +140,15 @@ fun HomeScreen(
                         userId = userId
                     ))
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnNavigateToCreateClScreen->{
+                    navController.navigate(Screens.CreateCenterLineScreen(
+                        companyId = companyId,
+                        userId = userId,
+                        productionLineId = event.line.id,
+                        equipmentId = event.equipment.id,
+                        isCreatingNewCl = true
+                    ))
+                }
             }
         }
     }
@@ -328,7 +337,9 @@ fun HomeScreen(
                                     onDismissLineDropDown = {viewModel.onEvent(HomeScreenEvent.OnDismissLineDropDown(index))},
                                     onProductionLineClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineDropDown(index))},
                                     onViewProductionLineInterventionsClick = {viewModel.onEvent(HomeScreenEvent.OnShowLineInterventionsClick(index))},
-                                    onViewEquipmentInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnViewEquipmentInterventionsClick)}
+                                    onViewEquipmentInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnViewEquipmentInterventionsClick)},
+                                    onCreateClClick = {equipment->
+                                        viewModel.onEvent(HomeScreenEvent.OnCreateClClick(equipment = equipment, prodLine = viewModel.productionLineList.value[index]))}
                                 )
                         }
                 }

@@ -3,6 +3,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain
 import com.google.firebase.firestore.CollectionReference
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineForm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 
@@ -135,6 +136,15 @@ interface CompaniesRepository {
     )
     suspend fun updatePmCard(
         pmc:ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+
+    suspend fun saveCenterLineForm(
+        companyId: String,
+        lineId:String,
+        equipmentId:String,
+        clForm:CenterLineForm,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     )

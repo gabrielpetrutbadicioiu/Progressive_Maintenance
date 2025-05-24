@@ -1,6 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_home
 
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
+import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
 
 sealed class HomeScreenEvent {
@@ -24,5 +25,6 @@ sealed class HomeScreenEvent {
     data class OnDismissLineDropDown(val index:Int):HomeScreenEvent()
     data class OnShowLineDropDown(val index:Int):HomeScreenEvent()
     data class OnShowLineInterventionsClick(val index: Int):HomeScreenEvent()
+    data class OnCreateClClick(val equipment: Equipment, val prodLine:ProductionLine):HomeScreenEvent()
 
 }

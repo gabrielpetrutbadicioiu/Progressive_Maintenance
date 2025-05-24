@@ -5,4 +5,5 @@ object FirebaseCollections {
     const val COMPANIES="Companies"
     const val INTERVENTIONS="Interventions"
     const val GLOBAL_INTERVENTIONS="Global interventions"
+    const val CENTERLINES="Centerlines"
 }

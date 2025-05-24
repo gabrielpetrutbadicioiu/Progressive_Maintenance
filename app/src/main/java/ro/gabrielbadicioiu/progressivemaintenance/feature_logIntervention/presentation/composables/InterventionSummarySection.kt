@@ -310,6 +310,18 @@ fun InterventionSummarySection(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        if (isEditing)
+        {
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = pmCard.resolved,
+                    onCheckedChange = { onCheckedChange() })
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = stringResource(id = R.string.mark_resolved))
+            }
+        }
         if (isEditing||isNewIntervention)
         {
             TextButton(onClick = {
@@ -398,48 +410,42 @@ fun InterventionSummarySection(
             }
 
         }
-        if (isEditing)
+
+        if(!isNewIntervention && !isEditing)
         {
             Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = pmCard.resolved,
-                    onCheckedChange = { onCheckedChange() })
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = stringResource(id = R.string.mark_resolved))
+                if (pmCard.photo1.isNotEmpty())
+                {
+                    AsyncImage(
+                        modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo1) },
+                        contentScale = ContentScale.Crop,
+                        model = pmCard.photo1,
+                        contentDescription = stringResource(id = R.string.image_description))
+                }
+                if (pmCard.photo2.isNotEmpty())
+                {
+                    AsyncImage(
+                        modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo2) },
+                        contentScale = ContentScale.Crop,
+                        model = pmCard.photo2,
+                        contentDescription = stringResource(id = R.string.image_description))
+                }
+                if (pmCard.photo3.isNotEmpty())
+                {
+                    AsyncImage(
+                        modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo3) },
+                        contentScale = ContentScale.Crop,
+                        model = pmCard.photo3,
+                        contentDescription = stringResource(id = R.string.image_description))
+                }
+
+
+
             }
         }
 
-        Row {
-            if (pmCard.photo1.isNotEmpty())
-            {
-                AsyncImage(
-                    modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo1) },
-                    contentScale = ContentScale.Crop,
-                    model = pmCard.photo1,
-                    contentDescription = stringResource(id = R.string.image_description))
-            }
-            if (pmCard.photo2.isNotEmpty())
-            {
-                AsyncImage(
-                    modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo2) },
-                    contentScale = ContentScale.Crop,
-                    model = pmCard.photo2,
-                    contentDescription = stringResource(id = R.string.image_description))
-            }
-            if (pmCard.photo3.isNotEmpty())
-            {
-                AsyncImage(
-                    modifier = Modifier.size(imageSize).clickable { onImageClick(pmCard.photo3) },
-                    contentScale = ContentScale.Crop,
-                    model = pmCard.photo3,
-                    contentDescription = stringResource(id = R.string.image_description))
-            }
-
-
-
-        }
         
     }
 }

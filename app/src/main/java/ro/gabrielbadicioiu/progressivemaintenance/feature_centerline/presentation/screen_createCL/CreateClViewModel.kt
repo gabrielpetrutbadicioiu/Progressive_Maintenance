@@ -27,6 +27,10 @@ class CreateClViewModel(
 {
  //states
     private val _args= mutableStateOf(CreateClArgumentData())
+    val args:State<CreateClArgumentData> = _args
+
+    private val _isEditing= mutableStateOf(false)
+    val isEditing:State<Boolean> = _isEditing
 
     private val _currentUser= mutableStateOf(UserDetails())
     val currentUser:State<UserDetails> = _currentUser
@@ -35,13 +39,15 @@ class CreateClViewModel(
     val prodLine:State<ProductionLine> = _prodLine
 
      var equipment:Equipment?= null
-    var date:String=""
+    private var date:String=""
 
     private val _errState= mutableStateOf(CreateClErrorState())
-    val errorState:State<CreateClErrorState> = _errState
+    val errState:State<CreateClErrorState> = _errState
 
     private val _clForm= mutableStateOf(CenterLineForm())
     val clForm:State<CenterLineForm> = _clForm
+
+    private val _originalClForm= mutableStateOf(CenterLineForm())
  // one time events
     private val _eventFlow= MutableSharedFlow<CreateClUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -63,7 +69,9 @@ class CreateClViewModel(
                     companyId = event.companyId,
                     userId = event.userId,
                     lineId = event.lineId,
-                    equipmentId = event.equipmentId)
+                    equipmentId = event.equipmentId,
+                    isCreatingNewCl = event.isCreatingNewCl,
+                    clId = event.clId)
                 viewModelScope.launch {
                     try {
                         companiesRepository.getUserInCompany(
@@ -72,7 +80,10 @@ class CreateClViewModel(
                             onSuccess = {user->
                                 if (user != null) {
                                     _currentUser.value=user
-                                    _clForm.value=_clForm.value.copy(authorId = user.userID)
+                                    if (_args.value.isCreatingNewCl)
+                                    {
+                                        _clForm.value=_clForm.value.copy(authorId = user.userID)
+                                    }
                                 }
                                 _errState.value= CreateClErrorState()
                             },
@@ -83,7 +94,6 @@ class CreateClViewModel(
                     {
                         _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e.message?:"ViewModel: Fetch User Err")
                     }
-
                 }
                 viewModelScope.launch {
                     try {
@@ -93,7 +103,11 @@ class CreateClViewModel(
                            onSuccess = {line->
                                _prodLine.value=line
                                equipment=line.equipments.find { equipment -> equipment.id==event.equipmentId }
-                               _clForm.value=_clForm.value.copy(lineId = line.id)
+                              if (_args.value.isCreatingNewCl)
+                              {
+                                  _clForm.value=_clForm.value.copy(lineId = line.id)
+                              }
+
                            },
                            onFailure = {e-> _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e)}
                        )
@@ -109,6 +123,24 @@ class CreateClViewModel(
                     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                     date=now.format(formatter)
                     _clForm.value=_clForm.value.copy(date = date)
+                }
+
+                if (!event.isCreatingNewCl)
+                {
+                    viewModelScope.launch {
+                        try {
+                            companiesRepository.fetchCenterLineById(
+                                companyId = event.companyId,
+                                lineId = event.lineId,
+                                clId = event.clId,
+                                onSuccess = {cl -> _clForm.value=cl.copy() },
+                                onFailure = {e-> _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e)}
+                            )
+                        }catch (e:Exception)
+                        {
+                            _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e.message?:"Repository: Failed to fetch cl")
+                        }
+                    }
                 }
 
             }//get argument data
@@ -148,15 +180,44 @@ class CreateClViewModel(
                             onFailure = {e->viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e))}},
                             onSuccess = {
                                 viewModelScope.launch {  _eventFlow.emit(CreateClUiEvent.OnNavigateToHome)  }
-
                             }
-
                             )
 
 
                     }catch (e:Exception)
                     {
                         _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e.message?:"Viewmodel:Failed to save!")
+                    }
+                }
+
+            }
+            is CreateCenterLineEvent.OnEditBtnClick->{
+                _isEditing.value=true
+                _originalClForm.value=_clForm.value.copy()
+            }
+            is CreateCenterLineEvent.OnCancelEditClick->{
+                _isEditing.value=false
+                _clForm.value=_originalClForm.value.copy()
+            }
+            is CreateCenterLineEvent.OnUpdateClClick->{
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.updateCl(
+                            companyId = _args.value.companyId,
+                            lineId = _args.value.lineId,
+                            clId = _args.value.clId,
+                            cl = _clForm.value.copy(),
+                            onSuccess = {
+                                viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast("Centerline updated successfully!")) }
+                                _isEditing.value=false
+                            },
+                            onFailure = {e->
+                                viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e)) }
+                            }
+                        )
+                    }catch (e:Exception)
+                    {
+                        viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e.message?:"Viewmodel:Failed to update CL")) }
                     }
                 }
 

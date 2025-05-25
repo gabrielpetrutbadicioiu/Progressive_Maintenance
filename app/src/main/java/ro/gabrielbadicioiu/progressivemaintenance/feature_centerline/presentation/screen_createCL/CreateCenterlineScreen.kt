@@ -2,12 +2,10 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentati
 
 
 import android.os.Build
-import android.widget.Space
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -60,6 +57,7 @@ fun CreateCenterLineScreen(
     productionLineId:String,
     equipmentId:String,
     isCreatingNewCl:Boolean,
+    clId:String,
     viewModel: CreateClViewModel,
     navController: NavController
 )
@@ -71,7 +69,8 @@ fun CreateCenterLineScreen(
             userId=userId,
             lineId = productionLineId,
             equipmentId = equipmentId,
-            isCreatingNewCl = isCreatingNewCl
+            isCreatingNewCl =isCreatingNewCl,
+            clId = clId
         ))
         viewModel.eventFlow.collectLatest { event->
             when(event)
@@ -123,20 +122,22 @@ fun CreateCenterLineScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top)
             {
-                if (viewModel.errorState.value.isFetchDataErr)
+                if (viewModel.errState.value.isFetchDataErr)
                 {
                     item {  DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.error), size = 128.dp)
-                        Text(text =viewModel.errorState.value.errMsg )}
+                        Text(text =viewModel.errState.value.errMsg )}
 
                 }else{
                     item { GeneralClInfo(
                         productionLine =viewModel.prodLine.value,
                         equipment = viewModel.equipment?:Equipment(),
-                        date =viewModel.date,
+                        date =viewModel.clForm.value.date,
                         author = viewModel.currentUser.value,
                         clName = viewModel.clForm.value.clName,
                         onClNameChange = {clName-> viewModel.onEvent(CreateCenterLineEvent.OnClNameChange(clName = clName.replaceFirstChar { char-> char.uppercase() }))},
-                        isNameErr = viewModel.errorState.value.isClNameErr) }
+                        isNameErr = viewModel.errState.value.isClNameErr,
+                        nameReadOnly = !viewModel.isEditing.value,
+                        )}
 
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -158,13 +159,14 @@ fun CreateCenterLineScreen(
                             clParameter = clParameter,
                             onParameterNameChange = { parameterName, _ -> viewModel.onEvent(CreateCenterLineEvent.OnParameterNameChange(parameterName = parameterName, index = index)) },
                             onParameterValueChange = { parameterValue, _ -> viewModel.onEvent(CreateCenterLineEvent.OnParameterValueChange(parameterValue = parameterValue, index = index)) },
-                            showDeleteBtn = isCreatingNewCl && index!=0,
+                            showDeleteBtn = viewModel.isEditing.value && index!=0,
                             onDeleteClick = {viewModel.onEvent(CreateCenterLineEvent.OnParameterDelete(index))},
-                            isParameterErr=viewModel.errorState.value.isParameterErr && index==0
+                            isParameterErr=viewModel.errState.value.isParameterErr && index==0,
+                            isReadOnly = !viewModel.isEditing.value || isCreatingNewCl
                         )
 
                     }//items
-                    if (isCreatingNewCl)
+                    if (viewModel.isEditing.value|| isCreatingNewCl)
                     {
                         item {
                             OutlinedButton(
@@ -180,7 +182,6 @@ fun CreateCenterLineScreen(
                                         contentDescription = stringResource(id = R.string.image_description))
                                     Text(text = stringResource(id = R.string.add_parameter) )
                                 }
-
                             }
                         }
                     }
@@ -196,6 +197,50 @@ fun CreateCenterLineScreen(
                                 ) {
                                     Text(text = stringResource(id = R.string.save))
                             }
+                        }
+                    }
+                    item {
+                        if (!viewModel.args.value.isCreatingNewCl && !viewModel.isEditing.value)
+                        {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Button(
+                                onClick = { viewModel.onEvent(CreateCenterLineEvent.OnEditBtnClick) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.btn_color),
+                                    contentColor = colorResource(id = R.color.text_color))
+                            ) {
+                                Text(text = stringResource(id = R.string.edit))
+                            }
+                        }
+                    }
+                    item {
+                        if (viewModel.isEditing.value)
+                        {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Row(modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Absolute.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically) {
+
+
+                                OutlinedButton(
+                                    onClick = { viewModel.onEvent(CreateCenterLineEvent.OnCancelEditClick) },
+                                    border = BorderStroke(1.dp, color = colorResource(id = R.color.btn_color)),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = colorResource(id = R.color.btn_color),
+                                    )
+                                ) {
+                                        Text(text = stringResource(id = R.string.cancel_btn) )
+                                }
+                                Button(
+                                    onClick = { viewModel.onEvent(CreateCenterLineEvent.OnUpdateClClick) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.btn_color),
+                                        contentColor = colorResource(id = R.color.text_color))
+                                ) {
+                                    Text(text = stringResource(id = R.string.update))
+                                }
+                            }
+
                         }
                     }
                    

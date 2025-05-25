@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ArrowDropUp
 import androidx.compose.material.icons.outlined.ChevronRight
@@ -29,9 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieCompositionSpec
 import ro.gabrielbadicioiu.progressivemaintenance.R
-import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.Equipment
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
@@ -52,7 +49,8 @@ fun ProductionLineCard(
     onViewProductionLineInterventionsClick:()->Unit,
     onDismissLineDropDown:()->Unit,
     onViewEquipmentInterventionClick:()->Unit,
-    onCreateClClick:(equipment:Equipment)->Unit
+    onCreateClClick:(equipment:Equipment)->Unit,
+    onViewClClick:()->Unit
 
 )
 {
@@ -138,7 +136,8 @@ fun ProductionLineCard(
                                 onDismissRequest = { onDropDownDismiss() },
                                 onLogInterventionClick = {onLogInterventionClick()},
                                 onViewInterventionClick = {onViewEquipmentInterventionClick()},
-                                onCreateClClick ={onCreateClClick(machine)} )
+                                onCreateClClick ={onCreateClClick(machine)},
+                                onViewClClick = {onViewClClick()})
                         }
                         HorizontalDivider( color = Color.LightGray)
                     }

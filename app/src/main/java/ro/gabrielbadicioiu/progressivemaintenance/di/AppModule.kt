@@ -52,6 +52,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.DeleteClParameter
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.OnSaveClick
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateClViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL.DisplayAllClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.DisplayInterventionsUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.FetchInterventions
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.OnSearchIntervention
@@ -343,6 +344,11 @@ single{
         CreateClViewModel(
             companiesRepository = get(),
             useCases =get() )
+    }
+
+    //display all cl screen
+    viewModel {
+        DisplayAllClViewModel(companiesRepository = get())
     }
 }
 

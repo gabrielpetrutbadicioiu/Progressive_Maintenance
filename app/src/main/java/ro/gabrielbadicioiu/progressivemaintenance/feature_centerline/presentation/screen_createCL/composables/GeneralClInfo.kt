@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -33,6 +32,7 @@ fun GeneralClInfo(
     author:UserDetails,
     clName:String,
     isNameErr:Boolean,
+    nameReadOnly:Boolean,
     onClNameChange:(String)->Unit
 )
 {
@@ -100,6 +100,7 @@ OutlinedTextField(
         .padding(start = 8.dp, end = 8.dp),
     value =clName,
     isError =isNameErr,
+    readOnly =nameReadOnly ,
     onValueChange ={cl-> onClNameChange(cl)},
     placeholder = { Text(text = stringResource(id = R.string.cl_name_ph))},
     supportingText = { Text(text = stringResource(id = R.string.cl_name_st))},

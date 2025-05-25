@@ -18,7 +18,8 @@ fun MachineDropDownMenu(
     onDismissRequest:()->Unit,
     onLogInterventionClick:()->Unit,
     onViewInterventionClick:()->Unit,
-    onCreateClClick:()->Unit
+    onCreateClClick:()->Unit,
+    onViewClClick:()->Unit
 )
 {
     DropdownMenu(
@@ -40,6 +41,14 @@ fun MachineDropDownMenu(
         DropdownMenuItem(
             text = { Text(text =stringResource(id = R.string.create_cl) )},
             onClick = { onCreateClClick() })
+        DropdownMenuItem(
+            text = {
+                Column {
+                    Text(text = stringResource(id = R.string.view_center_line))
+                    Divider(space =16.dp , thickness =1.dp , color = Color.LightGray )
+                }
+            },
+            onClick = { onViewClClick() })
 
 
 

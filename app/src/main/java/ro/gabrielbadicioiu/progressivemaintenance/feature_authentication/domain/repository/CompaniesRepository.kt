@@ -148,4 +148,26 @@ interface CompaniesRepository {
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     )
+    suspend fun fetchAllCenterLines(
+        companyId:String,
+        lineId:String,
+        onSuccess: (List<CenterLineForm>) -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun fetchCenterLineById(
+        companyId:String,
+        lineId:String,
+        clId:String,
+        onSuccess: (cl:CenterLineForm) -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun updateCl(
+        companyId:String,
+        lineId:String,
+        clId:String,
+        cl:CenterLineForm,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+
 }

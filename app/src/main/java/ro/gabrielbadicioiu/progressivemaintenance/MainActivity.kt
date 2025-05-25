@@ -37,6 +37,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.present
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_signIn.LoginViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateCenterLineScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateClViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL.DisplayAllClScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL.DisplayAllClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPMCardsScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.presentation.screen_displayAllIPMCards.DisplayAllPmCardsViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.AddProductionLineScreen
@@ -85,6 +87,7 @@ class MainActivity : ComponentActivity() {
                 val logInterventionScreenViewModel= getViewModel<LogInterventionScreenViewModel> ()
                 val displayAllPmCardsViewModel= getViewModel<DisplayAllPmCardsViewModel> ()
                 val createClViewModel=getViewModel<CreateClViewModel> ()
+                val displayAllClViewModel=getViewModel<DisplayAllClViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -263,7 +266,19 @@ class MainActivity : ComponentActivity() {
                             equipmentId = args.equipmentId,
                             isCreatingNewCl = args.isCreatingNewCl,
                             viewModel = createClViewModel,
-                            navController=navController
+                            navController=navController,
+                            clId = args.clId
+                        )
+                    }
+                    composable<Screens.DisplayCenterLinesScreen> {
+                        val args=it.toRoute<Screens.DisplayCenterLinesScreen>()
+                        DisplayAllClScreen(
+                            viewModel = displayAllClViewModel,
+                            navController = navController,
+                            companyId = args.companyId,
+                            userId = args.userId,
+                            equipmentId = args.equipmentId,
+                            productionLineId = args.productionLineId
                         )
                     }
                 }//navHost

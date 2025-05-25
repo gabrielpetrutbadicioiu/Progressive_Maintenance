@@ -564,4 +564,88 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 onFailure(e.message?:"Repository:Failed to upload cl")
             }
     }
+
+    override suspend fun fetchAllCenterLines(
+        companyId: String,
+        lineId: String,
+        onSuccess: (List<CenterLineForm>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.CENTERLINES)
+            .addSnapshotListener { centerLineQuerySnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository: failed to fetch CL")
+                    return@addSnapshotListener
+                }
+
+                if (centerLineQuerySnapshot != null && !centerLineQuerySnapshot.isEmpty)
+                {
+                 val clList= centerLineQuerySnapshot.documents.mapNotNull { clSnapshot->
+                      clSnapshot.toObject(CenterLineForm::class.java)
+                  }
+                    onSuccess(clList)
+                }
+
+
+            }
+    }
+
+    override suspend fun fetchCenterLineById(
+        companyId: String,
+        lineId: String,
+        clId: String,
+        onSuccess: (cl: CenterLineForm) -> Unit,
+        onFailure: (String) -> Unit,
+    )
+    {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.CENTERLINES)
+            .document(clId)
+            .addSnapshotListener { clDocSnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository: failed to fetch cl")
+                    return@addSnapshotListener
+                }
+                if (clDocSnapshot!=null&&clDocSnapshot.exists())
+                {
+                   val cl= clDocSnapshot.toObject(CenterLineForm::class.java)
+                    cl?.let { clf->onSuccess(clf) }
+                }
+            }
+    }
+
+    override suspend fun updateCl(
+        companyId: String,
+        lineId: String,
+        clId: String,
+        cl:CenterLineForm,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.CENTERLINES)
+            .document(clId)
+            .set(cl)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { e->
+                onFailure(e.message?:"Repository:Failed to update cl")
+            }
+    }
 }

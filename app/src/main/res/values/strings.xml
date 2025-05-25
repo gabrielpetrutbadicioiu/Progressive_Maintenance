@@ -202,5 +202,9 @@
     <string name="add_parameter">Add parameter</string>
     <string name="delete_cl_parameter">Delete parameter</string>
     <string name="save">Save</string>
+    <string name="view_center_line">View centerlines</string>
+    <string name="cl_records">Centerlined records</string>
+    <string name="empty_cl_err">No centerline records found for this equipment</string>
+    <string name="update">Update</string>
 
 </resources>

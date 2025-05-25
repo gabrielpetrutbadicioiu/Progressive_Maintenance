@@ -65,12 +65,14 @@ class HomeViewModel(
         data object OnNavigateToLogInterventionScreen:HomeScreenUiEvent()
         data object OnNavigateToDisplayGlobalInterventionsScreen:HomeScreenUiEvent()
 
+
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
         data class OnNavigateToLineInterventionsScreen(val productionLine: ProductionLine):HomeScreenUiEvent()
         data class OnNavigateToEquipmentInterventionsScreen(val equipment: Equipment, val line:ProductionLine):HomeScreenUiEvent()
         data class OnNavigateToCreateClScreen(val equipment: Equipment, val line: ProductionLine):HomeScreenUiEvent()
+        data class OnNavigateToViewClScreen(val prodLineId:String, val equipmentId:String):HomeScreenUiEvent()
     }
 
     fun onEvent(event: HomeScreenEvent)
@@ -209,6 +211,15 @@ class HomeViewModel(
                     equipment = event.equipment, line = event.prodLine
                 )) }
                 onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
+            }
+            is HomeScreenEvent.OnViewClClick->{
+                viewModelScope.launch {
+                    _eventFlow.emit(HomeScreenUiEvent.OnNavigateToViewClScreen(
+                        prodLineId = _clickedProdLine.value.id,
+                        equipmentId = _clickedEq.value.id))
+                    onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
+                }
+
             }
 
         }

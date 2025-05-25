@@ -17,6 +17,7 @@ sealed class HomeScreenEvent {
     data object OnLogInterventionClick:HomeScreenEvent()
     data object OnSearchInterventionsClick:HomeScreenEvent()
     data object OnViewEquipmentInterventionsClick:HomeScreenEvent()
+    data object OnViewClClick:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()
@@ -26,5 +27,6 @@ sealed class HomeScreenEvent {
     data class OnShowLineDropDown(val index:Int):HomeScreenEvent()
     data class OnShowLineInterventionsClick(val index: Int):HomeScreenEvent()
     data class OnCreateClClick(val equipment: Equipment, val prodLine:ProductionLine):HomeScreenEvent()
+
 
 }

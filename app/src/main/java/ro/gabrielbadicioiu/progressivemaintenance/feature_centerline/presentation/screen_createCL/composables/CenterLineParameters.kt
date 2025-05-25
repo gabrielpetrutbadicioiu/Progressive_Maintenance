@@ -1,6 +1,5 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.composables
 
-import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,11 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -24,11 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.Divider
-import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineForm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineParameter
 
 @Composable
@@ -38,7 +31,8 @@ fun CenterLineParameters(
     onParameterNameChange:(String, CenterLineParameter)->Unit,
     onParameterValueChange:(String, CenterLineParameter)->Unit,
     onDeleteClick:()->Unit,
-    isParameterErr:Boolean
+    isParameterErr:Boolean,
+    isReadOnly:Boolean
 )
 {
 
@@ -56,6 +50,7 @@ fun CenterLineParameters(
                         focusedBorderColor = colorResource(id = R.color.btn_color)
                     ),
                     isError = isParameterErr,
+                    readOnly =isReadOnly ,
                     supportingText = { Text(text = stringResource(id = R.string.parameter))},
                     modifier = Modifier.weight(0.5f),
                     placeholder = { Text(text = stringResource(id = R.string.parameter_name))}
@@ -68,6 +63,7 @@ fun CenterLineParameters(
                         focusedContainerColor = Color.Transparent,
                         focusedBorderColor = colorResource(id = R.color.btn_color)
                     ),
+                    readOnly = isReadOnly,
                     isError = isParameterErr,
                     supportingText = { Text(text = stringResource(id = R.string.parameter_value))},
                     modifier = Modifier.weight(0.5f),

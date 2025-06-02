@@ -191,7 +191,7 @@
     <string name="line_name">Production line:</string>
     <string name="equipment">Equipment:</string>
     <string name="created_on">Created on: </string>
-    <string name="centerlie_parameters">Centerline parameters</string>
+    <string name="centerline_parameters">Centerline parameters</string>
     <string name="parameter">Parameter*</string>
     <string name="parameter_name_st">Parameter name*</string>
     <string name="parameter_value">Parameter value*</string>
@@ -206,5 +206,17 @@
     <string name="cl_records">Centerlined records</string>
     <string name="empty_cl_err">No centerline records found for this equipment</string>
     <string name="update">Update</string>
+    <string name="procedure">Procedure</string>
+    <string name="create_procedure">Create procedure</string>
+    <string name="view_procedures">View procedures</string>
+    <string name="procedure_name_st">Specify a unique and descriptive title for this procedure*</string>
+    <string name="procedure_name_ph">Enter procedure name</string>
+    <string name="procedure_steps">Procedure steps</string>
+    <string name="procedure_step_ph">Provide instructions for this step</string>
+    <string name="procedure_step_st">Explain clearly what needs to be done at this stage of the procedure</string>
+    <string name="tap_hint">(Optional) Tap on camera button to attach photos for this step</string>
+    <string name="add_step">Add new step</string>
+    <string name="procedures">Procedures</string>
+
 
 </resources>

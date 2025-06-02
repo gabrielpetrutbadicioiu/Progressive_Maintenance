@@ -158,6 +158,22 @@ fun HomeScreen(
                         equipmentId = event.equipmentId
                     ))
                 }
+                is HomeViewModel.HomeScreenUiEvent.OnCreateProcedureClick->{
+                    navController.navigate(Screens.ProcedureScreen(
+                        companyId = companyId,
+                        userId = userId,
+                        productionLineId = event.line.id,
+                        equipmentId = event.equipment.id
+                    ))
+                }
+                is HomeViewModel.HomeScreenUiEvent.OnViewProceduresClick->{
+                    navController.navigate(Screens.DisplayProceduresScreen(
+                        companyId = companyId,
+                        userId = userId,
+                        productionLineId = event.lineId,
+                        equipmentId = event.equipmentId
+                    ))
+                }
             }
         }
     }
@@ -349,7 +365,9 @@ fun HomeScreen(
                                     onViewEquipmentInterventionClick = {viewModel.onEvent(HomeScreenEvent.OnViewEquipmentInterventionsClick)},
                                     onCreateClClick = {equipment->
                                         viewModel.onEvent(HomeScreenEvent.OnCreateClClick(equipment = equipment, prodLine = viewModel.productionLineList.value[index]))},
-                                    onViewClClick = {viewModel.onEvent(HomeScreenEvent.OnViewClClick)}
+                                    onViewClClick = {viewModel.onEvent(HomeScreenEvent.OnViewClClick)},
+                                    onCreateProcedureClick = {viewModel.onEvent(HomeScreenEvent.OnCreateProcedureClick)},
+                                    onViewProceduresClick = {viewModel.onEvent(HomeScreenEvent.OnViewProceduresClick)}
                                 )
                         }
                 }

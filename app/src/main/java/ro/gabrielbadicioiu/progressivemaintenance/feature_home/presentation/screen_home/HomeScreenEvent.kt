@@ -18,6 +18,8 @@ sealed class HomeScreenEvent {
     data object OnSearchInterventionsClick:HomeScreenEvent()
     data object OnViewEquipmentInterventionsClick:HomeScreenEvent()
     data object OnViewClClick:HomeScreenEvent()
+    data object OnCreateProcedureClick:HomeScreenEvent()
+    data object OnViewProceduresClick:HomeScreenEvent()
 
     data class OnExpandBtnClick(val id:String): HomeScreenEvent()
     data class OnEditBtnClick(val id:String):HomeScreenEvent()

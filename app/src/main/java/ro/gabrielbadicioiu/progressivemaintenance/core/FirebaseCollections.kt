@@ -6,4 +6,5 @@ object FirebaseCollections {
     const val INTERVENTIONS="Interventions"
     const val GLOBAL_INTERVENTIONS="Global interventions"
     const val CENTERLINES="Centerlines"
+    const val PROCEDURES="Procedures"
 }

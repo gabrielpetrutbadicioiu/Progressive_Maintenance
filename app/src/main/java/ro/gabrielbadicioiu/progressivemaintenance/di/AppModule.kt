@@ -97,6 +97,15 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.domain.use_cas
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.domain.use_cases.ProfileScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.CreateProcedureUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnSaveProcedureClick
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnStepDescriptionChange
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnStepPhotoUriResult
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto1Remove
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto2Remove
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto3Remove
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
 
 
 val appModule= module {
@@ -349,6 +358,27 @@ single{
     //display all cl screen
     viewModel {
         DisplayAllClViewModel(companiesRepository = get())
+    }
+    //create procedure screen
+    single{
+        CreateProcedureUseCases(
+            onSaveProcedureClick = OnSaveProcedureClick(),
+            onStepDescriptionChange = OnStepDescriptionChange(),
+            onStepPhotoUriResult = OnStepPhotoUriResult(cloudStorageRepository = get()),
+            procedurePhoto1Remove = ProcedurePhoto1Remove(cloudStorageRepository = get()),
+            procedurePhoto2Remove = ProcedurePhoto2Remove(cloudStorageRepository = get()),
+            procedurePhoto3Remove = ProcedurePhoto3Remove(cloudStorageRepository = get())
+        )
+    }
+    viewModel {
+        CreateProcedureViewModel(
+            companiesRepository = get(),
+            useCases = get()
+            )
+    }
+
+    viewModel {
+        DisplayAllProceduresViewModel()
     }
 }
 

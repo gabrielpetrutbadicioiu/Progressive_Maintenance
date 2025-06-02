@@ -6,6 +6,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineForm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.model.Procedure
 
 interface CompaniesRepository {
     suspend fun registerCompany(
@@ -166,6 +167,13 @@ interface CompaniesRepository {
         lineId:String,
         clId:String,
         cl:CenterLineForm,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun uploadProcedure(
+        companyId: String,
+        lineId: String,
+        procedure: Procedure,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     )

@@ -19,7 +19,9 @@ fun MachineDropDownMenu(
     onLogInterventionClick:()->Unit,
     onViewInterventionClick:()->Unit,
     onCreateClClick:()->Unit,
-    onViewClClick:()->Unit
+    onViewClClick:()->Unit,
+    onCreateProcedureClick:()->Unit,
+    onViewProceduresClick:()->Unit
 )
 {
     DropdownMenu(
@@ -50,6 +52,13 @@ fun MachineDropDownMenu(
             },
             onClick = { onViewClClick() })
 
+        //procedure
+        DropdownMenuItem(
+            text = { Text(text =stringResource(id = R.string.create_procedure) )},
+            onClick = { onCreateProcedureClick() })
+        DropdownMenuItem(
+            text = { Text(text =stringResource(id = R.string.view_procedures) )},
+            onClick = { onViewProceduresClick() })
 
 
     }

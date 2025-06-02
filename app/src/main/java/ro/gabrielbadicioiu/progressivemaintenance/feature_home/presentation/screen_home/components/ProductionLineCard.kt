@@ -50,7 +50,9 @@ fun ProductionLineCard(
     onDismissLineDropDown:()->Unit,
     onViewEquipmentInterventionClick:()->Unit,
     onCreateClClick:(equipment:Equipment)->Unit,
-    onViewClClick:()->Unit
+    onViewClClick:()->Unit,
+    onCreateProcedureClick:()->Unit,
+    onViewProceduresClick:()->Unit
 
 )
 {
@@ -137,7 +139,9 @@ fun ProductionLineCard(
                                 onLogInterventionClick = {onLogInterventionClick()},
                                 onViewInterventionClick = {onViewEquipmentInterventionClick()},
                                 onCreateClClick ={onCreateClClick(machine)},
-                                onViewClClick = {onViewClClick()})
+                                onViewClClick = {onViewClClick()},
+                                onCreateProcedureClick = {onCreateProcedureClick()},
+                                onViewProceduresClick = {onViewProceduresClick()})
                         }
                         HorizontalDivider( color = Color.LightGray)
                     }

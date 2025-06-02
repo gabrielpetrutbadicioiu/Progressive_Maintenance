@@ -50,7 +50,6 @@ class HomeViewModel(
     private val _clickedEq =  mutableStateOf(Equipment())
     val clickedEq:State<Equipment> = _clickedEq
 
-    private var equipmentLine= Equipment()
 
     private var _clickedEquipmentIndex=0
 
@@ -65,7 +64,6 @@ class HomeViewModel(
         data object OnNavigateToLogInterventionScreen:HomeScreenUiEvent()
         data object OnNavigateToDisplayGlobalInterventionsScreen:HomeScreenUiEvent()
 
-
         data class ToastMessage(val message:String):HomeScreenUiEvent()
         data class OnEditBtnClick(val id:String):HomeScreenUiEvent()
         data class OnNavigateTo(val screen:Screens):HomeScreenUiEvent()
@@ -73,6 +71,8 @@ class HomeViewModel(
         data class OnNavigateToEquipmentInterventionsScreen(val equipment: Equipment, val line:ProductionLine):HomeScreenUiEvent()
         data class OnNavigateToCreateClScreen(val equipment: Equipment, val line: ProductionLine):HomeScreenUiEvent()
         data class OnNavigateToViewClScreen(val prodLineId:String, val equipmentId:String):HomeScreenUiEvent()
+        data class OnCreateProcedureClick(val equipment: Equipment, val line: ProductionLine):HomeScreenUiEvent()
+        data class OnViewProceduresClick(val lineId:String, val equipmentId:String):HomeScreenUiEvent()
     }
 
     fun onEvent(event: HomeScreenEvent)
@@ -219,7 +219,22 @@ class HomeViewModel(
                         equipmentId = _clickedEq.value.id))
                     onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
                 }
-
+            }
+            is HomeScreenEvent.OnCreateProcedureClick->{
+                viewModelScope.launch {
+                    _eventFlow.emit(HomeScreenUiEvent.OnCreateProcedureClick(
+                        equipment = _clickedEq.value,
+                        line = _clickedProdLine.value
+                    ))
+                }
+                onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
+            }
+            is HomeScreenEvent.OnViewProceduresClick-> {
+                viewModelScope.launch { _eventFlow.emit(HomeScreenUiEvent.OnViewProceduresClick(
+                    lineId = _clickedProdLine.value.id,
+                    equipmentId = _clickedEq.value.id
+                )) }
+                onEvent(HomeScreenEvent.OnEquipmentDropdownMenuDismiss)
             }
 
         }

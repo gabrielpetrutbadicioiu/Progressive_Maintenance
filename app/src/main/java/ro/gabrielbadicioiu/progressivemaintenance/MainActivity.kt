@@ -54,6 +54,10 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.MembersScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreenViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.ProcedureScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
 
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -88,6 +92,8 @@ class MainActivity : ComponentActivity() {
                 val displayAllPmCardsViewModel= getViewModel<DisplayAllPmCardsViewModel> ()
                 val createClViewModel=getViewModel<CreateClViewModel> ()
                 val displayAllClViewModel=getViewModel<DisplayAllClViewModel>()
+                val createProcedureViewModel=getViewModel<CreateProcedureViewModel>()
+                val displayAllProceduresViewModel=getViewModel<DisplayAllProceduresViewModel>()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -279,6 +285,28 @@ class MainActivity : ComponentActivity() {
                             userId = args.userId,
                             equipmentId = args.equipmentId,
                             productionLineId = args.productionLineId
+                        )
+                    }
+                    composable<Screens.ProcedureScreen> {
+                        val args=it.toRoute<Screens.ProcedureScreen>()
+                        ProcedureScreen(
+                            companyId =args.companyId ,
+                            userId =args.userId ,
+                            productionLineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            navController = navController,
+                            viewModel = createProcedureViewModel
+                        )
+                    }
+                    composable<Screens.DisplayProceduresScreen> {
+                        val args=it.toRoute<Screens.DisplayProceduresScreen>()
+                        DisplayAllProceduresScreen(
+                            companyId = args.companyId,
+                            lineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            userId = args.userId,
+                            viewModel = displayAllProceduresViewModel,
+                            navController = navController
                         )
                     }
                 }//navHost

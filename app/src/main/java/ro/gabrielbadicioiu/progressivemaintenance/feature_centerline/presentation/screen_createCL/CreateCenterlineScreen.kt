@@ -136,7 +136,7 @@ fun CreateCenterLineScreen(
                         clName = viewModel.clForm.value.clName,
                         onClNameChange = {clName-> viewModel.onEvent(CreateCenterLineEvent.OnClNameChange(clName = clName.replaceFirstChar { char-> char.uppercase() }))},
                         isNameErr = viewModel.errState.value.isClNameErr,
-                        nameReadOnly = !viewModel.isEditing.value,
+                        nameReadOnly = !(viewModel.isEditing.value || isCreatingNewCl),
                         )}
 
                     item {
@@ -147,7 +147,7 @@ fun CreateCenterLineScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(id = R.string.centerlie_parameters),
+                                text = stringResource(id = R.string.centerline_parameters),
                                 color = colorResource(id = R.color.text_color),
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -243,9 +243,6 @@ fun CreateCenterLineScreen(
 
                         }
                     }
-                   
-
-
                 }
             }
         }

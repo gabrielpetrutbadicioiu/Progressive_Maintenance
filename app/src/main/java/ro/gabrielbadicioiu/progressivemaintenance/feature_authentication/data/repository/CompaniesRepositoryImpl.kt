@@ -15,6 +15,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.model.CenterLineForm
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.model.Procedure
 
 class CompaniesRepositoryImpl:CompaniesRepository {
     override suspend fun registerCompany(
@@ -647,5 +648,25 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             .addOnFailureListener { e->
                 onFailure(e.message?:"Repository:Failed to update cl")
             }
+    }
+
+    override suspend fun uploadProcedure(
+        companyId: String,
+        lineId: String,
+        procedure: Procedure,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+       val docRef= Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.PROCEDURES)
+            .document()
+        val updatedProcedure=procedure.copy(procedureId = docRef.id)
+        docRef.set(updatedProcedure)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to upload procedure") }
     }
 }

@@ -378,7 +378,9 @@ single{
     }
 
     viewModel {
-        DisplayAllProceduresViewModel()
+        DisplayAllProceduresViewModel(
+            companiesRepository = get()
+        )
     }
 }
 

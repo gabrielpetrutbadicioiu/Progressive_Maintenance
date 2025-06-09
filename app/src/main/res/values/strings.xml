@@ -217,6 +217,7 @@
     <string name="tap_hint">(Optional) Tap on camera button to attach photos for this step</string>
     <string name="add_step">Add new step</string>
     <string name="procedures">Procedures</string>
+    <string name="empty_procedures_list_err">Oops! No procedures found.</string>
 
 
 </resources>

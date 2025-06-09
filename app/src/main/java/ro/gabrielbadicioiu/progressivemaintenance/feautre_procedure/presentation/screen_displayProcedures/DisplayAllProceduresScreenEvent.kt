@@ -9,4 +9,7 @@ sealed class DisplayAllProceduresScreenEvent
         val lineId:String,
         val equipmentId:String,
         val userId:String):DisplayAllProceduresScreenEvent()
+
+    data class OnSearchQueryChange(val query:String):DisplayAllProceduresScreenEvent()
+
 }

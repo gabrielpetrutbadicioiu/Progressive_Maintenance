@@ -178,4 +178,12 @@ interface CompaniesRepository {
         onFailure: (String) -> Unit
     )
 
+    suspend fun fetchAllEquipmentProcedures(
+        companyId:String,
+        lineId: String,
+        equipmentId:String,
+        onSuccess: (List<Procedure>) -> Unit,
+        onFailure: (String) -> Unit
+    )
+
 }

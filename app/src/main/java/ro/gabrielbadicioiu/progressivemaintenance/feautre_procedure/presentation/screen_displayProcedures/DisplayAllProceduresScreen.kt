@@ -2,12 +2,16 @@ package ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentatio
 
 
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,12 +29,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.Divider
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.SearchField
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.composables.ProcedureListItem
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DisplayAllProceduresScreen(
     companyId:String,
@@ -95,9 +105,36 @@ fun DisplayAllProceduresScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center)
+                verticalArrangement = Arrangement.Top)
             {
+                if (viewModel.uiState.value.isFetchProceduresErr){
+                    item {
+                        DisplayLottie(spec =LottieCompositionSpec.RawRes(R.raw.ic_error_lottie) , size = 128.dp)
+                        Text(text = viewModel.uiState.value.errMsg)
+                    }
+                }
+                else
+                {stickyHeader {
+                    Spacer(modifier = Modifier.height(32.dp))
+                    SearchField(query = viewModel.searchQuery.value) {query->
+                        viewModel.onEvent(DisplayAllProceduresScreenEvent.OnSearchQueryChange(query.replaceFirstChar { char-> char.uppercase() }))
+                    }
+                    Divider(space = 8.dp, thickness = 2.dp, color = Color.DarkGray)
+                }
+                    if (viewModel.proceduresList.value.isEmpty())
+                    {
+                        item {
+                            DisplayLottie(spec =LottieCompositionSpec.RawRes(R.raw.ghost_lottie) , size = 128.dp)
+                            Text(text = stringResource(id = R.string.empty_procedures_list_err))
+                        }
+                    }else{
+                        itemsIndexed(viewModel.proceduresList.value){index, procedure ->
+                            ProcedureListItem(procedure = procedure) {
 
+                            }
+                        }
+                    }
+                }
             }
         }
     }

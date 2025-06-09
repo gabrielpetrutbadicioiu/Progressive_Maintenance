@@ -669,4 +669,34 @@ class CompaniesRepositoryImpl:CompaniesRepository {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to upload procedure") }
     }
+
+    override suspend fun fetchAllEquipmentProcedures(
+        companyId: String,
+        lineId: String,
+        equipmentId: String,
+        onSuccess: (List<Procedure>) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.PROCEDURES)
+            .addSnapshotListener { procedureQuerySnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository:Failed to fetch procedures")
+                    return@addSnapshotListener
+                }
+                if (procedureQuerySnapshot!=null && !procedureQuerySnapshot.isEmpty)
+                {
+                    val procedureList=procedureQuerySnapshot.documents.mapNotNull { procedureDocumentSnapshot->
+                        procedureDocumentSnapshot.toObject(Procedure::class.java)
+                    }
+                    val equipmentProcedureList=procedureList.filter { procedure-> procedure.equipmentId==equipmentId }
+                    onSuccess(equipmentProcedureList)
+                }
+            }
+    }
 }

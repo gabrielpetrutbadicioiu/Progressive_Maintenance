@@ -106,6 +106,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_c
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto3Remove
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreenViewModel
 
 
 val appModule= module {
@@ -382,5 +383,9 @@ single{
             companiesRepository = get()
         )
     }
+
+    viewModel { VisualizeProcedureScreenViewModel(
+        companiesRepository = get()
+    ) }
 }
 

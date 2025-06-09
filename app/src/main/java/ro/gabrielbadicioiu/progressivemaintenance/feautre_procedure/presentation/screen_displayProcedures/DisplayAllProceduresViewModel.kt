@@ -28,7 +28,10 @@ class DisplayAllProceduresViewModel(
     private val _eventFlow= MutableSharedFlow<DisplayAllProceduresUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
     sealed class DisplayAllProceduresUiEvent{
-    data object OnNavigateHome:DisplayAllProceduresUiEvent()
+
+        data class OnProcedureClick(val procedureId:String):DisplayAllProceduresUiEvent()
+
+        data object OnNavigateHome:DisplayAllProceduresUiEvent()
     }
     //vars
     private var args=DisplayAllProceduresArgs()
@@ -78,6 +81,10 @@ class DisplayAllProceduresViewModel(
                     _proceduresList.value=_proceduresList.value.filter { procedure-> procedure.procedureName.contains(event.query) }
                 }
             }
+            is DisplayAllProceduresScreenEvent.OnProcedureClick->{
+                viewModelScope.launch { _eventFlow.emit(DisplayAllProceduresUiEvent.OnProcedureClick(procedureId =event.procedureId )) }
+            }
+
         }
     }
 }

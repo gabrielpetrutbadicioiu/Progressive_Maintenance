@@ -58,6 +58,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.ProcedureScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreenViewModel
 
 
 import ro.gabrielbadicioiu.progressivemaintenance.ui.theme.ProgressiveMaintenanceTheme
@@ -94,6 +96,8 @@ class MainActivity : ComponentActivity() {
                 val displayAllClViewModel=getViewModel<DisplayAllClViewModel>()
                 val createProcedureViewModel=getViewModel<CreateProcedureViewModel>()
                 val displayAllProceduresViewModel=getViewModel<DisplayAllProceduresViewModel>()
+                val visualizeProcedureScreenViewModel=getViewModel<VisualizeProcedureScreenViewModel>()
+
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -306,6 +310,18 @@ class MainActivity : ComponentActivity() {
                             equipmentId = args.equipmentId,
                             userId = args.userId,
                             viewModel = displayAllProceduresViewModel,
+                            navController = navController
+                        )
+                    }
+                    composable<Screens.VisualizeProcedureScreen> {
+                        val args=it.toRoute<Screens.VisualizeProcedureScreen>()
+                        VisualizeProcedureScreen(
+                            companyId = args.companyId,
+                            userId = args.userId,
+                            lineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            procedureId = args.procedureId,
+                            viewModel = visualizeProcedureScreenViewModel,
                             navController = navController
                         )
                     }

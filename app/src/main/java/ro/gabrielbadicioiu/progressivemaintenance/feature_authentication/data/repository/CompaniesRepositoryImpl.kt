@@ -699,4 +699,32 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 }
             }
     }
+
+    override suspend fun fetchProcedureById(
+        companyId: String,
+        lineId: String,
+        procedureId: String,
+        onSuccess: (Procedure) -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.PROCEDURES)
+            .document(procedureId)
+            .addSnapshotListener { documentSnapshot, error ->
+                if (error!=null)
+                {
+                    onFailure(error.message?:"Repository: Failed to fetch procedure")
+                    return@addSnapshotListener
+                }
+                if (documentSnapshot!=null && documentSnapshot.exists())
+                {
+                    val procedure=documentSnapshot.toObject(Procedure::class.java)
+                    procedure?.let {prc-> onSuccess(prc) }
+                }
+            }
+    }
 }

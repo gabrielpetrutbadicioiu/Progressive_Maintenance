@@ -4,6 +4,7 @@ sealed class DisplayAllProceduresScreenEvent
 {
     data object OnNavigateHome:DisplayAllProceduresScreenEvent()
 
+    data class OnProcedureClick(val procedureId:String):DisplayAllProceduresScreenEvent()
     data class OnGetArgumentData(
         val companyId:String,
         val lineId:String,

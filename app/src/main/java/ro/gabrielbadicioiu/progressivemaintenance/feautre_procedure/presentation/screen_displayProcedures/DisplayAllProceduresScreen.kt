@@ -64,6 +64,15 @@ fun DisplayAllProceduresScreen(
                 is DisplayAllProceduresViewModel.DisplayAllProceduresUiEvent.OnNavigateHome->{
                     navController.navigate(Screens.HomeScreen(companyID = companyId, userID = userId))
                 }
+                is DisplayAllProceduresViewModel.DisplayAllProceduresUiEvent.OnProcedureClick->{
+                    navController.navigate(Screens.VisualizeProcedureScreen(
+                        companyId = companyId,
+                        userId = userId,
+                        equipmentId = equipmentId,
+                        productionLineId = lineId,
+                        procedureId = event.procedureId
+                    ))
+                }
             }
         }
     }
@@ -128,9 +137,9 @@ fun DisplayAllProceduresScreen(
                             Text(text = stringResource(id = R.string.empty_procedures_list_err))
                         }
                     }else{
-                        itemsIndexed(viewModel.proceduresList.value){index, procedure ->
+                        itemsIndexed(viewModel.proceduresList.value){_, procedure ->
                             ProcedureListItem(procedure = procedure) {
-
+                                viewModel.onEvent(DisplayAllProceduresScreenEvent.OnProcedureClick(procedureId = procedure.procedureId))
                             }
                         }
                     }

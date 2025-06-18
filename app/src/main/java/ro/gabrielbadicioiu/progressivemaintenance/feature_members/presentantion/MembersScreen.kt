@@ -1,7 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +46,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.composables.MemberCard
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MembersScreen(
         companyId:String,
@@ -153,7 +152,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                     {
                         if (viewModel.userDetails.value.rank==UserRank.OWNER.name)
                         {
-                            stickyHeader {
+                            item {
                                 Column {
                                     Row(horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically,
@@ -172,6 +171,11 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
 
                             }
                         }
+                        item { if (viewModel.showBannedUsers.value && viewModel.bannedList.value.isEmpty())
+                        {
+                            DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.ghost_lottie), size = 128.dp)
+                            Text(text = stringResource(id = R.string.no_banned_users))
+                        } }
                         items(viewModel.memberStatus.value)
                         {user->
                             if (!user.user.hasBeenBanned && !viewModel.showBannedUsers.value)
@@ -191,10 +195,12 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
                                         viewModel.onEvent(MembersScreenEvent.OnEditPositionClick(user))
                                     },
                                     onBanClick ={viewModel.onEvent(MembersScreenEvent.OnBanClick(user)) },
-                                    onUnbanClick = {/*todo*/})
+                                    onUnbanClick = {})
 
                             }
+
                             if (viewModel.showBannedUsers.value && user.user.hasBeenBanned){
+                            
                                 MemberCard(user = user.user,
                                     currentUser = viewModel.userDetails.value,
                                     isDropdownMenuExpanded = user.showDropDown,

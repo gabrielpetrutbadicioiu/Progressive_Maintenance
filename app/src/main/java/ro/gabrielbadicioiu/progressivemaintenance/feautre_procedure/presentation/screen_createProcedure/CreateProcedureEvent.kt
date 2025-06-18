@@ -17,5 +17,6 @@ sealed class CreateProcedureEvent {
     data class OnPhoto1Delete(val index:Int):CreateProcedureEvent()
     data class OnPhoto2Delete(val index:Int):CreateProcedureEvent()
     data class OnPhoto3Delete(val index: Int):CreateProcedureEvent()
+    data class OnStepDelete(val index:Int):CreateProcedureEvent()
 
 }

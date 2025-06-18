@@ -3,9 +3,9 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.prese
 import android.app.TimePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +21,8 @@ import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.WarningAmber
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -458,13 +460,8 @@ fun InterventionInfoSection(
             HorizontalDivider(color = Color.DarkGray,
                 thickness = 2.dp)
             Spacer(modifier = Modifier.height(16.dp))
-
         }
     }
-
-
-
-
 
     if (isOtherParticipantsMenuExpanded)
     {
@@ -480,19 +477,23 @@ fun InterventionInfoSection(
         }
         else{
             ModalBottomSheet(onDismissRequest = { onOtherParticipantsMenuDismiss() }) {
-                LazyColumn {
+                LazyColumn(horizontalAlignment = Alignment.Start) {
                     items(employeeList.size)
                     {index->
                         HorizontalDivider(color = Color.DarkGray,
                             thickness = 1.dp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        DisplayUserWithAvatar(
-                            participant =employeeList[index],
+                        Button(
+                            onClick = { onParticipantClick(employeeList[index].copy()) },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onParticipantClick(employeeList[index].copy())
-                                })
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            contentPadding = PaddingValues(0.dp),
+                            elevation = ButtonDefaults.buttonElevation(0.dp)
+                        ) {
+                            ClickableUser(participant = employeeList[index])
+                        }
+
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }

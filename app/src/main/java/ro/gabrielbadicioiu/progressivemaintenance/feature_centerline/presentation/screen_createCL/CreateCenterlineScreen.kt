@@ -74,7 +74,9 @@ fun CreateCenterLineScreen(
         ))
         viewModel.eventFlow.collectLatest { event->
             when(event)
-            {
+            { is CreateClViewModel.CreateClUiEvent.OnNavigateToDisplayCls->{
+                navController.navigate(Screens.DisplayCenterLinesScreen(companyId = companyId, userId = userId, productionLineId = productionLineId, equipmentId = equipmentId))
+            }
                 is CreateClViewModel.CreateClUiEvent.OnNavigateToHome->{
                     navController.navigate(Screens.HomeScreen(companyID = companyId, userID = userId))
                 }
@@ -99,7 +101,17 @@ fun CreateCenterLineScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = stringResource(id = R.string.create_cl))
+                            if (isCreatingNewCl)
+                            {
+                                Text(text = stringResource(id = R.string.create_cl))
+                            }
+                            else  if (viewModel.isEditing.value)
+                            {
+                                Text(text = stringResource(id = R.string.edit_cl))
+                            }
+                            else {
+                                Text(text = stringResource(id = R.string.cl))
+                            }
                         }
                     },
                     navigationIcon = { IconButton(onClick = {viewModel.onEvent(CreateCenterLineEvent.OnNavigateHome)  }) {
@@ -159,10 +171,10 @@ fun CreateCenterLineScreen(
                             clParameter = clParameter,
                             onParameterNameChange = { parameterName, _ -> viewModel.onEvent(CreateCenterLineEvent.OnParameterNameChange(parameterName = parameterName, index = index)) },
                             onParameterValueChange = { parameterValue, _ -> viewModel.onEvent(CreateCenterLineEvent.OnParameterValueChange(parameterValue = parameterValue, index = index)) },
-                            showDeleteBtn = viewModel.isEditing.value && index!=0,
+                            showDeleteBtn = (viewModel.isEditing.value || isCreatingNewCl) && index!=0,
                             onDeleteClick = {viewModel.onEvent(CreateCenterLineEvent.OnParameterDelete(index))},
                             isParameterErr=viewModel.errState.value.isParameterErr && index==0,
-                            isReadOnly = !viewModel.isEditing.value || isCreatingNewCl
+                            isReadOnly = !(viewModel.isEditing.value || isCreatingNewCl)
                         )
 
                     }//items
@@ -189,14 +201,30 @@ fun CreateCenterLineScreen(
                         if (isCreatingNewCl)
                         {
                             Spacer(modifier = Modifier.height(32.dp))
-                            Button(
-                                onClick = { viewModel.onEvent(CreateCenterLineEvent.OnSaveClick) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(id = R.color.btn_color),
-                                    contentColor = colorResource(id = R.color.text_color))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                OutlinedButton(
+                                    onClick = { viewModel.onEvent(CreateCenterLineEvent.OnNavigateHome) },
+                                    border = BorderStroke(1.dp, color = colorResource(id = R.color.btn_color)),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = colorResource(id = R.color.btn_color),
+                                    )
+                                ) {
+                                        Text(text = stringResource(id = R.string.cancel_btn) )
+                                }
+                                Button(
+                                    onClick = { viewModel.onEvent(CreateCenterLineEvent.OnSaveClick) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colorResource(id = R.color.btn_color),
+                                        contentColor = colorResource(id = R.color.text_color))
                                 ) {
                                     Text(text = stringResource(id = R.string.save))
+                                }
                             }
+
                         }
                     }
                     item {

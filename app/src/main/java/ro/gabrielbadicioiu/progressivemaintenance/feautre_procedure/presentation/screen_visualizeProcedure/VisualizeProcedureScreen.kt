@@ -75,6 +75,16 @@ fun VisualizeProcedureScreen(
                  is VisualizeProcedureScreenViewModel.VisualizeProcedureUiEvent.OnNavigateToDisplayPhotoScreen->{
                      navController.navigate(Screens.DisplayImageScreen(event.uri))
                  }
+
+                is VisualizeProcedureScreenViewModel.VisualizeProcedureUiEvent.OnNavigateToEditProcedureScreen->{
+                    navController.navigate(Screens.EditProcedureScreen(
+                        userId = userId,
+                        companyId = companyId,
+                        productionLineId = lineId,
+                        equipmentId = equipmentId,
+                        procedureId = procedureId
+                    ))
+                }
             }
         }
     }

@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -150,6 +151,9 @@ AuthenticationLottie()
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
+         colors = OutlinedTextFieldDefaults.colors(
+             focusedBorderColor = colorResource(id = R.color.btn_color),
+             focusedLabelColor = colorResource(id = R.color.btn_color)),
         value = viewModel.user.value.email,
         onValueChange = {email->
             viewModel.onEvent(LoginScreenEvent.OnEmailChange(email))
@@ -185,6 +189,9 @@ AuthenticationLottie()
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = colorResource(id = R.color.btn_color),
+                                focusedLabelColor = colorResource(id = R.color.btn_color)),
                             value =viewModel.user.value.password,
                             onValueChange ={pass->viewModel.onEvent(LoginScreenEvent.OnPassChange(pass))
                                 if (viewModel.user.value.rememberMe)
@@ -222,6 +229,8 @@ AuthenticationLottie()
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = colorResource(id = R.color.btn_color)),
                         isError = viewModel.isError.value,
                         value = viewModel.user.value.companyName,
                         readOnly = true,

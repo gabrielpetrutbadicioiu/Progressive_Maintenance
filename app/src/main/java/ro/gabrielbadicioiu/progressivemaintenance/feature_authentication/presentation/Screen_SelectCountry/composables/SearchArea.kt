@@ -67,7 +67,8 @@ fun SearchArea(
 
                 TextButton(onClick = { onCancelClick() },
                     modifier = Modifier.padding(8.dp)) {
-                    Text(text = stringResource(id = R.string.cancel_btn))
+                    Text(text = stringResource(id = R.string.cancel_btn),
+                        color = colorResource(id = R.color.btn_color))
                 }
 
             }

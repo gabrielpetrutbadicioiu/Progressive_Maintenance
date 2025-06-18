@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -160,7 +161,8 @@ fun CompanyDetailsScreen(
                         .padding(16.dp, 0.dp),
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.btn_color))
                 ) {
-                    Text(text = stringResource(id = R.string.pick_company_logo))
+                    Text(text = stringResource(id = R.string.pick_company_logo),
+                        color = Color.White)
                 }
 
                 Spacer(
@@ -173,6 +175,7 @@ fun CompanyDetailsScreen(
                     onValueChange ={value->viewModel.onEvent(CompanyDetailsScreenEvent.OnOrganisationNameChange(value))},
                     supportingText = { Text(text = stringResource(id = R.string.organisation_name)) },
                     shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     placeholder = { Text(text = stringResource(id = R.string.enter_organisation_name)) },
                     singleLine = true,
                 )
@@ -186,6 +189,7 @@ fun CompanyDetailsScreen(
                     onValueChange ={value->viewModel.onEvent(CompanyDetailsScreenEvent.OnIndustryNameChange(value))},
                     supportingText = { Text(text = stringResource(id = R.string.industry)) },
                     shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     placeholder = { Text(text = stringResource(id = R.string.industry_hint)) },
                     singleLine = true,
                 )
@@ -201,6 +205,7 @@ fun CompanyDetailsScreen(
                     onValueChange ={value->viewModel.onEvent(CompanyDetailsScreenEvent.OnCountryNameChange(value))},
                     supportingText = { Text(text = stringResource(id = R.string.country)) },
                     shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     placeholder = { Text(text = stringResource(id = R.string.country_hint))},
                     singleLine = true,
                     trailingIcon = {

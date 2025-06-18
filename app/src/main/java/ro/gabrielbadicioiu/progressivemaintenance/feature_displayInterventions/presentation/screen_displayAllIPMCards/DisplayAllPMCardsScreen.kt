@@ -17,12 +17,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,6 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
@@ -63,6 +67,7 @@ fun DisplayAllPMCardsScreen(
 )
 {
     val context= LocalContext.current
+    val currentUser=Firebase.auth.currentUser?.uid
     LaunchedEffect(key1 = true) {
 
         viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnGetArgumentData(
@@ -180,16 +185,32 @@ if (viewModel.pmCardList.value.isEmpty())
         Text(text = stringResource(id = R.string.no_intervention_found))
     } }
 }
-                
                 itemsIndexed(viewModel.pmCardList.value) {index, pmCard->
                     InterventionCard(
                         pmCard = pmCard,
+                        currentUser =viewModel.currentUser.value ,
                         isExpanded = viewModel.pmCardList.value[index].isExpanded,
                         onExpandClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnExpandInterventionClick(index))},
-                        onViewDetailsClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnViewInterventionDetailsClick(pmCard))})
+                        onViewDetailsClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnViewInterventionDetailsClick(pmCard))},
+                        onDeleteInterventionClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnDeleteInterventionClick(pmCard.interventionId))})
                 }
 
             }
         }
     }
+    if (viewModel.showAlertDialog.value)
+    {
+        AlertDialog(
+            onDismissRequest = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnDismissDialogClick)},
+            confirmButton = { TextButton(onClick = { viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnConfirmBtnClick) }) {
+                Text(text = stringResource(id = R.string.delete_line_confirm))
+            } },
+            dismissButton = { TextButton(onClick = {viewModel.onEvent(DisplayAllPmCardsScreenEvent.OnDismissDialogClick)}) {
+                Text(text = stringResource(id = R.string.cancel_btn))
+            }},
+            title = { Text(text = stringResource(id = R.string.delete_intervention_alert))},
+            text = { Text(text = stringResource(id = R.string.undone_warning))}
+        )
+    }
+
 }

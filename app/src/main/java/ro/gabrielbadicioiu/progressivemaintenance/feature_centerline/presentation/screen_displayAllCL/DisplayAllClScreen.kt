@@ -1,9 +1,12 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,10 +35,13 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.Divider
+import ro.gabrielbadicioiu.progressivemaintenance.core.composables.SearchField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.Screen_SelectCountry.composables.SearchArea
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL.components.DisplayClCard
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DisplayAllClScreen(
     viewModel: DisplayAllClViewModel,
@@ -115,8 +121,9 @@ fun DisplayAllClScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center)
+                verticalArrangement = Arrangement.Top)
             {
+
                 if (viewModel.errState.value.isFetchClErr)
                 {
                     item { 
@@ -132,6 +139,11 @@ fun DisplayAllClScreen(
                     }
                 }
                 else{
+                    stickyHeader { 
+                        Spacer(modifier = Modifier.height(36.dp))
+                        SearchField(query = viewModel.query.value,
+                        onQueryChange = {query-> viewModel.onEvent(DisplayAllClScreenEvent.OnQueryChange(query.replaceFirstChar { char-> char.uppercase() })) })
+                    Divider(space = 36.dp, thickness = 1.dp, color = Color.DarkGray)}
                     if (viewModel.equipmentClList.value.isEmpty())
                     {
                         item {

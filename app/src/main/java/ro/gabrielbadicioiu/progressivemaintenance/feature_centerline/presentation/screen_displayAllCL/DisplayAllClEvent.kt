@@ -11,4 +11,5 @@ sealed class DisplayAllClScreenEvent {
         val equipmentId: String,
     ):DisplayAllClScreenEvent()
     data class OnClClick(val clIndex:Int):DisplayAllClScreenEvent()
+    data class OnQueryChange(val query:String):DisplayAllClScreenEvent()
 }

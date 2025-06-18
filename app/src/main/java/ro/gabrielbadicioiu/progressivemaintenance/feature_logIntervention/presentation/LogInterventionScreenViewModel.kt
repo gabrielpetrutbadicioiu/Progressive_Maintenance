@@ -44,11 +44,9 @@ class LogInterventionScreenViewModel(
     private val _employeeList= mutableStateOf<List<UserDetails>>(emptyList())
     val employeeList:State<List<UserDetails>> = _employeeList
 
-   // private val _participantsList= mutableStateOf<List<UserDetails>>(emptyList())
-   // val participantsList:State<List<UserDetails>> = _participantsList
+
 
     private val _selectedParticipant= mutableStateOf(UserDetails())
-   // val selectedParticipant:State<UserDetails> = _selectedParticipant
 
     private val _fetchEmployeesErr= mutableStateOf(false)
     val fetchEmployeesErr:State<Boolean> = _fetchEmployeesErr
@@ -208,7 +206,6 @@ class LogInterventionScreenViewModel(
                         viewModelScope.launch {_eventFlow.emit(LogInterventionUiEvent.ShowToast(e))}
                     },
                     onSuccess = { interventionParticipants->
-                        //_participantsList.value=participants
                         _pmCard.value=_pmCard.value.copy(otherParticipants = interventionParticipants)
                         onEvent(LogInterventionScreenEvent.OnOtherParticipantsDropdownMenuDismiss)
                     }
@@ -220,6 +217,7 @@ class LogInterventionScreenViewModel(
                 _pmCard.value=_pmCard.value.copy(otherParticipants =updatedList )
             }
             is LogInterventionScreenEvent.OnNavigateToHome->{
+                _pmCard.value=ProgressiveMaintenanceCard()
                 viewModelScope.launch { _eventFlow.emit(LogInterventionUiEvent.OnNavigateToHome) }
             }
 

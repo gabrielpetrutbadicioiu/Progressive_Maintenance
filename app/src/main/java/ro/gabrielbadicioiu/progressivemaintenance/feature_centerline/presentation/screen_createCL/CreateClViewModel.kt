@@ -53,6 +53,7 @@ class CreateClViewModel(
     val eventFlow=_eventFlow.asSharedFlow()
     sealed class CreateClUiEvent{
         data object OnNavigateToHome:CreateClUiEvent()
+        data object OnNavigateToDisplayCls:CreateClUiEvent()
         data class OnShowToast(val message:String):CreateClUiEvent()
     }
 
@@ -62,7 +63,16 @@ class CreateClViewModel(
         when(event)
         {
             is CreateCenterLineEvent.OnNavigateHome->{
-                viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnNavigateToHome) }
+                _clForm.value=CenterLineForm()
+                if (_args.value.isCreatingNewCl)
+                {
+                    viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnNavigateToHome) }
+                }
+                else{
+                    viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnNavigateToDisplayCls) }
+                }
+
+
             }
             is CreateCenterLineEvent.OnGetArgumentData->{
                 _args.value=_args.value.copy(
@@ -170,6 +180,9 @@ class CreateClViewModel(
                 _clForm.value=useCases.deleteClParameter.execute(clForm = _clForm.value.copy(), index = event.index)
             }
             is CreateCenterLineEvent.OnSaveClick->{
+                _clForm.value=_clForm.value.copy(clParameterList = _clForm.value.clParameterList.filterIndexed { index, centerLineParameter ->
+                    index == 0 || (centerLineParameter.parameterValue.isNotEmpty() && centerLineParameter.parameterName.isNotEmpty())
+                })
                 viewModelScope.launch {
                     try {
                         _errState.value=useCases.onSaveClick.execute(
@@ -200,27 +213,27 @@ class CreateClViewModel(
                 _clForm.value=_originalClForm.value.copy()
             }
             is CreateCenterLineEvent.OnUpdateClClick->{
+                _clForm.value=_clForm.value.copy(clParameterList = _clForm.value.clParameterList.filterIndexed { index, centerLineParameter ->
+                    index == 0 || (centerLineParameter.parameterValue.isNotEmpty() && centerLineParameter.parameterName.isNotEmpty())
+                  })
+
                 viewModelScope.launch {
                     try {
-                        companiesRepository.updateCl(
-                            companyId = _args.value.companyId,
-                            lineId = _args.value.lineId,
-                            clId = _args.value.clId,
-                            cl = _clForm.value.copy(),
+                       _errState.value= useCases.onUpdateCl.execute(
+                            clForm=_clForm.value,
+                            onFailure = {e->viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e))}},
                             onSuccess = {
                                 viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast("Centerline updated successfully!")) }
                                 _isEditing.value=false
                             },
-                            onFailure = {e->
-                                viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e)) }
-                            }
+                            companyId = _args.value.companyId,
+                            productionLineId = _args.value.lineId
                         )
                     }catch (e:Exception)
                     {
-                        viewModelScope.launch { _eventFlow.emit(CreateClUiEvent.OnShowToast(e.message?:"Viewmodel:Failed to update CL")) }
+                        _errState.value=_errState.value.copy(isFetchDataErr = true, errMsg = e.message?:"Viewmodel:Failed to update!")
                     }
                 }
-
             }
         }
     }

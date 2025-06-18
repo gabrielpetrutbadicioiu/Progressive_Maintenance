@@ -450,16 +450,13 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                     onFailure(error.message?:"Repository:Failed to fetch global interventions")
                     return@addSnapshotListener
                 }
-                if (interventionsSnapshot!=null && !interventionsSnapshot.isEmpty)
-                {
-                    val interventionList=interventionsSnapshot.mapNotNull { queryDocumentSnapshot ->
+
+                    val interventionList=interventionsSnapshot?.map { queryDocumentSnapshot ->
                         queryDocumentSnapshot.toObject(ProgressiveMaintenanceCard::class.java)
-                    }
+                    }?: emptyList()
                     onSuccess(interventionList)
-                }
-                else{
-                    onFailure("")
-                }
+
+
             }
     }
 
@@ -481,16 +478,13 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                     onFailure(error.message?:"Repository: failed to fetch line interventions")
                     return@addSnapshotListener
                 }
-                if (pmcQuerySnapshot!=null && !pmcQuerySnapshot.isEmpty)
-                {
-                    val interventionList=pmcQuerySnapshot.mapNotNull { pmc->
+
+                    val interventionList=pmcQuerySnapshot?.mapNotNull { pmc->
                         pmc.toObject(ProgressiveMaintenanceCard::class.java)
-                    }
+                    }?: emptyList()
                     onSuccess(interventionList)
-                }
-                else{
-                    onFailure("")
-                }
+
+
             }
     }
 
@@ -539,6 +533,41 @@ class CompaniesRepositoryImpl:CompaniesRepository {
                 onSuccess()
             }
             .addOnFailureListener { e-> onFailure(e.message?:"Repository: Failed to update PMC") }
+    }
+
+    override suspend fun deletePMCardGlobally(
+        companyId: String,
+        pmc: ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.GLOBAL_INTERVENTIONS)
+            .document(pmc.interventionId)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e->  onFailure(e.message?:"Repository:Failed to delete company intervention!") }
+    }
+
+    override suspend fun deletePMCardLocally(
+        companyId: String,
+        pmc: ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(pmc.productionLineId)
+            .collection(FirebaseCollections.INTERVENTIONS)
+            .document(pmc.interventionId)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to delete line intervention!") }
     }
 
     override suspend fun saveCenterLineForm(
@@ -668,6 +697,25 @@ class CompaniesRepositoryImpl:CompaniesRepository {
         docRef.set(updatedProcedure)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to upload procedure") }
+    }
+
+    override suspend fun updateProcedure(
+        companyId: String,
+        lineId: String,
+        procedure: Procedure,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
+    ) {
+        Firebase.firestore
+            .collection(FirebaseCollections.COMPANIES)
+            .document(companyId)
+            .collection(FirebaseCollections.PRODUCTION_LINES)
+            .document(lineId)
+            .collection(FirebaseCollections.PROCEDURES)
+            .document(procedure.procedureId)
+            .set(procedure)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e-> onFailure(e.message?:"Repository:Failed to update the procedure") }
     }
 
     override suspend fun fetchAllEquipmentProcedures(

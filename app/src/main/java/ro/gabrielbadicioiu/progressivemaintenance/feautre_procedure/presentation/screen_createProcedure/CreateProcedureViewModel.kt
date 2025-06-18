@@ -155,7 +155,6 @@ class CreateProcedureViewModel(
                            }
                        }
                     )
-
             }
             is CreateProcedureEvent.OnStepDescrChange->{
                 _procedure.value=useCases.onStepDescriptionChange.execute(procedure = _procedure.value, index = event.index, description = event.description)
@@ -237,6 +236,11 @@ class CreateProcedureViewModel(
             is CreateProcedureEvent.OnAddNewStep->{
                 val newStepList=_procedure.value.steps+ProcedureStep()
                 _procedure.value=_procedure.value.copy(steps = newStepList)
+            }
+            is CreateProcedureEvent.OnStepDelete->{
+                val stepList=_procedure.value.steps.toMutableList()
+                stepList-=stepList[event.index]
+                _procedure.value=_procedure.value.copy(steps = stepList)
             }
         }
     }

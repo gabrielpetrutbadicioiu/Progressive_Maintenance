@@ -1,5 +1,6 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_addProductionLine.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,8 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -17,10 +18,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,12 +67,13 @@ fun AddLineCard(
                         newName-> onLineNameChange(newName)
                                     },
                     modifier = Modifier.fillMaxWidth(),
+                    
                     singleLine = true,
                     isError = emptyNameError,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = colorResource(id = R.color.text_color)),
+                    colors = OutlinedTextFieldDefaults.colors(
+                      focusedBorderColor = colorResource(id = R.color.btn_color)
+                        ),
                     shape = RoundedCornerShape(16.dp),
                     placeholder = {
                         Text(text = stringResource(id = R.string.enter_line_name),
@@ -96,20 +99,17 @@ fun AddLineCard(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = colorResource(id = R.color.text_color)),
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        containerColor = Color.Transparent,
-//                        focusedBorderColor = colorResource(id = R.color.text_color),
-//                    ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorResource(id = R.color.btn_color)
+                    ),
+
                     trailingIcon = { IconButton(onClick = {
                         onDeleteEquipment(index)
                     }) {
                         Icon(
-                            imageVector = Icons.Default.DeleteOutline,
+                            imageVector = Icons.Outlined.DeleteOutline,
                             contentDescription = stringResource(id = R.string.icon_btn_descr),
-                            tint = colorResource(id = R.color.text_color))
+                            tint = Color.Red)
                     } },
                     shape = RoundedCornerShape(16.dp),
                     placeholder = {
@@ -149,29 +149,30 @@ fun AddLineCard(
                     horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically) {
                     
-                    
-                        Button(
-                            onClick = {
-                                onDoneBtnClick()
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))
-                        ) {
-                            if (showProgressBar)
-                            {
-                                CircularProgressIndicator()
-                            }
-                            else {
-                                Text(text = stringResource(id = R.string.done_btn))
-                            }
-                           
-                        }
-                    
-
-                    Button(onClick = {
+                    OutlinedButton(onClick = {
                         onCancelBtnClick()
                     },
-                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
+                        colors = ButtonDefaults.buttonColors(contentColor = colorResource(id = R.color.btn_color),
+                            containerColor = Color.Transparent),
+                        border = BorderStroke(width = 2.dp, color = colorResource(id = R.color.btn_color))
+                    ) {
                         Text(text = stringResource(id = R.string.cancel_btn))
+                    }
+
+                    Button(
+                        onClick = {
+                            onDoneBtnClick()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))
+                    ) {
+                        if (showProgressBar)
+                        {
+                            CircularProgressIndicator()
+                        }
+                        else {
+                            Text(text = stringResource(id = R.string.done_btn))
+                        }
+
                     }
                 }
             }

@@ -1,27 +1,30 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_home.presentation.screen_editProductionLine.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +38,6 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
 import ro.gabrielbadicioiu.progressivemaintenance.feature_home.domain.model.ProductionLine
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProdLineCard(
     productionLine: ProductionLine,
@@ -73,9 +75,8 @@ fun EditProdLineCard(
                     singleLine = true,
                     isError = emptyNameError,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color)
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorResource(id = R.color.btn_color)
                     ),
                     shape = RoundedCornerShape(16.dp),
                     placeholder = {
@@ -103,17 +104,17 @@ fun EditProdLineCard(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     textStyle = TextStyle(color = colorResource(id = R.color.text_color)),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedBorderColor = colorResource(id = R.color.text_color)
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorResource(id = R.color.btn_color)
                     ),
                     trailingIcon = { IconButton(onClick = {
                         onDeleteEquipment(index)
-                    }) {
+                    },
+                        ) {
                         Icon(
-                            imageVector = Icons.Default.DeleteOutline,
+                            imageVector = Icons.Outlined.DeleteOutline,
                             contentDescription = stringResource(id = R.string.icon_btn_descr),
-                            tint = colorResource(id = R.color.text_color)
+                            tint = Color.Red
                         )
                     } },
                     shape = RoundedCornerShape(16.dp),
@@ -182,6 +183,17 @@ fun EditProdLineCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically) {
+
+                    OutlinedButton(onClick = {
+                        onCancelBtnClick()
+                    },
+                        colors = ButtonDefaults.buttonColors(contentColor = colorResource(id = R.color.btn_color),
+                            containerColor = Color.Transparent),
+                        border = BorderStroke(width = 2.dp, color = colorResource(id = R.color.btn_color))
+                    ) {
+                        Text(text = stringResource(id = R.string.cancel_btn))
+                    }
+
                     Button(
                         onClick = {
                             onDoneBtnClick()
@@ -190,27 +202,24 @@ fun EditProdLineCard(
                     ) {
                         Text(text = stringResource(id = R.string.done_btn))
                     }
-                    Button(onClick = {
-                        onCancelBtnClick()
-                    },
-                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.btn_color))) {
-                        Text(text = stringResource(id = R.string.cancel_btn))
-                    }
                 }
             }//item
             item {
+                Spacer(modifier = Modifier.height(6.dp))
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
-                    Button(
+                    OutlinedButton(
                         onClick = {
                         onDeleteProdLineClick()
                     },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) {
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.Red,
+                            containerColor = Color.Transparent),
+                        border = BorderStroke(width = 2.dp, color = Color.Red)) {
                         Text(text = stringResource(id = R.string.delete_line),
-                            color = colorResource(id = R.color.text_color))
+                            color = Color.Red)
                     }
                 }
             }//item

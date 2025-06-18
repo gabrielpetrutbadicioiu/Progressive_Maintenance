@@ -23,6 +23,10 @@ class DisplayAllClViewModel(
     private val _errState= mutableStateOf(DisplayAllClErrState())
     val errState:State<DisplayAllClErrState> = _errState
 
+    private val _query = mutableStateOf("")
+    val query:State<String> = _query
+
+    private var originalList= emptyList<CenterLineForm>()
     //one time events
     private val _eventFlow= MutableSharedFlow<DisplayAllClUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -49,7 +53,9 @@ class DisplayAllClViewModel(
                         companiesRepository.fetchAllCenterLines(
                             companyId = event.companyId,
                             lineId = event.productionLineId,
-                            onSuccess = {clList-> _equipmentClList.value=clList.filter { cl-> cl.equipmentId==event.equipmentId } },
+                            onSuccess = {clList-> _equipmentClList.value=clList.filter { cl-> cl.equipmentId==event.equipmentId }
+                                        originalList=_equipmentClList.value
+                                        },
                             onFailure = {e-> _errState.value=_errState.value.copy(isFetchClErr = true, errMsg = e)}
                         )
                     }catch (e:Exception)
@@ -63,6 +69,14 @@ class DisplayAllClViewModel(
             }
             is DisplayAllClScreenEvent.OnClClick->{
                 viewModelScope.launch { _eventFlow.emit(DisplayAllClUiEvent.OnClClick(clId = _equipmentClList.value[event.clIndex].clFormId)) }
+            }
+            is DisplayAllClScreenEvent.OnQueryChange->{
+                _query.value=event.query
+                if (_query.value.isEmpty())
+                {
+                    _equipmentClList.value=originalList
+                }
+                _equipmentClList.value=_equipmentClList.value.filter { cl-> cl.clName.contains(event.query, ignoreCase = true) }
             }
 
         }

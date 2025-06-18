@@ -54,9 +54,10 @@
     <string name="empty_screen_message2">Tap on</string>
     <string name="empty_screen_message3"> to add a production line.</string>
     <string name="delete_line">Delete this production line</string>
-    <string name="delete_line_warning">Are you sure you want to delete this production line? This action cannot be undone.</string>
-    <string name="delete_line_confirm">Yes, delete this production line</string>
-    <string name="delete_line_dismiss">No, don\'t delete this production line</string>
+    <string name="delete_line_warning">Delete this production line?</string>
+    <string name="undone_warning">This cannot be undone.</string>
+    <string name="delete_line_confirm">Confirm</string>
+    <string name="delete_line_dismiss">Cancel</string>
     <string name="register_company_txt">Register a New Company</string>
     <string name="enter_business_email">Enter business email</string>
     <string name="organisation_name">Organisation\'s name*</string>
@@ -72,7 +73,7 @@
     <string name="read_more">more</string>
     <string name="read_less">less</string>
     <string name="short_text">By completing this step, you will create an owner account for the company and will have full administrative rights.</string>
-    <string name="full_text">As the owner, you will have full control over the company account. You can manage users (promote to Administrator for additional management, demote, approve, or remove them), add, edit, or delete production lines and data.Access levels: Owner(full access, including user management), Administrator(can manage production lines but cannot mange users), User(can log interventions and view data but cannot make structural changes).</string>
+    <string name="full_text">As the owner, you will have full control over the company account. You can manage users (promote to Administrator for additional management, demote or remove users).You can also add, edit, or delete production lines and data.Access levels: Owner(full access, including user management), Administrator(can manage production lines but cannot mange users), User(can log interventions and view data but cannot make structural changes).</string>
     <string name="email_recommendation">We recommend using a business email*</string>
     <string name="email_format_err">Please enter a valid email address.</string>
     <string name="create_pass">Create password</string>
@@ -220,7 +221,12 @@
     <string name="procedure_title">Procedure title</string>
     <string name="empty_procedures_list_err">Oops! No procedures found.</string>
     <string name="procedure_details">Procedure details</string>
-
+    <string name="edit_procedure">Edit procedure</string>
+    <string name="delete">Delete</string>
+    <string name="edit_cl">Edit centerline</string>
+    <string name="cl">Centerline</string>
+    <string name="delete_intervention_alert">Delete intervention?</string>
+    <string name="no_banned_users">No banned users found.</string>
 
 
 </resources>

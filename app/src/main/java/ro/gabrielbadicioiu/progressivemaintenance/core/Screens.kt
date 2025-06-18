@@ -76,31 +76,40 @@ sealed class Screens {
         val equipmentId: String,
         val isCreatingNewCl:Boolean,
         val clId:String
-    )
+    ):Screens()
     @Serializable
     data class DisplayCenterLinesScreen(
         val companyId:String,
         val userId:String,
         val productionLineId: String,
         val equipmentId: String,
-    )
+    ):Screens()
     @Serializable
     data class ProcedureScreen(
         val companyId:String,
         val userId:String,
         val productionLineId: String,
         val equipmentId: String,
-    )
+    ):Screens()
     @Serializable
     data class DisplayProceduresScreen(
         val companyId:String,
         val userId:String,
         val productionLineId:String,
         val equipmentId:String
-    )
+    ):Screens()
 
     @Serializable
     data class VisualizeProcedureScreen(
+        val companyId:String,
+        val userId:String,
+        val productionLineId:String,
+        val equipmentId:String,
+        val procedureId:String
+    ):Screens()
+
+    @Serializable
+    data class EditProcedureScreen(
         val companyId:String,
         val userId:String,
         val productionLineId:String,

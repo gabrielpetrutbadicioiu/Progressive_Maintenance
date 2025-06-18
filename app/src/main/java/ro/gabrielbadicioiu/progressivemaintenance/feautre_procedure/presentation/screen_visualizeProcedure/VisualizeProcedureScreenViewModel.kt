@@ -38,7 +38,10 @@ class VisualizeProcedureScreenViewModel(
     val eventFlow=_eventFlow.asSharedFlow()
     sealed class VisualizeProcedureUiEvent{
         data object OnNavigateToDisplayAllProceduresScreen:VisualizeProcedureUiEvent()
+        data object OnNavigateToEditProcedureScreen:VisualizeProcedureUiEvent()
+
         data class OnNavigateToDisplayPhotoScreen(val uri:String):VisualizeProcedureUiEvent()
+
     }
 
     //vars
@@ -125,6 +128,7 @@ class VisualizeProcedureScreenViewModel(
                     uri = _procedure.value.steps[event.index].photo1Uri
                 )) }
             }
+
             is VisualizeProcedureScreenEvent.OnPhoto2Click->{
                 viewModelScope.launch { _eventFlow.emit(VisualizeProcedureUiEvent.OnNavigateToDisplayPhotoScreen(
                     uri = _procedure.value.steps[event.index].photo2Uri
@@ -137,8 +141,8 @@ class VisualizeProcedureScreenViewModel(
                 )) }
 
             is VisualizeProcedureScreenEvent.OnEditBtnClick->{
-                //todo de implementat navigarea catre ecranul de edit. Mai ai de facut ecranul de edit, de retestat ecranul de cl-uri si facut la fel cu listItem si alte chestii de finete. Dupa nu stiu ce sa zic tb sa ne gandim cu statisticile cum facem
-            }
+                viewModelScope.launch { _eventFlow.emit(VisualizeProcedureUiEvent.OnNavigateToEditProcedureScreen) }
+             }
         }
         }
     }

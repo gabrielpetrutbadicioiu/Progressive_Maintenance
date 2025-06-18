@@ -4,6 +4,7 @@ package ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.prese
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,6 +45,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.core.composables.IconTextField
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateCenterLineEvent
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.composables.InterventionInfoSection
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.presentation.composables.InterventionSummarySection
 
@@ -263,8 +266,18 @@ fun LogInterventionScreen(
                         {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically) {
+                                OutlinedButton(
+                                    onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnCancelChangesClick)},
+                                    border = BorderStroke(1.dp, color = colorResource(id = R.color.btn_color)),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = colorResource(id = R.color.btn_color),
+                                    )
+                                ) {
+                                    Text(text = stringResource(id = R.string.cancel_btn) )
+                                }
+
                                 Button(
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = colorResource(id = R.color.btn_color),
@@ -272,13 +285,7 @@ fun LogInterventionScreen(
                                     onClick = { viewModel.onEvent(LogInterventionScreenEvent.OnSaveChangesClick) }) {
                                     Text(text = stringResource(id = R.string.save_changes))
                                 }
-                                Button(
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = colorResource(id = R.color.btn_color),
-                                        contentColor = Color.White),
-                                    onClick = {viewModel.onEvent(LogInterventionScreenEvent.OnCancelChangesClick)}) {
-                                    Text(text = stringResource(id = R.string.cancel_btn))
-                                }
+
                             }
                         }
 

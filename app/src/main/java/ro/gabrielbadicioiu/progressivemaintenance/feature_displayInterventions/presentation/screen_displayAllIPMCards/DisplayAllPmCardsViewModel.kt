@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.model.DisplayInterventionArgumentData
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.model.SortOption
@@ -27,8 +28,14 @@ class DisplayAllPmCardsViewModel(
     //states
     private val _displayInterventionArgumentData= mutableStateOf(DisplayInterventionArgumentData())
 
+    private val _showAlertDialog= mutableStateOf(false)
+    val showAlertDialog:State<Boolean> = _showAlertDialog
+
     private val _pmCardList= mutableStateOf <List<ProgressiveMaintenanceCard>>(emptyList())
     val pmCardList:State<List<ProgressiveMaintenanceCard>> = _pmCardList
+
+    private val _currentUser= mutableStateOf(UserDetails())
+    val currentUser:State<UserDetails> = _currentUser
 
     private val _isErr= mutableStateOf(false)
     val isErr:State<Boolean> = _isErr
@@ -40,6 +47,8 @@ class DisplayAllPmCardsViewModel(
 
     private val _sortOption= mutableStateOf(SortOption())
     val sortOption:State<SortOption> = _sortOption
+
+
     //one time events
     private val _eventFlow= MutableSharedFlow<DisplayAllPmCardsUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -57,6 +66,7 @@ class DisplayAllPmCardsViewModel(
         ):DisplayAllPmCardsUiEvent()
     }
 
+    private var deletedPmc=ProgressiveMaintenanceCard()
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event: DisplayAllPmCardsScreenEvent)
@@ -84,6 +94,25 @@ class DisplayAllPmCardsViewModel(
                         onFailure = {e->
                             viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e))} }
                             )
+                }
+
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.getUserInCompany(
+                            companyID = event.companyId,
+                            currentUserID = event.userId,
+                            onFailure = {e-> viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e))} },
+                            onSuccess = {user->
+                                if (user != null) {
+                                    _currentUser.value=user
+                                }
+                            },
+                            onUserNotFound = { viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast("User not found"))}}
+                        )
+                    }catch (e:Exception)
+                    {
+                        viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e.message?:"ViewModel:Failed to fetch user"))}
+                    }
                 }
             }
             is DisplayAllPmCardsScreenEvent.OnGetAllPmCards->{
@@ -127,7 +156,6 @@ class DisplayAllPmCardsViewModel(
                         _pmCardList.value=useCases.onSearchIntervention.execute(query = event.query, pmCardList = _pmCardList.value.toList())
                         onSort()
                     }
-
             }
             is DisplayAllPmCardsScreenEvent.OnExpandInterventionClick->{
                 val mutablePmList=_pmCardList.value.toMutableList()
@@ -160,6 +188,48 @@ class DisplayAllPmCardsViewModel(
                         productionLineId = event.pmc.productionLineId,
                         isNewIntervention = false
                     )) }
+            }
+            is DisplayAllPmCardsScreenEvent.OnDeleteInterventionClick->{
+                deletedPmc=_pmCardList.value.find { pmc-> pmc.interventionId==event.pmcId }?: ProgressiveMaintenanceCard()
+                _showAlertDialog.value=true
+            }
+            is DisplayAllPmCardsScreenEvent.OnConfirmBtnClick->{
+                try {
+                    viewModelScope.launch {
+                        companiesRepository.deletePMCardGlobally(
+                            companyId = _displayInterventionArgumentData.value.companyId,
+                            pmc = deletedPmc,
+                            onSuccess = {
+                                viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast("Intervention deleted successfully")) }
+                            },
+                            onFailure = {e->
+                                viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e)) }}
+                        )
+                    }
+                }catch (e:Exception)
+                {
+                    viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e.message?:"ViewModel: Failed to delete intervention")) }
+                }
+                try {
+                    viewModelScope.launch {
+                        companiesRepository.deletePMCardLocally(
+                            companyId = _displayInterventionArgumentData.value.companyId,
+                            pmc = deletedPmc,
+                            onSuccess = {
+                                viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast("Intervention deleted successfully")) }
+                            },
+                            onFailure = {e->
+                                viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e)) }}
+                        )
+                    }
+                }catch (e:Exception)
+                {
+                    viewModelScope.launch { _eventFlow.emit(DisplayAllPmCardsUiEvent.OnShowToast(e.message?:"ViewModel: Failed to delete intervention")) }
+                }
+                _showAlertDialog.value=false
+            }
+            is DisplayAllPmCardsScreenEvent.OnDismissDialogClick->{
+                _showAlertDialog.value=false
             }
         }
     }

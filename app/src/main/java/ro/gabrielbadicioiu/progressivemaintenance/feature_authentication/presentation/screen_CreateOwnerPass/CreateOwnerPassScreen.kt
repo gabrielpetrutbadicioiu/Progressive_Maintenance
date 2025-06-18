@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -123,6 +124,9 @@ fun CreateOwnerPassScreen(
                     onValueChange ={pass-> if (pass.length<=20) viewModel.onEvent(CreateOwnerPassEvent.OnPassChange(pass))},
                     singleLine = true,
                     isError = false,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = colorResource(id = R.color.btn_color),
+                        focusedBorderColor = colorResource(id = R.color.btn_color)),
                     label = {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                             Text(text = stringResource(id = R.string.password_hint))
@@ -145,6 +149,9 @@ fun CreateOwnerPassScreen(
                         .fillMaxWidth()
                         .padding(4.dp),
                     value =viewModel.confPass.value,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedLabelColor = colorResource(id = R.color.btn_color),
+                        focusedBorderColor = colorResource(id = R.color.btn_color)),
                     onValueChange ={confPass-> if (confPass.length<=20) viewModel.onEvent(CreateOwnerPassEvent.OnConfPassChange(confPass))},
                     singleLine = true,
                     isError = false,

@@ -62,17 +62,7 @@ fun SelectCountryScreen(
             topBar = {
                 TopAppBar(
                     title = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_icon),
-                                contentDescription = stringResource(id = R.string.image_descr),
-                                modifier = Modifier.size(86.dp)
-                            )
-                        }
+
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colorResource(id = R.color.bar_color),

@@ -58,6 +58,8 @@ import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.ProcedureScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_editProcedure.EditProcedureScreen
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_editProcedure.EditProcedureScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreen
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreenViewModel
 
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
                 val createProcedureViewModel=getViewModel<CreateProcedureViewModel>()
                 val displayAllProceduresViewModel=getViewModel<DisplayAllProceduresViewModel>()
                 val visualizeProcedureScreenViewModel=getViewModel<VisualizeProcedureScreenViewModel>()
-
+                val editProcedureScreenViewModel= getViewModel<EditProcedureScreenViewModel> ()
                 NavHost(
                     navController = navController,
                     startDestination = Screens.SignInScreen) {
@@ -323,6 +325,19 @@ class MainActivity : ComponentActivity() {
                             procedureId = args.procedureId,
                             viewModel = visualizeProcedureScreenViewModel,
                             navController = navController
+                        )
+                    }
+                    composable<Screens.EditProcedureScreen> {
+                        val args=it.toRoute<Screens.EditProcedureScreen>()
+                        EditProcedureScreen(
+                            userId = args.userId,
+                            companyId = args.companyId,
+                            productionLineId = args.productionLineId,
+                            equipmentId = args.equipmentId,
+                            procedureId = args.procedureId,
+                            viewModel = editProcedureScreenViewModel,
+                            navController = navController
+
                         )
                     }
                 }//navHost

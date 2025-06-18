@@ -51,6 +51,7 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.CreateClUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.DeleteClParameter
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.OnSaveClick
+import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.domain.use_cases.OnUpdateCl
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_createCL.CreateClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_centerline.presentation.screen_displayAllCL.DisplayAllClViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feature_displayInterventions.domain.use_cases.DisplayInterventionsUseCases
@@ -98,14 +99,17 @@ import ro.gabrielbadicioiu.progressivemaintenance.feature_members.presentantion.
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.domain.use_cases.ProfileScreenUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feature_profileScreen.presentation.ProfileScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.CreateProcedureUseCases
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.EditProcedureUseCases
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnSaveProcedureClick
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnStepDescriptionChange
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnStepPhotoUriResult
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.OnUpdateProcedure
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto1Remove
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto2Remove
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.domain.use_cases.ProcedurePhoto3Remove
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_displayProcedures.DisplayAllProceduresViewModel
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_editProcedure.EditProcedureScreenViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_visualizeProcedure.VisualizeProcedureScreenViewModel
 
 
@@ -303,7 +307,7 @@ single{
         CreateUserUseCases(onAddUserToCompany = OnAddUserToCompany(companiesRepository = get(), cloudStorageRepository = get()))
     }
     viewModel {
-        CreateUserProfileViewModel(get())
+        CreateUserProfileViewModel(useCases = get(), companiesRepository = get())
     }
 
     //LogInterventionScreen
@@ -347,7 +351,8 @@ single{
             clParameterNameChange = ClParameterNameChange(),
             clParameterValueChange = ClParameterValueChange(),
             deleteClParameter = DeleteClParameter(),
-            onSaveClick = OnSaveClick(companiesRepository = get())
+            onSaveClick = OnSaveClick(companiesRepository = get()),
+            onUpdateCl = OnUpdateCl(companiesRepository = get())
         )
     }
     viewModel {
@@ -386,6 +391,21 @@ single{
 
     viewModel { VisualizeProcedureScreenViewModel(
         companiesRepository = get()
+    ) }
+
+    single{
+        EditProcedureUseCases(
+            onStepDescriptionChange = OnStepDescriptionChange(),
+            onStepPhotoUriResult = OnStepPhotoUriResult(cloudStorageRepository = get()),
+            procedurePhoto1Remove = ProcedurePhoto1Remove(cloudStorageRepository = get()),
+            procedurePhoto2Remove = ProcedurePhoto2Remove(cloudStorageRepository = get()),
+            procedurePhoto3Remove = ProcedurePhoto3Remove(cloudStorageRepository = get()),
+            onUpdateProcedure = OnUpdateProcedure()
+        )
+    }
+    viewModel { EditProcedureScreenViewModel(
+        companiesRepository = get(),
+        useCases = get()
     ) }
 }
 

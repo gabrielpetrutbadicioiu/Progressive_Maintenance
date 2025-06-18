@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -138,7 +140,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop)
                     }
-
+                Spacer(modifier = Modifier.height(6.dp))
                 Button(
                     onClick = {
                         photoPickerLauncher.launch(
@@ -164,6 +166,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                         .fillMaxWidth()
                         .padding(4.dp),
                     value = viewModel.user.value.firstName,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     onValueChange = {firstName->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnFirstNameChange(firstName))},
                     placeholder = { Text(text = stringResource(id = R.string.first_name))},
                     singleLine = true,
@@ -181,6 +184,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                         .fillMaxWidth()
                         .padding(4.dp),
                     value = viewModel.user.value.lastName,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     onValueChange = {lastName->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnLastNameChange(lastName))},
                     placeholder = { Text(text = stringResource(id = R.string.last_name))},
                     singleLine = true,
@@ -198,6 +202,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                         .fillMaxWidth()
                         .padding(4.dp),
                     value = viewModel.user.value.position,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     onValueChange = {position->viewModel.onEvent(OwnerAccDetailsScreenEvent.OnPositionChange(position))},
                     placeholder = { Text(text = stringResource(id = R.string.position))},
                     singleLine = true,
@@ -221,7 +226,7 @@ val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityRe
                 }
 
                     val btnEn=viewModel.user.value.firstName.isNotBlank()&& viewModel.user.value.lastName.isNotBlank() && viewModel.user.value.position.isNotBlank()
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
                             viewModel.onEvent(OwnerAccDetailsScreenEvent.OnFinishBtnClick(companyDocumentID))

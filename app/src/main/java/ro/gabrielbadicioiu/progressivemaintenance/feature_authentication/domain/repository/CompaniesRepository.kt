@@ -128,6 +128,18 @@ interface CompaniesRepository {
         onSuccess: (List<ProgressiveMaintenanceCard>) -> Unit,
         onFailure: (String) -> Unit
     )
+    suspend fun deletePMCardLocally(
+        companyId: String,
+        pmc:ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+    suspend fun deletePMCardGlobally(
+        companyId: String,
+        pmc:ProgressiveMaintenanceCard,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
     suspend fun fetchPmCardById(
         companyId: String,
         productionLineId: String,
@@ -171,6 +183,14 @@ interface CompaniesRepository {
         onFailure: (String) -> Unit
     )
     suspend fun uploadProcedure(
+        companyId: String,
+        lineId: String,
+        procedure: Procedure,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    )
+
+    suspend fun updateProcedure(
         companyId: String,
         lineId: String,
         procedure: Procedure,

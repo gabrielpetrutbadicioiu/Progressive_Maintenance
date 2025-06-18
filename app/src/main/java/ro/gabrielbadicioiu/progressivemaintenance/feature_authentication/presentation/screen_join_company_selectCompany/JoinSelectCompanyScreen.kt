@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -95,17 +96,7 @@ fun JoinSelectCompanyScreen(
                         }
                     },
                     title = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-//                            Image(
-//                                painter = painterResource(id = R.drawable.ic_icon),
-//                                contentDescription = stringResource(id = R.string.image_descr),
-//                                modifier = Modifier.size(86.dp)
-//                            )
-                        }
+
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colorResource(id = R.color.bar_color),
@@ -132,6 +123,7 @@ fun JoinSelectCompanyScreen(
                     value = viewModel.registrationEmail.value,
                     onValueChange = {value->viewModel.onEvent(JoinSelectCompanyEvent.OnRegistrationEmailChange(value))},
                     placeholder = { Text(text = stringResource(id = R.string.email_hint)) },
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     singleLine = true,
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Email,
@@ -155,6 +147,7 @@ fun JoinSelectCompanyScreen(
                     isError = false,
                     value = viewModel.selectedCompany.value.organisationName,
                     readOnly = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     onValueChange ={ },
                     supportingText = { Text(text = stringResource(id = R.string.select_company_supporting_txt)) },
                     shape = RoundedCornerShape(16.dp),
@@ -186,6 +179,7 @@ fun JoinSelectCompanyScreen(
                                 viewModel.onEvent(JoinSelectCompanyEvent.OnOtpValueChange(otpValue))
                             }},
                         modifier = Modifier.width(250.dp),
+                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                         leadingIcon = { Icon(imageVector = Icons.Default.Key,
                             contentDescription = stringResource(id = R.string.icon_descr))},
                         placeholder = { Text(text = stringResource(id = R.string.otp_hint))},

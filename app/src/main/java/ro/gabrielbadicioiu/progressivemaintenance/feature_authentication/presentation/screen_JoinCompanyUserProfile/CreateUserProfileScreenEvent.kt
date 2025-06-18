@@ -9,8 +9,9 @@ sealed class CreateUserProfileScreenEvent {
     data class OnPositionChange(val position:String):CreateUserProfileScreenEvent()
     data class OnFinishBtnClick(val companyID:String):CreateUserProfileScreenEvent()
     data class OnGetCurrentUser(val userID:String, val email:String):CreateUserProfileScreenEvent()
-
+    data class OnFetchArgumentData(  val companyID:String, val userID:String):CreateUserProfileScreenEvent()
     data object OnNavigateUp:CreateUserProfileScreenEvent()
+    data object OnUpdateCompanyOTP:CreateUserProfileScreenEvent()
 
 
 }

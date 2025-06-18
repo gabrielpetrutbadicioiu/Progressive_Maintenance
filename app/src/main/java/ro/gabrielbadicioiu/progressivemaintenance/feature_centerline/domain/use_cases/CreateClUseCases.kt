@@ -5,5 +5,6 @@ data class CreateClUseCases(
     val clParameterNameChange: ClParameterNameChange,
     val clParameterValueChange: ClParameterValueChange,
     val deleteClParameter: DeleteClParameter,
-    val onSaveClick: OnSaveClick
+    val onSaveClick: OnSaveClick,
+    val onUpdateCl: OnUpdateCl
 )

@@ -55,6 +55,10 @@ class MembersScreenViewModel(
 
     private val _isBanned= mutableStateOf(false)
     val isBanned:State<Boolean> = _isBanned
+
+    private val _bannedList=mutableStateOf<List<UserDetails>>(emptyList())
+    val bannedList:State<List<UserDetails>> = _bannedList
+
     //one time events
     private val _eventFlow= MutableSharedFlow<MembersScreenUiEvent>()
     val eventFlow=_eventFlow.asSharedFlow()
@@ -112,6 +116,7 @@ class MembersScreenViewModel(
                                _memberStatus.value= userList.map { user->
                                    MemberStatus(user = user)
                                }
+                                _bannedList.value=userList.filter { user-> user.hasBeenBanned }
                                        },
                             onFailure = {e->
                                 _isError.value=true
@@ -272,8 +277,6 @@ class MembersScreenViewModel(
             is MembersScreenEvent.OnNavigateToProfile->{
                 viewModelScope.launch { _eventFlow.emit(MembersScreenUiEvent.OnProfileClick)}
             }
-
-
         }
     }
 }

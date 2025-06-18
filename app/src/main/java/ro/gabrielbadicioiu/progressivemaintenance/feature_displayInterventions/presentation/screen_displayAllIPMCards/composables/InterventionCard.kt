@@ -10,11 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -36,14 +35,17 @@ import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.Divider
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
 import ro.gabrielbadicioiu.progressivemaintenance.feature_logIntervention.domain.model.ProgressiveMaintenanceCard
 
 @Composable
 fun InterventionCard(
     pmCard: ProgressiveMaintenanceCard,
+    currentUser:UserDetails,
     isExpanded:Boolean,
     onExpandClick:()->Unit,
-    onViewDetailsClick:()->Unit
+    onViewDetailsClick:()->Unit,
+    onDeleteInterventionClick:()->Unit
 )
 {
     Card(
@@ -54,7 +56,8 @@ fun InterventionCard(
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top)
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.padding(8.dp))
         {
 
             Row(modifier = Modifier
@@ -69,14 +72,14 @@ fun InterventionCard(
                 )
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text =pmCard.equipmentName ,
+                    text =pmCard.equipmentName,
                     style = MaterialTheme.typography.titleMedium,
                     color = colorResource(id = R.color.text_color)
                 )
-
             }
             Row(modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
                 Text(
@@ -89,7 +92,8 @@ fun InterventionCard(
             {
                 Divider(space = 4.dp, thickness = 1.dp, color = Color.LightGray)
                 Row(modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start) {
                     Text(text = "${stringResource(id = R.string.created_by)} ${pmCard.authorName}")
@@ -110,7 +114,7 @@ fun InterventionCard(
                                 modifier = Modifier
                                     .size(48.dp)
                                     .clip(shape = CircleShape),
-                                clipToBounds = true,)
+                                clipToBounds = true)
 
                         }
                     }
@@ -143,13 +147,22 @@ fun InterventionCard(
                 Row(modifier = Modifier
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start)
+                    horizontalArrangement = Arrangement.SpaceBetween)
                 {
                     TextButton(
                         onClick = { onViewDetailsClick() },
                         ) {
                         Text(text = stringResource(id = R.string.view_details))
                     }
+
+                    if (currentUser.rank==UserRank.OWNER.name || currentUser.rank== UserRank.ADMIN.name || currentUser.userID==pmCard.authorId)
+                    IconButton(onClick = { onDeleteInterventionClick() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.DeleteOutline,
+                            contentDescription = stringResource(id = R.string.icon_descr),
+                            tint = Color.Red)
+                    }
+
                 }
             }//isExpanded
             Row(

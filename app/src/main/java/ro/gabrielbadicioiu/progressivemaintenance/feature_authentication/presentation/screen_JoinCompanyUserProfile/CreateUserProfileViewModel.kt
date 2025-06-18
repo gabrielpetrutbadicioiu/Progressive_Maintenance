@@ -12,11 +12,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import ro.gabrielbadicioiu.progressivemaintenance.core.CloudStorageFolders
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.UserRank
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.Company
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.model.UserDetails
+import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.repository.CompaniesRepository
 import ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.domain.use_cases.screen_joinCompanyCreateUser.CreateUserUseCases
+import kotlin.random.Random
 
 class CreateUserProfileViewModel(
-    private val useCases: CreateUserUseCases
+    private val useCases: CreateUserUseCases,
+    private val companiesRepository: CompaniesRepository
 ):ViewModel()
 { private val storageRef= Firebase.storage.reference
     //states
@@ -25,6 +29,9 @@ class CreateUserProfileViewModel(
 
     private val _showProgressBar= mutableStateOf(false)
     val showProgressBar:State<Boolean> = _showProgressBar
+
+    private val _company= mutableStateOf(Company())
+    val company:State<Company> =_company
 
     private val _firstNameErr= mutableStateOf(false)
     val firstNameErr:State<Boolean> = _firstNameErr
@@ -38,6 +45,7 @@ class CreateUserProfileViewModel(
     val errMsg:State<String> = _errMsg
     private val _selectedImageUri = mutableStateOf<Uri?>(null)
 
+    private var args=CreateUserProfileArgumentData()
     //one time events
     private val _eventFlow = MutableSharedFlow<CreateUserProfileUiEvent>()
     val eventFlow= _eventFlow.asSharedFlow()
@@ -45,7 +53,9 @@ class CreateUserProfileViewModel(
 
     sealed class CreateUserProfileUiEvent{
         data class OnNavigateBack(val hasPoppedBackStack:Boolean):CreateUserProfileUiEvent()
+        data class OnShowToast(val message:String):CreateUserProfileUiEvent()
         data object OnNavigateToSignIn:CreateUserProfileUiEvent()
+
     }
 
     fun onEvent(event:CreateUserProfileScreenEvent)
@@ -57,7 +67,9 @@ class CreateUserProfileViewModel(
             }
             is CreateUserProfileScreenEvent.OnUriResult->{
                 _selectedImageUri.value=event.uri
-                _user.value=_user.value.copy(profilePicture = event.uri.toString())
+
+                val uri=if (event.uri!=null)event.uri.toString() else ""
+                _user.value=_user.value.copy(profilePicture = uri)
             }
             is CreateUserProfileScreenEvent.OnFirstNameChange->{
                 _user.value=_user.value.copy(firstName = event.name.replaceFirstChar { char-> char.uppercase() })
@@ -97,8 +109,10 @@ class CreateUserProfileViewModel(
                             _lastNameErr.value=false
                             _firstNameErr.value=false
                             _errMsg.value=""
-                            viewModelScope.launch {_eventFlow.emit(CreateUserProfileUiEvent.OnNavigateToSignIn)  }
                             _showProgressBar.value=false
+                            onEvent(CreateUserProfileScreenEvent.OnUpdateCompanyOTP)
+
+
                         },
                         imageReference = storageRef,
                         imageName = _user.value.userID
@@ -107,6 +121,38 @@ class CreateUserProfileViewModel(
             }
             is CreateUserProfileScreenEvent.OnGetCurrentUser->{
                 _user.value=_user.value.copy(email = event.email, userID = event.userID)
+            }
+            is CreateUserProfileScreenEvent.OnUpdateCompanyOTP->{
+                val otp= Random.nextInt(100000, 999999).toString()
+                _company.value=_company.value.copy(otp = otp)
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.updateCompany(
+                            companyId = args.companyID,
+                            updatedCompany = _company.value.copy(),
+                            onSuccess = { viewModelScope.launch {_eventFlow.emit(CreateUserProfileUiEvent.OnNavigateToSignIn)  }},
+                            onFailure = {e-> viewModelScope.launch { _eventFlow.emit(CreateUserProfileUiEvent.OnShowToast(e)) }}
+                        )
+                    }catch (e:Exception)
+                    {
+                        viewModelScope.launch { _eventFlow.emit(CreateUserProfileUiEvent.OnShowToast(e.message?:"ViewModel:Failed to update company otp")) }
+                    }
+                }
+            }
+            is CreateUserProfileScreenEvent.OnFetchArgumentData->{
+                args=args.copy(companyID = event.companyID, userID = event.userID)
+                viewModelScope.launch {
+                    try {
+                        companiesRepository.getCompanyById(
+                            companyId = event.companyID,
+                            onSuccess = {comp-> _company.value=comp},
+                            onFailure = {e-> viewModelScope.launch { _eventFlow.emit(CreateUserProfileUiEvent.OnShowToast(e)) }}
+                        )
+                    }catch (e:Exception)
+                    {
+                        viewModelScope.launch { _eventFlow.emit(CreateUserProfileUiEvent.OnShowToast(e.message?:"ViewModel:Failed to fetch company")) }
+                    }
+                }
             }
         }
     }

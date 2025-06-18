@@ -1,6 +1,7 @@
 package ro.gabrielbadicioiu.progressivemaintenance.feature_authentication.presentation.screen_JoinCompanyUserProfile
 
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -28,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,10 +42,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -66,7 +71,9 @@ fun JoinCompanyUserProfileScreen(
             uri->
         viewModel.onEvent(CreateUserProfileScreenEvent.OnUriResult(uri))
     }
+    val context= LocalContext.current
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(CreateUserProfileScreenEvent.OnFetchArgumentData(companyID = companyID, userID = userID))
         viewModel.onEvent(CreateUserProfileScreenEvent.OnGetCurrentUser(userID = userID, email=email))
         viewModel.eventFlow.collectLatest { event->
             when(event)
@@ -76,6 +83,9 @@ fun JoinCompanyUserProfileScreen(
                 }
                 is CreateUserProfileViewModel.CreateUserProfileUiEvent.OnNavigateToSignIn->{
                     navController.navigate(Screens.SignInScreen)
+                }
+                is CreateUserProfileViewModel.CreateUserProfileUiEvent.OnShowToast->{
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -138,6 +148,7 @@ fun JoinCompanyUserProfileScreen(
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop)
                 }
+                Spacer(modifier = Modifier.height(6.dp))
                 Button(
                     onClick = {
                         photoPickerLauncher.launch(
@@ -162,6 +173,7 @@ fun JoinCompanyUserProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     value = viewModel.user.value.firstName,
                     onValueChange = {firstName->viewModel.onEvent(CreateUserProfileScreenEvent.OnFirstNameChange(firstName))},
                     placeholder = { Text(text = stringResource(id = R.string.first_name))},
@@ -179,6 +191,7 @@ fun JoinCompanyUserProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     value = viewModel.user.value.lastName,
                     onValueChange = {lastName->viewModel.onEvent(CreateUserProfileScreenEvent.OnLastNameChange(lastName))},
                     placeholder = { Text(text = stringResource(id = R.string.last_name))},
@@ -196,6 +209,7 @@ fun JoinCompanyUserProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
                     value = viewModel.user.value.position,
                     onValueChange = {position->viewModel.onEvent(CreateUserProfileScreenEvent.OnPositionChange(position))},
                     placeholder = { Text(text = stringResource(id = R.string.position))},

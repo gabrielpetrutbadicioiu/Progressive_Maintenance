@@ -1,5 +1,4 @@
-package ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure
-
+package ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_editProcedure
 
 
 import android.os.Build
@@ -45,38 +44,47 @@ import kotlinx.coroutines.flow.collectLatest
 import ro.gabrielbadicioiu.progressivemaintenance.R
 import ro.gabrielbadicioiu.progressivemaintenance.core.Screens
 import ro.gabrielbadicioiu.progressivemaintenance.core.composables.DisplayLottie
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureEvent
+import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.CreateProcedureViewModel
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.components.CreateProcedureGeneralInfo
 import ro.gabrielbadicioiu.progressivemaintenance.feautre_procedure.presentation.screen_createProcedure.components.CreateProcedureSteps
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProcedureScreen(
-     companyId:String,
-     userId:String,
-     productionLineId: String,
-     equipmentId: String,
-     viewModel: CreateProcedureViewModel,
-     navController: NavController
+fun EditProcedureScreen(
+    companyId:String,
+    userId:String,
+    productionLineId: String,
+    equipmentId: String,
+    procedureId:String,
+    viewModel: EditProcedureScreenViewModel,
+    navController: NavController
 )
 {
-    val context= LocalContext.current
+ val context= LocalContext.current
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(CreateProcedureEvent.OnFetchArgumentData(
+        viewModel.onEvent(EditProcedureScreenEvent.OnFetchArgumentData(
             companyId = companyId,
-            userId = userId,
+            userId=userId,
+            procedureId = procedureId,
             productionLineId = productionLineId,
             equipmentId = equipmentId
         ))
         viewModel.eventFlow.collectLatest { event->
             when(event)
             {
-                is CreateProcedureViewModel.CreateProcedureUiEvent.OnNavigateHome->{
-                    navController.navigate(Screens.HomeScreen(companyID = companyId, userID = userId))
+                is EditProcedureScreenViewModel.EditProcedureUiEvent.OnNavigateToVisualizeProcedure->{
+                    navController.navigate(Screens.VisualizeProcedureScreen(
+                        companyId = companyId,
+                        equipmentId = equipmentId,
+                        procedureId = procedureId,
+                        productionLineId = productionLineId,
+                        userId = userId
+                    ))
                 }
-                is CreateProcedureViewModel.CreateProcedureUiEvent.OnShowToast->{
-                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
-                }
+                is EditProcedureScreenViewModel.EditProcedureUiEvent.ShowToast->{ Toast.makeText(context, event.message, Toast.LENGTH_LONG).show() }
+
             }
         }
     }
@@ -90,7 +98,7 @@ fun ProcedureScreen(
             topBar = {
                 TopAppBar(
                     navigationIcon = {
-                        IconButton(onClick = {viewModel.onEvent(CreateProcedureEvent.OnNavigateHome)}) {
+                        IconButton(onClick = {viewModel.onEvent(EditProcedureScreenEvent.OnNavigateToVisualizeProcedure)}) {
                             Icon(
                                 imageVector = Icons.Outlined.ArrowBackIosNew,
                                 contentDescription = stringResource(id = R.string.icon_descr))
@@ -102,7 +110,7 @@ fun ProcedureScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = stringResource(id = R.string.create_procedure))
+                            Text(text = stringResource(id = R.string.edit_procedure))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -120,21 +128,23 @@ fun ProcedureScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top)
             {
-                if (viewModel.screenErrState.value.isFetchDataErr)
+                if (viewModel.uiErrState.value.isFetchProcedureErr || viewModel.uiErrState.value.isFetchAuthorErr)
                 {
                     item {  DisplayLottie(spec = LottieCompositionSpec.RawRes(R.raw.error), size = 128.dp)
-                        Text(text =viewModel.screenErrState.value.errMsg )}
+                        Text(text =viewModel.uiErrState.value.errMsg )}
                 }
                 else{
                     item {
                         CreateProcedureGeneralInfo(
-                            productionLine = viewModel.prodLine.value,
+                            productionLine = viewModel.productionLine.value,
                             equipment = viewModel.equipment.value,
                             date = viewModel.procedure.value.date,
-                            author =viewModel.currentUser.value,
-                            isErr =viewModel.screenErrState.value.isProcedureNameErr ,
+                            author =viewModel.author.value,
+                            isErr =viewModel.uiErrState.value.isEmptyProcedureNameErr ,
                             procedureName = viewModel.procedure.value.procedureName,
-                            onProcedureNameChange = {procedureName-> viewModel.onEvent(CreateProcedureEvent.OnProcedureNameChange(procedureName))}
+                            onProcedureNameChange = {procedureName->
+                                viewModel.onEvent(EditProcedureScreenEvent.OnProcedureNameChange(procedureName.replaceFirstChar { char-> char.uppercase() }))
+                            }
                         )
                     }
 
@@ -158,19 +168,19 @@ fun ProcedureScreen(
                             procedureStep = step,
                             onDescriptionChange = { descr ->
                                 viewModel.onEvent(
-                                    CreateProcedureEvent.OnStepDescrChange(
+                                    EditProcedureScreenEvent.OnStepDescrChange(
                                         description = descr.replaceFirstChar { char -> char.uppercase() },
                                         index = index)
                                 )
                             },
-                            isStepErr = viewModel.screenErrState.value.isStepDescriptionErr,
+                            isStepErr = viewModel.uiErrState.value.isStepDescriptionErr,
                             index =index,
                             procedureName = viewModel.procedure.value.procedureName,
-                            onPhotoUriResult = {localUri-> viewModel.onEvent(CreateProcedureEvent.OnStepPhotoUriResult(localUri = localUri, index = index))},
-                            onPhoto1Remove = {viewModel.onEvent(CreateProcedureEvent.OnPhoto1Delete(index = index))},
-                            onPhoto2Remove = {viewModel.onEvent(CreateProcedureEvent.OnPhoto2Delete(index = index))},
-                            onPhoto3Remove = {viewModel.onEvent(CreateProcedureEvent.OnPhoto3Delete(index = index))},
-                            onDeleteStepClick = {viewModel.onEvent(CreateProcedureEvent.OnStepDelete(index=index))}
+                            onPhotoUriResult = {localUri-> viewModel.onEvent(EditProcedureScreenEvent.OnUriResult(localUri = localUri, index = index))},
+                            onPhoto1Remove = {viewModel.onEvent(EditProcedureScreenEvent.OnPhoto1Delete(index = index))},
+                            onPhoto2Remove = {viewModel.onEvent(EditProcedureScreenEvent.OnPhoto2Delete(index = index))},
+                            onPhoto3Remove = {viewModel.onEvent(EditProcedureScreenEvent.OnPhoto3Delete(index = index))},
+                            onDeleteStepClick = {viewModel.onEvent(EditProcedureScreenEvent.OnDeleteProcedureStep(index=index))}
                         )
                     }
 
@@ -179,7 +189,7 @@ fun ProcedureScreen(
                         OutlinedButton(
                             colors = ButtonDefaults.buttonColors(contentColor = colorResource(id = R.color.btn_color),
                                 containerColor = Color.Transparent),
-                            onClick = { viewModel.onEvent(CreateProcedureEvent.OnAddNewStep) },
+                            onClick = { viewModel.onEvent(EditProcedureScreenEvent.OnAddNewStep) },
                             border = BorderStroke(width = 2.dp, color = colorResource(id = R.color.btn_color))
                         ) {
                             Text(text = stringResource(id = R.string.add_step))
@@ -196,22 +206,22 @@ fun ProcedureScreen(
                             OutlinedButton(
                                 colors = ButtonDefaults.buttonColors(contentColor = colorResource(id = R.color.btn_color),
                                     containerColor = Color.Transparent),
-                                onClick = { viewModel.onEvent(CreateProcedureEvent.OnCancelBtnClick) },
+                                onClick = { viewModel.onEvent(EditProcedureScreenEvent.OnCancelBtnClick) },
                                 border = BorderStroke(width = 2.dp, color = colorResource(id = R.color.btn_color))
                             ) {
                                 Text(text = stringResource(id = R.string.cancel_btn))
                             }
                             Button(
-                                onClick = { viewModel.onEvent(CreateProcedureEvent.OnSaveBtnClick)},
+                                onClick = { viewModel.onEvent(EditProcedureScreenEvent.OnSaveBtnClick)},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = colorResource(id = R.color.btn_color),
                                     contentColor = colorResource(id = R.color.text_color))
                             ) {
                                 Text(text = stringResource(id = R.string.save))
                             }
-                            
+
                         }
-                       
+
                     }
 
                 }

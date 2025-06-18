@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +48,8 @@ index:Int,
 onPhotoUriResult:(String)->Unit,
 onPhoto1Remove:()->Unit,
 onPhoto2Remove:()->Unit,
-onPhoto3Remove:()->Unit
+onPhoto3Remove:()->Unit,
+onDeleteStepClick:()->Unit
 )
 {
     val photoPickerLauncher= rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {uri->
@@ -63,9 +65,21 @@ onPhoto3Remove:()->Unit
         onValueChange = {stepDescr->onDescriptionChange(stepDescr)},
         isError =isStepErr,
         placeholder = { Text(text = stringResource(id = R.string.procedure_step_ph))},
-        supportingText = { Text(text = stringResource(id = R.string.procedure_step_st))},
+        supportingText = {
+            if (index==0)
+            {
+                Text(text = stringResource(id = R.string.procedure_step_st))
+            }
+            else{
+                TextButton(onClick = { onDeleteStepClick() }) {
+                    Text(text = stringResource(id = R.string.delete),
+                        color = Color.Red)
+                }
+            }
+
+                         },
         colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color)),
-        leadingIcon = { Text(text = index.toString())},
+        leadingIcon = { Text(text = (index+1).toString())},
         trailingIcon = { IconButton(onClick = {
             if (procedureStep.photo1Uri.isEmpty()||procedureStep.photo2Uri.isEmpty()||procedureStep.photo3Uri.isEmpty())
             {
@@ -89,26 +103,27 @@ onPhoto3Remove:()->Unit
                 contentDescription = stringResource(id = R.string.icon_descr))
         }}
     )
+    if (procedureStep.photo1Uri.isEmpty()&&procedureStep.photo2Uri.isEmpty()&&procedureStep.photo3Uri.isEmpty() && index==0)
+    {Row(modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start)
+    {
+        Icon(
+            imageVector = Icons.Outlined.Info,
+            contentDescription = stringResource(id = R.string.icon_descr),
+            Modifier.size(16.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(id = R.string.tap_hint),
+            fontSize = 10.sp)
+    }
+
+    }
     Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically) {
         val imageSize=64.dp
-        if (procedureStep.photo1Uri.isEmpty()&&procedureStep.photo2Uri.isEmpty()&&procedureStep.photo3Uri.isEmpty())
-        {Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start)
-        {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = stringResource(id = R.string.icon_descr),
-                Modifier.size(16.dp))
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = stringResource(id = R.string.tap_hint),
-                fontSize = 10.sp)
-        }
 
-        }
         if (procedureStep.photo1Uri.isNotEmpty())
         {
             BadgedBox(badge = {

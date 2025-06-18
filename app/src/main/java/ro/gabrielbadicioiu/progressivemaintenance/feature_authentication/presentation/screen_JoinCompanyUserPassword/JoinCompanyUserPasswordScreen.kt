@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -122,6 +123,8 @@ fun JoinCompanyUserPasswordScreen(
                     onValueChange ={ pass->
                         if(pass.length<=20) viewModel.onEvent(JoinCompanyUserPassEvent.OnPasswordChange(pass))},
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color),
+                        focusedLabelColor = colorResource(id = R.color.btn_color)),
                     isError = false,
                     label = {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
@@ -144,6 +147,8 @@ fun JoinCompanyUserPasswordScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(4.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = colorResource(id = R.color.btn_color),
+                        focusedLabelColor = colorResource(id = R.color.btn_color)),
                     value =viewModel.confPass.value,
                     onValueChange ={confPass-> if (confPass.length<=20) viewModel.onEvent(JoinCompanyUserPassEvent.OnConfPassChange(confPass))},
                     singleLine = true,
